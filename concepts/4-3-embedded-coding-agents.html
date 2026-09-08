@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>4.3 Embedded Coding Agents | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 640px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; } .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 16px; }
+    .storyboard-step { display: flex; gap: 16px; align-items: flex-start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .step-number { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+    .step-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 4px; } .step-content p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .customer-story { background: var(--sf-lighter); border-left: 4px solid var(--sf-primary); border-radius: 0 8px 8px 0; padding: 20px; margin-top: 16px; }
+    .customer-story p { font-style: italic; margin-bottom: 8px; } .customer-story .attribution { font-style: normal; font-weight: 600; font-size: 0.85rem; color: var(--sf-dark); }
+    .page-container { max-width: 900px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 4: AI &rarr; 4.3 Embedded Coding Agents</div>
+
+    <div class="concept-hero">
+      <h1>Embedded Coding Agents</h1>
+      <p class="subtitle">Giving your product AI-powered code generation and task automation: the Cortex Code SDK lets you embed a coding agent that can write SQL, Python, and orchestration logic -- then execute it -- directly within your SaaS application.</p>
+    </div>
+
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <ul>
+        <li><strong>Custom code generation pipelines:</strong> Prompt engineering with OpenAI/Anthropic APIs, custom sandboxing for execution, and hand-built UIs for displaying generated code. 6+ months to production-ready.</li>
+        <li><strong>Embedded notebooks:</strong> Jupyter-style interfaces embedded in the product (Observable, Hex). Powerful but require technical users and don't integrate with platform governance.</li>
+        <li><strong>No-code workflow builders:</strong> Drag-and-drop tools that abstract away code but are limited in expressiveness. Users hit a wall quickly with complex logic.</li>
+        <li><strong>Manual custom development:</strong> Customers file tickets asking for custom reports, transformations, or automations. Engineering builds them one-off. Doesn't scale.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card"><h4>Product Engineering</h4><p>Integrates the Cortex Code SDK into the product UI, manages the execution sandbox, and handles output rendering.</p></div>
+        <div class="role-card"><h4>AI / Platform Team</h4><p>Configures the agent's capabilities, tool access, and guardrails. Decides what the coding agent can and cannot do.</p></div>
+        <div class="role-card"><h4>Security / Compliance</h4><p>Ensures generated code runs within governance boundaries: tenant isolation, resource limits, and data access policies.</p></div>
+        <div class="role-card"><h4>End Users (Customers)</h4><p>Business analysts and ops teams who describe what they need in natural language and get working code/results back without writing it themselves.</p></div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>Execution sandboxing:</strong> Generated code must run safely without accessing other tenants' data or consuming unbounded resources. Building a secure sandbox is hard.</li>
+        <li><strong>Multi-step reasoning:</strong> Real automation requires iterating: generate code, run it, observe the result, fix errors, try again. Most LLM integrations are single-shot.</li>
+        <li><strong>Tool access governance:</strong> The coding agent needs access to tables, functions, and APIs -- but scoped to the current tenant's permissions. Hard to enforce externally.</li>
+        <li><strong>Cost control:</strong> A coding agent that generates and runs expensive queries could blow through a tenant's compute budget in minutes.</li>
+        <li><strong>Quality and reliability:</strong> Generated code must be correct, efficient, and idiomatic. Generic LLMs often produce SQL that runs but returns wrong results.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <ul>
+        <li><strong>Cortex Code SDK:</strong> A programmable coding agent that can write, execute, and iterate on SQL and Python within Snowflake's governance boundary. Embed it in your product via API.</li>
+        <li><strong>Built-in execution environment:</strong> Generated code runs inside Snowflake -- no separate sandbox to build. Inherits RBAC, row-access policies, and resource monitors automatically.</li>
+        <li><strong>Multi-turn iteration:</strong> The agent observes query results, errors, and schema metadata, then self-corrects. Not just code generation -- code generation + execution + refinement in a loop.</li>
+        <li><strong>Tool-use architecture:</strong> The coding agent can read schemas, query data, create objects, and call other Snowflake services (Cortex AI functions, Cortex Search) as part of its workflow.</li>
+        <li><strong>Tenant-scoped by default:</strong> Same session-based isolation as Cortex Agents -- the coding agent's session carries tenant context, and all generated SQL is governed by existing policies.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <div class="feature-item"><h4>Cortex Code SDK</h4><p>Programmable coding agent API. Send a task description, receive generated code + execution results. Supports multi-turn iteration with tool use.</p></div>
+        <div class="feature-item"><h4>Snowflake SQL Execution</h4><p>Generated SQL runs natively in Snowflake with full RBAC enforcement. No external execution environment needed.</p></div>
+        <div class="feature-item"><h4>Session-Based Tenant Isolation</h4><p>Coding agent sessions carry tenant context. All generated queries are governed by row-access policies and resource monitors.</p></div>
+        <div class="feature-item"><h4>Schema Introspection</h4><p>The agent reads INFORMATION_SCHEMA to understand available tables, columns, and types. Produces schema-aware code without hallucinating column names.</p></div>
+        <div class="feature-item"><h4>Resource Monitors</h4><p>Limit the compute budget for agent-generated queries. Prevent runaway costs from complex generated code.</p></div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <div class="storyboard">
+        <div class="storyboard-step"><div class="step-number">1</div><div class="step-content"><h4>User Describes a Task</h4><p>A customer types: "Show me the top 10 customers by revenue this quarter, broken down by product category, with month-over-month growth rates." The embedded coding agent receives this as a task.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">2</div><div class="step-content"><h4>Agent Explores Schema</h4><p>The coding agent introspects INFORMATION_SCHEMA to find relevant tables (orders, customers, products), understand column types, and identify join keys.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">3</div><div class="step-content"><h4>Agent Generates and Executes SQL</h4><p>Writes a multi-CTE query with window functions for MoM growth. Executes it in the tenant's session. Row-access policy ensures only their data is queried.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">4</div><div class="step-content"><h4>Agent Iterates on Errors</h4><p>If the first attempt hits an error (e.g., ambiguous column name), the agent reads the error message, adjusts the SQL, and retries automatically.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">5</div><div class="step-content"><h4>Results Rendered in Product UI</h4><p>The final query results are returned to the product frontend and rendered as a formatted table or chart. The generated SQL is shown for transparency.</p></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

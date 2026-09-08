@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3.1 Embedded SQL Analytics | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 640px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; } .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 16px; }
+    .storyboard-step { display: flex; gap: 16px; align-items: flex-start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .step-number { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+    .step-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 4px; } .step-content p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .customer-story { background: var(--sf-lighter); border-left: 4px solid var(--sf-primary); border-radius: 0 8px 8px 0; padding: 20px; margin-top: 16px; }
+    .customer-story p { font-style: italic; margin-bottom: 8px; } .customer-story .attribution { font-style: normal; font-weight: 600; font-size: 0.85rem; color: var(--sf-dark); }
+    .page-container { max-width: 900px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 3: Analytics &rarr; 3.1 Embedded SQL Analytics</div>
+
+    <div class="concept-hero">
+      <h1>Embedded SQL Analytics</h1>
+      <p class="subtitle">Serving customer-facing dashboards and reports: parameterized queries, result caching, query acceleration, and pre-computed aggregations.</p>
+    </div>
+
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <ul>
+        <li><strong>Embedded BI tools:</strong> Looker, Metabase, or Sigma embedded in the product via iframes. Adds licensing cost, limits UX control, and creates vendor lock-in.</li>
+        <li><strong>Pre-computed aggregation tables:</strong> Background jobs that compute every possible rollup and store in a read-optimized store (Redis, Elasticsearch). Stale, incomplete, expensive to maintain.</li>
+        <li><strong>Custom analytics microservice:</strong> A dedicated service with its own database that serves analytics queries. Duplicates data, adds latency, and requires ongoing engineering investment.</li>
+        <li><strong>Direct warehouse queries with caching:</strong> Application queries the warehouse directly but adds a Redis/Memcached layer for frequently-accessed results. Cache invalidation is the hard problem.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card"><h4>Product Engineering</h4><p>Builds the customer-facing analytics UI, manages query parameterization, and handles the display of results in charts/tables.</p></div>
+        <div class="role-card"><h4>Analytics Engineering</h4><p>Defines the metrics, dimensions, and aggregation logic that power customer-facing reports.</p></div>
+        <div class="role-card"><h4>Performance / SRE</h4><p>Ensures analytics queries meet latency SLAs (typically <2s p95) at high concurrency (hundreds of simultaneous dashboard loads).</p></div>
+        <div class="role-card"><h4>Product Management</h4><p>Defines which analytics features are available per tier and what self-service capabilities customers should have.</p></div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>Concurrency limits:</strong> Traditional warehouses struggle with hundreds of simultaneous queries from different tenants loading dashboards at the same time.</li>
+        <li><strong>Latency expectations:</strong> Customers expect sub-second response for dashboards, but complex analytical queries on large datasets take seconds or minutes.</li>
+        <li><strong>Freshness vs. performance:</strong> Pre-computing improves speed but sacrifices freshness. Live queries ensure freshness but are slower and more expensive.</li>
+        <li><strong>Multi-tenant query isolation:</strong> One tenant's expensive report shouldn't slow down everyone else's dashboard experience.</li>
+        <li><strong>Customizability:</strong> Customers want to slice data their way (custom dimensions, date ranges, filters) -- pre-computed cubes can't anticipate every combination.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <ul>
+        <li><strong>Result cache:</strong> Identical queries return in milliseconds from cache -- perfect for dashboards where many users view the same reports. No separate cache to manage.</li>
+        <li><strong>Query acceleration:</strong> Offloads portions of large scans to additional compute resources automatically. Reduces outlier query times without over-provisioning warehouses.</li>
+        <li><strong>Multi-cluster warehouses:</strong> Auto-scale to handle concurrency spikes (e.g., 9am dashboard rush) without queuing. Scale to zero during quiet periods.</li>
+        <li><strong>Dynamic tables for pre-aggregation:</strong> Pre-compute common rollups that update automatically. Combine cache speed for common queries with live query flexibility for custom analysis.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <div class="feature-item"><h4>SQL API</h4><p>REST API for executing SQL queries from your application. Returns results as JSON, supports async execution for long-running queries, and handles authentication natively.</p></div>
+        <div class="feature-item"><h4>Result Cache</h4><p>Automatic caching of query results. Repeated identical queries (same SQL, same data) return in milliseconds. Cache invalidates automatically when underlying data changes.</p></div>
+        <div class="feature-item"><h4>Query Acceleration Service</h4><p>Automatically offloads scan-heavy portions of queries to additional serverless compute. Reduces tail latency for large aggregations without resizing the warehouse.</p></div>
+        <div class="feature-item"><h4>Multi-Cluster Warehouses</h4><p>Auto-scale warehouse instances based on query queue depth. Handle concurrency spikes transparently. Scale-down policy for cost efficiency.</p></div>
+        <div class="feature-item"><h4>Dynamic Tables</h4><p>Pre-compute common aggregations (daily rollups, tenant summaries) that update continuously. Queries against dynamic tables hit pre-computed results for instant response.</p></div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <div class="storyboard">
+        <div class="storyboard-step"><div class="step-number">1</div><div class="step-content"><h4>Parameterized Dashboard Query</h4><p>Show a SQL query with bind parameters for tenant_id, date_range, and metric_type. Execute via SQL API and show the JSON response structure.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">2</div><div class="step-content"><h4>Result Cache in Action</h4><p>Run the same query twice. First execution: 1.2 seconds. Second execution: 47 milliseconds (cache hit). Show QUERY_HISTORY confirming the cache hit.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">3</div><div class="step-content"><h4>Pre-Computed Aggregations</h4><p>Create a dynamic table with daily tenant metrics. Show queries against it returning in <100ms even for complex aggregations because the computation is already done.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">4</div><div class="step-content"><h4>Concurrency Test</h4><p>Simulate 50 concurrent dashboard loads (different tenants, same query pattern). Show multi-cluster warehouse scaling from 1 to 3 clusters and all queries completing within SLA.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">5</div><div class="step-content"><h4>Customer Dashboard Mockup</h4><p>Display a mockup analytics dashboard: revenue over time, top products, conversion funnel -- all powered by the parameterized queries and pre-computed tables.</p></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

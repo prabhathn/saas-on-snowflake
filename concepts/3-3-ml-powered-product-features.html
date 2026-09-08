@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3.3 ML-Powered Product Features | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 640px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; } .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 16px; }
+    .storyboard-step { display: flex; gap: 16px; align-items: flex-start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .step-number { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+    .step-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 4px; } .step-content p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .customer-story { background: var(--sf-lighter); border-left: 4px solid var(--sf-primary); border-radius: 0 8px 8px 0; padding: 20px; margin-top: 16px; }
+    .customer-story p { font-style: italic; margin-bottom: 8px; } .customer-story .attribution { font-style: normal; font-weight: 600; font-size: 0.85rem; color: var(--sf-dark); }
+    .page-container { max-width: 900px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 3: Analytics &rarr; 3.3 ML-Powered Product Features</div>
+
+    <div class="concept-hero">
+      <h1>Online Feature Serving and ML UDFs</h1>
+      <p class="subtitle">Deploying models as SQL functions: feature store for consistent inputs, UDF-based inference, and real-time scoring without external infrastructure.</p>
+    </div>
+
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <ul>
+        <li><strong>Separate feature stores:</strong> Feast, Tecton, or custom Redis-backed stores that maintain real-time and batch features. Yet another system to manage and keep in sync.</li>
+        <li><strong>Model serving endpoints:</strong> SageMaker endpoints, Vertex AI, or self-hosted TorchServe/Triton. Add latency, cost, and a network hop for every prediction.</li>
+        <li><strong>Batch scoring only:</strong> Run predictions on the full dataset periodically and store results. Predictions are always stale by the time they're used.</li>
+        <li><strong>Feature/serving skew:</strong> Features computed differently in training (warehouse SQL) vs. serving (application code). The #1 cause of ML model degradation in production.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card"><h4>ML Engineers</h4><p>Deploy models to serving infrastructure, manage feature pipelines, and ensure training/serving consistency.</p></div>
+        <div class="role-card"><h4>Backend Engineers</h4><p>Integrate predictions into the product -- call scoring endpoints, handle latency requirements, and manage fallbacks.</p></div>
+        <div class="role-card"><h4>Data Engineers</h4><p>Maintain feature pipelines that compute and materialize features for both training and real-time serving.</p></div>
+        <div class="role-card"><h4>Platform / DevOps</h4><p>Manages the model serving infrastructure: endpoint scaling, GPU allocation, health monitoring, and A/B routing.</p></div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>Training/serving skew:</strong> Features computed with SQL in the warehouse during training are re-implemented in Python/Java for serving. Subtle differences cause prediction quality to degrade.</li>
+        <li><strong>Latency requirements:</strong> Real-time scoring (recommendations, fraud detection) needs <50ms responses. Model serving endpoints add network hops and serialization overhead.</li>
+        <li><strong>Feature freshness:</strong> Online features should reflect the latest user behavior, but keeping a feature store synchronized with the source of truth is expensive.</li>
+        <li><strong>Infrastructure cost:</strong> Always-on model serving endpoints (GPU instances) are expensive even during low-traffic periods.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <ul>
+        <li><strong>Feature store with unified compute:</strong> Define features once as SQL/Python transformations. Same definitions serve both training and inference -- eliminating training/serving skew entirely.</li>
+        <li><strong>Models deployed as UDFs:</strong> Call model predictions directly in SQL. No external endpoint, no network hop, no serialization. Predictions run where the data is.</li>
+        <li><strong>Cortex fine-tuning:</strong> Fine-tune foundation models on your data directly in Snowflake. Deploy as a function callable from any query.</li>
+        <li><strong>Batch + real-time in one system:</strong> Score the entire customer base in a scheduled batch, or score a single row inline with a query. Same function, different invocation patterns.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <div class="feature-item"><h4>Feature Store</h4><p>Define feature views as SQL transformations over source tables. Snowflake materializes and refreshes them automatically. Same definition used in training and inference.</p></div>
+        <div class="feature-item"><h4>Python UDFs / UDTFs</h4><p>Deploy scikit-learn, XGBoost, or PyTorch models as SQL-callable functions. Vectorized UDFs process batches efficiently. Run predictions inline with any query.</p></div>
+        <div class="feature-item"><h4>Model Registry Deployment</h4><p>Deploy a specific model version from the registry as an inference function. Swap versions atomically. Roll back instantly if metrics degrade.</p></div>
+        <div class="feature-item"><h4>Cortex Fine-Tuning</h4><p>Fine-tune LLMs on your domain data (classification, extraction, summarization). Deploy the fine-tuned model as a Cortex function callable from SQL.</p></div>
+        <div class="feature-item"><h4>External Functions</h4><p>For complex model serving scenarios: call external endpoints (custom model servers) from SQL. Snowflake handles batching, retries, and authentication.</p></div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <div class="storyboard">
+        <div class="storyboard-step"><div class="step-number">1</div><div class="step-content"><h4>Define Feature Views</h4><p>Create feature views for customer scoring: avg_session_duration_7d, total_api_calls_30d, days_since_last_login. Show how they're materialized as a dynamic table.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">2</div><div class="step-content"><h4>Deploy Model as UDF</h4><p>Take the trained churn model from 4.2, deploy it as a UDF: predict_churn(avg_session, api_calls, days_inactive) RETURNS FLOAT. Show the CREATE FUNCTION statement.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">3</div><div class="step-content"><h4>Inline Scoring</h4><p>Run: SELECT customer_id, predict_churn(features.*) as churn_score FROM feature_store.customer_features. Show scores for all tenants' customers in one query.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">4</div><div class="step-content"><h4>Real-Time Scoring on Insert</h4><p>Create a stream + task that scores new customers immediately on signup. Show a new row appearing and being scored within seconds.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">5</div><div class="step-content"><h4>Serving in the Product</h4><p>Mockup: a customer health dashboard showing churn risk scores, powered by the UDF. "High risk" customers flagged with the model's explanation features.</p></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>1.4 Other Topics | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); }
+    .breadcrumb a { color: var(--sf-primary); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 640px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul { padding-left: 20px; margin-top: 12px; }
+    .concept-section li { margin-bottom: 10px; }
+    .topic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .topic-card h3 { font-size: 1rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; }
+    .topic-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0 0 8px; }
+    .topic-card .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .topic-card .tag-row span { font-size: 0.72rem; padding: 3px 8px; border-radius: 4px; background: var(--sf-lighter); color: var(--sf-dark); font-weight: 500; }
+    .page-container { max-width: 900px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-brand">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/>
+          <path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/>
+          <circle cx="18" cy="18" r="4" fill="white"/>
+        </svg>
+        Snowflake for SaaS
+      </a>
+    </div>
+  </nav>
+
+  <div class="page-container">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> &rarr; Section 1: Foundation &rarr; 1.4 Other Topics
+    </div>
+
+    <div class="concept-hero">
+      <h1>Other Foundation &amp; Operations Topics</h1>
+      <p class="subtitle">Additional patterns for multi-tenant SaaS platforms that didn't warrant a full deep-dive page -- but are worth knowing about when building on Snowflake.</p>
+    </div>
+
+    <div class="concept-section">
+      <h2>Topics</h2>
+
+      <div class="topic-card">
+        <h3>Cross-Tenant Data Sharing</h3>
+        <p>Enabling your customers to share data with each other (or with you) using Snowflake's native secure sharing -- no ETL, no copies, instant access. Useful when tenants collaborate on shared datasets or when you need to aggregate anonymized data across tenants.</p>
+        <div class="tag-row">
+          <span>Secure Sharing</span>
+          <span>Listings</span>
+          <span>Reader Accounts</span>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <h3>Operational Monitoring and Alerting</h3>
+        <p>Proactive platform health: Snowflake alerts for anomalous query patterns, event table telemetry from your app layer, and notification integrations for PagerDuty/Slack.</p>
+        <div class="tag-row">
+          <span>Alerts</span>
+          <span>Event Tables</span>
+          <span>Notifications</span>
+        </div>
+      </div>
+
+      <div class="topic-card">
+        <h3>Session Policies and Network Security</h3>
+        <p>Controlling how tenants connect: session policies for idle timeout and token refresh, network policies for IP allowlisting, and private connectivity via AWS PrivateLink or Azure Private Link.</p>
+        <div class="tag-row">
+          <span>Session Policies</span>
+          <span>Network Policies</span>
+          <span>Private Connectivity</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p>
+  </footer>
+</body>
+</html>

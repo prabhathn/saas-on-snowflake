@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2.1 Product Analytics / Clickstream | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); }
+    .breadcrumb a { color: var(--sf-primary); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 640px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; }
+    .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; }
+    .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; }
+    .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 16px; }
+    .storyboard-step { display: flex; gap: 16px; align-items: flex-start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .step-number { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+    .step-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 4px; }
+    .step-content p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .customer-story { background: var(--sf-lighter); border-left: 4px solid var(--sf-primary); border-radius: 0 8px 8px 0; padding: 20px; margin-top: 16px; }
+    .customer-story p { font-style: italic; margin-bottom: 8px; }
+    .customer-story .attribution { font-style: normal; font-weight: 600; font-size: 0.85rem; color: var(--sf-dark); }
+    .page-container { max-width: 900px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-brand">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/>
+          <path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/>
+          <circle cx="18" cy="18" r="4" fill="white"/>
+        </svg>
+        Snowflake for SaaS
+      </a>
+    </div>
+  </nav>
+
+  <div class="page-container">
+    <div class="breadcrumb">
+      <a href="../index.html">Home</a> &rarr; Section 2: Ingestion &rarr; 2.1 Product Analytics / Clickstream
+    </div>
+
+    <div class="concept-hero">
+      <h1>Product Analytics / Clickstream</h1>
+      <p class="subtitle">Capturing user behavior at scale: sub-second streaming ingestion, OLTP-adjacent workloads, and unified analytics across operational and analytical data.</p>
+    </div>
+
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <ul>
+        <li><strong>Third-party analytics tools:</strong> Segment, Amplitude, Mixpanel, or Heap capture events client-side and store them in their own platform. Data lives outside your infrastructure.</li>
+        <li><strong>Custom event pipelines:</strong> Client SDK -> API gateway -> Kafka -> Spark/Flink -> Data warehouse. Months of engineering, ongoing maintenance burden.</li>
+        <li><strong>Dual-database architectures:</strong> PostgreSQL for OLTP (user state, feature flags), a separate warehouse for analytics. Constant syncing challenges.</li>
+        <li><strong>Sampling and approximation:</strong> At high volumes, teams sample events (1-in-10) to manage costs. Loses granularity for per-user journey analysis.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card">
+          <h4>Product Analytics</h4>
+          <p>Queries event data to understand funnels, retention, and feature adoption. Needs low-latency access to complete event streams.</p>
+        </div>
+        <div class="role-card">
+          <h4>Data Engineering</h4>
+          <p>Builds and maintains the ingestion pipeline, ensures data quality, and manages the real-time/batch processing trade-offs.</p>
+        </div>
+        <div class="role-card">
+          <h4>Frontend Engineering</h4>
+          <p>Instruments the application to emit events, manages the event schema, and ensures tracking doesn't impact user experience.</p>
+        </div>
+        <div class="role-card">
+          <h4>Growth / Product</h4>
+          <p>Runs experiments, measures conversion, and needs real-time visibility into how changes affect user behavior.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>Latency gap:</strong> Events captured in real time but only queryable in the warehouse hours later. Growth teams can't measure experiment impact intra-day.</li>
+        <li><strong>Two-system complexity:</strong> Operational database (Postgres) for live features + warehouse for analytics means data lives in two places with different schemas and freshness.</li>
+        <li><strong>Volume management:</strong> High-traffic apps generate billions of events/day. Most warehouses charge per-byte ingested, making full-fidelity capture expensive.</li>
+        <li><strong>Schema evolution:</strong> Event schemas change frequently as the product evolves. Breaking schema changes cascade through the entire pipeline.</li>
+        <li><strong>Per-tenant isolation:</strong> Product analytics must be tenant-scoped but cross-tenant analysis (benchmarking, anomaly detection) requires a unified view.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <ul>
+        <li><strong>Sub-second ingestion with Snowpipe Streaming:</strong> Events flow from your app to queryable tables in under a second. No Kafka, no Spark, no intermediate storage.</li>
+        <li><strong>Unified OLTP + analytics:</strong> Snowflake Postgres handles transactional workloads (user state, feature flags) while mirroring data to Snowflake for analytics -- one platform, no ETL.</li>
+        <li><strong>Hybrid Tables for hot lookups:</strong> Point lookups and key-value access patterns at single-digit millisecond latency, alongside full analytical query capabilities.</li>
+        <li><strong>Schema flexibility:</strong> VARIANT columns store semi-structured event payloads without rigid schema enforcement. Query nested JSON fields directly with dot notation.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <div class="feature-item">
+          <h4>Snowpipe Streaming</h4>
+          <p>Ingest events via SDK (Java, Python) with sub-second latency. No files to stage, no Kafka required. Exactly-once delivery guarantees.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Snowflake Postgres</h4>
+          <p>PostgreSQL-compatible interface for OLTP workloads: user profiles, feature flags, session state. Wire-protocol compatible with existing Postgres drivers and ORMs.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Hybrid Tables</h4>
+          <p>Tables optimized for both point lookups (single-digit ms) and analytical scans. Perfect for "user profile + event history" access patterns.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Database Mirroring</h4>
+          <p>Automatically replicate Snowflake Postgres tables into Snowflake's analytical engine. No ETL pipeline to build or maintain.</p>
+        </div>
+        <div class="feature-item">
+          <h4>VARIANT Columns</h4>
+          <p>Store semi-structured event payloads (JSON) without pre-defining schema. Access nested fields with event_data:user.action or LATERAL FLATTEN.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Dynamic Tables</h4>
+          <p>Continuously materialized aggregations (sessions, funnels, retention cohorts) that update automatically as new events arrive.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <div class="storyboard">
+        <div class="storyboard-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Stream Events via Snowpipe Streaming</h4>
+            <p>Simulate a clickstream: page_view, button_click, form_submit events with user_id, tenant_id, timestamp, and a VARIANT payload. Show events becoming queryable in under 1 second.</p>
+          </div>
+        </div>
+        <div class="storyboard-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Snowflake Postgres for User State</h4>
+            <p>Show a user_profiles table in Snowflake Postgres: point lookup by user_id (3ms latency), update a feature flag, and see the change reflected immediately.</p>
+          </div>
+        </div>
+        <div class="storyboard-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Mirror to Analytics</h4>
+            <p>Enable mirroring on the Postgres tables. Show the same user_profiles data now queryable in Snowflake's analytical engine alongside the clickstream events.</p>
+          </div>
+        </div>
+        <div class="storyboard-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Build a Funnel with Dynamic Tables</h4>
+            <p>Create a dynamic table that computes a signup funnel (landing -> signup -> onboarding -> activation) per tenant. Show it updating in real time.</p>
+          </div>
+        </div>
+        <div class="storyboard-step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h4>Product Analytics Dashboard</h4>
+            <p>Mock up a product analytics view: funnel conversion rates, feature adoption over time, session duration distribution -- all powered by the streaming + mirrored data.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

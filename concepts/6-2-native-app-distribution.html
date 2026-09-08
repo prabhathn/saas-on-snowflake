@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>6.2 Native App Distribution | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 640px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; } .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 16px; }
+    .storyboard-step { display: flex; gap: 16px; align-items: flex-start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .step-number { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
+    .step-content h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 4px; } .step-content p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .customer-story { background: var(--sf-lighter); border-left: 4px solid var(--sf-primary); border-radius: 0 8px 8px 0; padding: 20px; margin-top: 16px; }
+    .customer-story p { font-style: italic; margin-bottom: 8px; } .customer-story .attribution { font-style: normal; font-weight: 600; font-size: 0.85rem; color: var(--sf-dark); }
+    .page-container { max-width: 900px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 6: Distribution &rarr; 6.2 Native App Distribution</div>
+
+    <div class="concept-hero">
+      <h1>Native App Distribution</h1>
+      <p class="subtitle">Distributing your SaaS as a Snowflake Native App: application packages, versioning, marketplace listing, and the provider/consumer model for B2B distribution.</p>
+    </div>
+
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <ul>
+        <li><strong>SaaS multi-tenant hosting:</strong> One instance serves all customers. Customer data co-mingles in your infrastructure. Some enterprises refuse this model for compliance reasons.</li>
+        <li><strong>Single-tenant deployments:</strong> Deploy a separate instance per enterprise customer in their cloud or yours. Operational nightmare at scale -- N customers = N deployments to maintain.</li>
+        <li><strong>On-premise installations:</strong> Ship software that customers install in their own environment. Version fragmentation, support complexity, and no telemetry.</li>
+        <li><strong>Data connectors / ETL:</strong> Ask customers to export their data to your platform. Introduces latency, governance risk, and customer reluctance.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card"><h4>Product / GTM</h4><p>Decides distribution strategy: pure SaaS, marketplace, or hybrid. Defines pricing models and the customer acquisition flow.</p></div>
+        <div class="role-card"><h4>Engineering</h4><p>Packages the application: setup scripts, manifest files, versioning, and the provider/consumer handshake.</p></div>
+        <div class="role-card"><h4>Partnerships / BD</h4><p>Manages marketplace listing, Snowflake partnership tier, and co-selling relationships.</p></div>
+        <div class="role-card"><h4>Customer Success</h4><p>Supports consumers through installation, configuration, and upgrades. Monitors app health across the installed base.</p></div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>Data residency requirements:</strong> Enterprise customers demand their data stays in their environment. Traditional SaaS can't satisfy this without single-tenant deployments.</li>
+        <li><strong>Version management:</strong> With single-tenant or on-premise deployments, you're supporting N versions simultaneously. Bug fixes and features must be backported.</li>
+        <li><strong>Distribution friction:</strong> Getting software into a customer's environment requires procurement cycles, security reviews, and infrastructure provisioning. Weeks to months.</li>
+        <li><strong>No access to customer data:</strong> Once deployed to the customer's environment, you can't easily debug issues or improve models because you can't see their data.</li>
+        <li><strong>Monetization complexity:</strong> Tracking usage across distributed installations for billing requires custom telemetry in every deployed instance.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <ul>
+        <li><strong>Code runs in the consumer's account:</strong> Your application logic runs inside the customer's Snowflake account -- their data never leaves their environment. Satisfies even the strictest data residency requirements.</li>
+        <li><strong>Single codebase, all consumers:</strong> Publish one version to the marketplace. All consumers get the same version, and you push upgrades centrally. No version fragmentation.</li>
+        <li><strong>Zero-friction distribution:</strong> Customers install with one click from the marketplace. No procurement of separate infrastructure, no security review of a new SaaS vendor.</li>
+        <li><strong>Built-in monetization:</strong> Snowflake handles metering, billing, and payment for marketplace apps. You get revenue without building billing infrastructure.</li>
+      </ul>
+    </div>
+
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <div class="feature-item"><h4>Application Packages</h4><p>Bundle your code (stored procedures, UDFs, Streamlit apps, SPCS services), data, and configuration into a versioned, distributable unit.</p></div>
+        <div class="feature-item"><h4>Manifest and Setup Scripts</h4><p>Declarative manifest.yml defines permissions, configuration options, and the installation flow. Setup scripts run automatically on install.</p></div>
+        <div class="feature-item"><h4>Versioning and Release Channels</h4><p>Publish versions (v1.0, v1.1, v2.0) with release notes. Create channels (stable, beta) for phased rollouts. Consumers auto-upgrade on your schedule.</p></div>
+        <div class="feature-item"><h4>Snowflake Marketplace</h4><p>List your Native App for discovery by Snowflake's customer base. Free and paid listings with usage-based or flat-rate pricing.</p></div>
+        <div class="feature-item"><h4>Event Sharing (Telemetry)</h4><p>Consumers opt in to share anonymized usage events back to you. Get product analytics without accessing their raw data.</p></div>
+      </div>
+    </div>
+
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <div class="storyboard">
+        <div class="storyboard-step"><div class="step-number">1</div><div class="step-content"><h4>Create Application Package</h4><p>Show the package structure: manifest.yml, setup_script.sql, a stored procedure that performs the core logic, and a Streamlit UI for configuration.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">2</div><div class="step-content"><h4>Add a Version</h4><p>Publish version 1.0 to the package. Show the versioning SQL and how release notes are attached. Add it to a "stable" release channel.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">3</div><div class="step-content"><h4>Consumer Installation</h4><p>Simulate a consumer installing the app from the marketplace. Show the one-click flow: accept terms, grant permissions, app appears in their account.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">4</div><div class="step-content"><h4>App Running on Consumer Data</h4><p>Show the app querying the consumer's own tables (which they granted access to during setup). Results stay in their account -- provider never sees raw data.</p></div></div>
+        <div class="storyboard-step"><div class="step-number">5</div><div class="step-content"><h4>Push an Upgrade</h4><p>Publish version 1.1 with a bug fix. Show the consumer's app auto-upgrading. No action required from the consumer -- seamless like a SaaS update.</p></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

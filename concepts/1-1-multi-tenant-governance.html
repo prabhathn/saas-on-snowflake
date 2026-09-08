@@ -146,7 +146,7 @@
         <li><strong>Audit complexity:</strong> Proving to SOC2 auditors that every single query path enforces isolation requires exhaustive code review and testing.</li>
         <li><strong>Performance vs. isolation tradeoff:</strong> Physical separation (separate DBs) is safe but 10x more expensive. Logical separation (shared tables) is efficient but risky.</li>
         <li><strong>Feature velocity drag:</strong> Every new feature requires re-implementing and re-testing tenant isolation, slowing engineering teams by 20-30%.</li>
-        <li><strong>AI makes it worse:</strong> Cortex Agents, AI functions, and generated SQL create new pathways for cross-tenant exposure. Securing AI features requires additional controls beyond WHERE clauses.</li>
+        <li><strong>AI makes it worse:</strong> AI agents, LLM-generated SQL, and autonomous copilots create new pathways for cross-tenant exposure. Securing AI features requires additional controls beyond WHERE clauses.</li>
       </ul>
     </div>
 

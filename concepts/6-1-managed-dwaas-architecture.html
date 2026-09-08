@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>6.1 Managed DWaaS Architecture | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; } .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    a.feature-item { text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    a.feature-item:hover { border-color: var(--sf-primary); box-shadow: 0 2px 8px rgba(41,181,232,0.1); }
+    a.feature-item h4::after { content: ' \2197'; font-size: 0.75rem; color: var(--sf-primary); }
+    .page-container { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+
+    /* Decision split visual */
+    .decision-split { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; margin-top: 24px; }
+    .decision-track { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .decision-track h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .decision-track p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px; }
+    .decision-divider { display: flex; align-items: center; justify-content: center; padding: 0 20px; }
+    .decision-divider span { writing-mode: vertical-lr; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .track-list { list-style: none; padding: 0; margin: 0; }
+    .track-list li { font-size: 0.85rem; padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; gap: 8px; }
+    .track-list li:hover { background: var(--sf-lighter); }
+    .track-list .track-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700; color: white; flex-shrink: 0; }
+    .track-list .track-label { font-weight: 600; color: var(--text-heading); }
+    .track-list .track-tag { font-size: 0.62rem; padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: auto; }
+
+    /* Model cards (expandable) */
+    .model-group-header { font-size: 1.05rem; font-weight: 700; color: var(--text-heading); margin: 32px 0 16px; padding: 10px 16px; border-radius: 8px; display: flex; align-items: center; gap: 10px; }
+    .model-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; transition: border-color 0.2s; }
+    .model-card:hover { border-color: var(--sf-primary); }
+    .model-card__summary { padding: 18px 22px; cursor: pointer; display: grid; grid-template-columns: 36px 1fr auto; gap: 14px; align-items: center; user-select: none; }
+    .model-card__num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: white; flex-shrink: 0; }
+    .model-card__info h4 { font-size: 0.95rem; font-weight: 650; color: var(--text-heading); margin-bottom: 3px; }
+    .model-card__info .model-oneliner { font-size: 0.82rem; color: var(--text-muted); margin: 0; }
+    .model-card__tags { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+    .model-card__tags .mtag { font-size: 0.62rem; padding: 2px 7px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
+    .model-card__chevron { font-size: 1.2rem; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; margin-left: 8px; }
+    .model-card--expanded .model-card__chevron { transform: rotate(180deg); }
+    .model-card__detail { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .model-card--expanded .model-card__detail { max-height: 2000px; }
+    .model-card__detail-inner { padding: 0 22px 22px; border-top: 1px solid var(--border); margin-top: 0; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .detail-col h5 { font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .detail-col ul { padding-left: 16px; margin: 0; } .detail-col li { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 5px; line-height: 1.5; }
+    .detail-col p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* Code blocks */
+    .code-block { background: #1e293b; border-radius: 8px; padding: 20px; overflow-x: auto; margin-top: 12px; }
+    .code-block pre { margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.78rem; line-height: 1.6; color: #e2e8f0; white-space: pre; }
+    .code-block .kw { color: #7dd3fc; } .code-block .str { color: #86efac; } .code-block .comment { color: #64748b; font-style: italic; } .code-block .fn { color: #c4b5fd; }
+
+    /* Storyboard */
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 24px; }
+    .story-step { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+    .step-left .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .step-number { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .step-left h4 { font-size: 1rem; font-weight: 650; color: var(--text-heading); margin: 0; }
+    .step-left p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+    .step-right { min-width: 0; }
+
+    /* Result table */
+    .result-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; margin-top: 12px; }
+    .result-table th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 8px 10px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+    .result-table td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; }
+
+    /* Comparison matrix */
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 16px; }
+    .compare-table th { text-align: left; padding: 10px 10px; background: var(--sf-lighter); border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; position: sticky; top: 64px; z-index: 2; }
+    .compare-table td { padding: 10px 10px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    .compare-table td:first-child { font-weight: 600; color: var(--sf-dark); white-space: nowrap; }
+    .compare-table tr:hover td { background: var(--sf-lighter); }
+
+    /* Decision flow */
+    .decision-flow { display: flex; flex-direction: column; align-items: center; gap: 0; margin-top: 24px; }
+    .flow-node { background: var(--card-bg); border: 2px solid var(--border); border-radius: 10px; padding: 14px 24px; text-align: center; max-width: 420px; width: 100%; }
+    .flow-node h4 { font-size: 0.88rem; font-weight: 650; color: var(--text-heading); margin-bottom: 2px; }
+    .flow-node p { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
+    .flow-node--question { border-color: var(--sf-primary); background: #eff6ff; }
+    .flow-node--answer { border-color: #16a34a; background: #f0fdf4; }
+    .flow-arrow { font-size: 1.4rem; color: var(--text-muted); padding: 4px 0; }
+    .flow-branch { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 520px; }
+    .flow-branch-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; padding: 4px 0; }
+
+    @media (max-width: 900px) {
+      .story-step { grid-template-columns: 1fr; }
+      .decision-split { grid-template-columns: 1fr; }
+      .decision-divider { display: none; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .flow-branch { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 6: Distribution &rarr; 6.1 Managed DWaaS Architecture</div>
+
+    <div class="concept-hero">
+      <h1>Managed Data-as-a-Service Architecture</h1>
+      <p class="subtitle">The decision framework for delivering data to customers: from Reader Accounts and Secure Shares through Native Apps, open Iceberg access, and full SaaS applications -- with the right model for every customer profile.</p>
+    </div>
+
+    <!-- How Companies Accomplish This Today -->
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <ul>
+        <li><strong>Direct database logins:</strong> Create a user in your data platform for each customer. They connect directly, run queries, and see the raw platform UI. Easy to set up, but difficult to govern -- platform UI changes hit your customers without warning, and you become a support proxy for a product you don't own. On Snowflake, this pattern is <a href="#anti-pattern" style="color: var(--sf-primary);">not supported by the Terms of Service</a>.</li>
+        <li><strong>Separate platform accounts per customer:</strong> Full isolation but extreme operational overhead. Every schema change, every software update must be rolled out N times.</li>
+        <li><strong>Custom portal with JDBC backend:</strong> Build a web app that queries the data platform on behalf of customers. Full control but significant engineering investment.</li>
+        <li><strong>File-based delivery:</strong> Export data to S3/SFTP for customer pickup. No interactivity, always stale, no governance after delivery.</li>
+      </ul>
+    </div>
+
+    <!-- Roles -->
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card"><h4>Product / GTM</h4><p>Decides the delivery model: what level of self-service, interactivity, and customization customers get.</p></div>
+        <div class="role-card"><h4>Legal / Compliance</h4><p>Ensures the delivery model complies with Snowflake TOS (service bureau restrictions), data processing agreements, and customer contracts.</p></div>
+        <div class="role-card"><h4>Platform Engineering</h4><p>Builds and maintains the delivery infrastructure: shares, apps, APIs, and customer onboarding automation.</p></div>
+        <div class="role-card"><h4>Customer Success</h4><p>Handles the support burden when customers hit issues -- the primary symptom of the direct-login anti-pattern.</p></div>
+      </div>
+    </div>
+
+    <!-- Challenges -->
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>UI dependency:</strong> Customers using the platform's native UI call your support team whenever the vendor ships a UI change. You're on the hook for a product you don't control.</li>
+        <li><strong>TOS violations:</strong> Providing Snowflake access to third parties as a service bureau is prohibited under standard TOS without an MSP addendum. Many companies don't know this until it's flagged.</li>
+        <li><strong>No feature gating:</strong> Direct logins give all customers the same capabilities. No way to differentiate tiers, restrict features, or control the experience.</li>
+        <li><strong>Customer tooling diversity:</strong> Each customer brings their own BI tools, scripts, and workflows to your platform. You can't standardize the experience or ensure quality.</li>
+        <li><strong>Customers on other engines:</strong> Customers on Spark, Trino, or DuckDB are left out entirely unless you export to files or stand up a separate access layer.</li>
+      </ul>
+    </div>
+
+    <!-- The Anti-Pattern: Direct Account Access -->
+    <div class="concept-section" id="anti-pattern">
+      <h2>The Anti-Pattern: Giving Customers Direct Account Access</h2>
+      <div style="background: linear-gradient(135deg, #fef2f2, #fff7ed); border: 2px solid #fca5a5; border-radius: 12px; padding: 24px; margin-top: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span style="font-size: 1.05rem; font-weight: 700; color: #991b1b;">This pattern violates Snowflake's Terms of Service -- Snowflake does not condone it</span>
+        </div>
+        <p style="font-size: 0.92rem; color: #7f1d1d; line-height: 1.7; margin-bottom: 16px;">The pattern is straightforward: a provider creates Snowflake users in their own account for each customer, gives them a role scoped to their data, and lets them log in to Snowsight or connect via JDBC/ODBC. It may appear easy to set up, but it violates Snowflake's Terms of Service and creates serious technical, security, and operational problems that compound over time.</p>
+
+        <div style="font-size: 0.82rem; font-weight: 650; color: #991b1b; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;">How it typically looks</div>
+        <div style="background: #1e293b; border-radius: 8px; padding: 18px; overflow-x: auto; margin-bottom: 20px;">
+          <pre style="margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.76rem; line-height: 1.6; color: #e2e8f0; white-space: pre;"><span style="color: #64748b; font-style: italic;">-- The anti-pattern: creating Snowflake users for your customers</span>
+<span style="color: #7dd3fc;">CREATE USER</span> acme_analyst
+  PASSWORD      = <span style="color: #86efac;">'...'</span>
+  DEFAULT_ROLE  = acme_role
+  DEFAULT_WAREHOUSE = customer_wh;
+
+<span style="color: #7dd3fc;">CREATE ROLE</span> acme_role;
+<span style="color: #7dd3fc;">GRANT USAGE ON</span> WAREHOUSE customer_wh <span style="color: #7dd3fc;">TO ROLE</span> acme_role;
+<span style="color: #7dd3fc;">GRANT USAGE ON</span> DATABASE product_db <span style="color: #7dd3fc;">TO ROLE</span> acme_role;
+<span style="color: #7dd3fc;">GRANT SELECT ON</span> TABLE product_db.acme.reports <span style="color: #7dd3fc;">TO ROLE</span> acme_role;
+
+<span style="color: #64748b; font-style: italic;">-- Customer logs in to Snowsight at https://&lt;your-account&gt;.snowflakecomputing.com</span>
+<span style="color: #64748b; font-style: italic;">-- They see YOUR account, YOUR warehouses, YOUR Snowsight UI</span></pre>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+          <div style="background: white; border: 1px solid #fecaca; border-radius: 8px; padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span style="font-size: 0.88rem; font-weight: 650; color: #991b1b;">Terms of Service Violation</span>
+            </div>
+            <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: #7f1d1d; line-height: 1.6;">
+              <li style="margin-bottom: 6px;"><a href="https://www.snowflake.com/en/legal/terms-of-service/" target="_blank" style="color: #991b1b; font-weight: 600;">Section 2.3 of the TOS</a> prohibits making the Snowflake Technology available to a third party <em>"or in a service bureau or outsourcing offering"</em></li>
+              <li style="margin-bottom: 6px;">The TOS carves out an exception for <em>"Service features expressly intended to enable Customer to provide its third parties with access to Customer Data"</em> -- i.e., Reader Accounts, Secure Sharing, Listings, and Native Apps</li>
+              <li style="margin-bottom: 6px;">Creating Snowflake users for your customers in your account does not fall under this exception -- it is granting direct platform access, not using an approved sharing feature</li>
+              <li style="margin-bottom: 6px;">An <strong>MSP addendum</strong> exists for managed service providers (negotiated through your Snowflake account team), but it has specific requirements and obligations</li>
+              <li>Enforcement can range from a warning to account suspension -- risk increases with scale</li>
+            </ul>
+          </div>
+          <div style="background: white; border: 1px solid #fecaca; border-radius: 8px; padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              <span style="font-size: 0.88rem; font-weight: 650; color: #991b1b;">Shared Security Model Breakdown</span>
+            </div>
+            <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: #7f1d1d; line-height: 1.6;">
+              <li style="margin-bottom: 6px;">Customer users exist in <strong>your identity plane</strong> -- a misconfigured role can expose other tenants' data</li>
+              <li style="margin-bottom: 6px;">Customers can see your account structure: warehouse names, database names, and metadata via SHOW commands</li>
+              <li style="margin-bottom: 6px;">You cannot enforce <strong>your customer's</strong> security policies (SSO, MFA) -- they use your account's auth settings</li>
+              <li>ACCOUNTADMIN remains a single point of compromise for all customer data</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div style="background: white; border: 1px solid #fecaca; border-radius: 8px; padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span style="font-size: 0.88rem; font-weight: 650; color: #991b1b;">Operational Risks</span>
+            </div>
+            <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: #7f1d1d; line-height: 1.6;">
+              <li style="margin-bottom: 6px;">Customer queries compete for warehouse resources -- one customer's heavy query affects all others</li>
+              <li style="margin-bottom: 6px;">Snowsight UI changes hit your customers without notice -- you become Snowflake's support proxy</li>
+              <li style="margin-bottom: 6px;">No feature gating: every customer gets the same Snowflake capabilities regardless of their plan tier</li>
+              <li>Cost attribution is approximate at best -- query_tag helps but requires consistent discipline</li>
+            </ul>
+          </div>
+          <div style="background: white; border: 1px solid #fecaca; border-radius: 8px; padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+              <span style="font-size: 0.88rem; font-weight: 650; color: #991b1b;">Scaling Problems</span>
+            </div>
+            <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: #7f1d1d; line-height: 1.6;">
+              <li style="margin-bottom: 6px;">User management grows linearly: onboarding, offboarding, password resets, and role changes for every customer user</li>
+              <li style="margin-bottom: 6px;">Customer-specific customization is impossible -- everyone sees the same Snowsight interface</li>
+              <li style="margin-bottom: 6px;">Audit and compliance become complex: separating customer activity in ACCESS_HISTORY requires careful tagging</li>
+              <li>Migrating away later is painful -- customers have built workflows against your account's URLs and object names</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="padding: 14px 18px; background: white; border: 1px solid #bfdbfe; border-radius: 8px; display: flex; align-items: flex-start; gap: 10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <p style="font-size: 0.86rem; color: var(--sf-dark); margin: 0; line-height: 1.5;"><strong>The fix:</strong> Every risk above is addressed by one of the 8 delivery models below. Reader Accounts give non-Snowflake customers SQL access without TOS issues. Secure Shares give Snowflake customers zero-copy data in their own account. Native Apps add code, UI, and agents on top. The right model eliminates the anti-pattern entirely.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- What Snowflake Offers -->
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <p>Snowflake provides a spectrum of data delivery models -- from zero-code shares to full application frameworks. The right choice depends on who your customer is, what tools they use, and how much control you need.</p>
+      <ul>
+        <li><strong>For customers without Snowflake:</strong> Reader Accounts (SQL access, you pay compute), Open Sharing via Iceberg (any engine reads your data via standard REST catalog), or a Custom SaaS App (full control).</li>
+        <li><strong>For customers with Snowflake:</strong> Secure Data Sharing (zero-copy, always live), Declarative Native Apps (data + code, no setup script), Full Native Apps (complete application framework), MCP (AI tool integration), or Data Clean Rooms (privacy-safe analytics).</li>
+        <li><strong>Cross-cutting:</strong> Cortex Agents can be layered onto any model that involves Snowflake, adding natural-language querying to shared data or apps.</li>
+      </ul>
+    </div>
+
+    <!-- Primary Decision Framework -->
+    <div class="concept-section">
+      <h2>Decision Framework: Does Your Customer Have Snowflake?</h2>
+      <p>This is the first and most important question. It determines which delivery models are available and where compute costs land.</p>
+      <div class="decision-split">
+        <div class="decision-track" style="border-left: 4px solid #d97706;">
+          <h3 style="color: #d97706;">Customer Does NOT Have Snowflake</h3>
+          <p>You own the infrastructure. Customer accesses data through your account or your application.</p>
+          <ul class="track-list">
+            <li onclick="toggleModel('model-1')"><span class="track-num" style="background: #d97706;">1</span><span class="track-label">Reader Accounts</span><span class="track-tag" style="background: #fffbeb; color: #d97706;">You Pay Compute</span></li>
+            <li onclick="toggleModel('model-2')"><span class="track-num" style="background: #d97706;">2</span><span class="track-label">Open Sharing (Iceberg)</span><span class="track-tag" style="background: #fffbeb; color: #d97706;">Any Engine</span></li>
+            <li onclick="toggleModel('model-3')"><span class="track-num" style="background: #d97706;">3</span><span class="track-label">Custom SaaS Application</span><span class="track-tag" style="background: #fffbeb; color: #d97706;">Full Control</span></li>
+          </ul>
+        </div>
+        <div class="decision-divider"><span>or</span></div>
+        <div class="decision-track" style="border-left: 4px solid var(--sf-primary);">
+          <h3 style="color: var(--sf-dark);">Customer HAS Snowflake</h3>
+          <p>Customer runs queries in their own account. Zero-copy sharing, they pay their own compute.</p>
+          <ul class="track-list">
+            <li onclick="toggleModel('model-4')"><span class="track-num" style="background: var(--sf-primary);">4</span><span class="track-label">Secure Data Sharing</span><span class="track-tag" style="background: #eff6ff; color: #2563eb;">Zero-Copy</span></li>
+            <li onclick="toggleModel('model-5')"><span class="track-num" style="background: var(--sf-primary);">5</span><span class="track-label">Declarative Native App</span><span class="track-tag" style="background: #eff6ff; color: #2563eb;">Data + Code</span></li>
+            <li onclick="toggleModel('model-6')"><span class="track-num" style="background: var(--sf-primary);">6</span><span class="track-label">Full Native App</span><span class="track-tag" style="background: #eff6ff; color: #2563eb;">Full App</span></li>
+            <li onclick="toggleModel('model-7')"><span class="track-num" style="background: var(--sf-primary);">7</span><span class="track-label">MCP Connection</span><span class="track-tag" style="background: #eff6ff; color: #2563eb;">AI Tools</span></li>
+            <li onclick="toggleModel('model-8')"><span class="track-num" style="background: var(--sf-primary);">8</span><span class="track-label">Data Clean Room</span><span class="track-tag" style="background: #eff6ff; color: #2563eb;">Privacy-Safe</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delivery Model Cards -->
+    <div class="concept-section">
+      <h2>Delivery Models</h2>
+
+      <!-- Group A: No Snowflake -->
+      <div class="model-group-header" style="background: #fffbeb; color: #92400e;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        Customer Does NOT Have Snowflake
+      </div>
+
+      <!-- Model 1: Reader Accounts -->
+      <div class="model-card" id="model-1">
+        <div class="model-card__summary" onclick="this.parentElement.classList.toggle('model-card--expanded')">
+          <div class="model-card__num" style="background: #d97706;">1</div>
+          <div class="model-card__info">
+            <h4>Reader Accounts</h4>
+            <p class="model-oneliner">Managed Snowflake accounts for customers without their own. Provider pays compute. SQL + Snowsight access.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="model-card__tags">
+              <span class="mtag" style="background: #f0fdf4; color: #16a34a;">GA</span>
+              <span class="mtag" style="background: #fef3c7; color: #92400e;">You Pay</span>
+            </div>
+            <span class="model-card__chevron">&#9662;</span>
+          </div>
+        </div>
+        <div class="model-card__detail">
+          <div class="model-card__detail-inner">
+            <div class="detail-grid">
+              <div class="detail-col">
+                <h5>Key Capabilities</h5>
+                <ul>
+                  <li>Customers get a full Snowflake login (Snowsight, SQL worksheets)</li>
+                  <li>Provider creates and manages the account entirely</li>
+                  <li>Can only consume data shared from the provider account</li>
+                  <li>Customers can create materialized views on shared data</li>
+                </ul>
+              </div>
+              <div class="detail-col">
+                <h5>Constraints</h5>
+                <ul>
+                  <li><strong>Max 20 reader accounts</strong> per provider (contact support to increase)</li>
+                  <li>Provider pays for all compute credits (unlimited unless resource monitor set)</li>
+                  <li>Readers <strong>cannot</strong> upload data, create pipes, stages, or shares</li>
+                  <li>7-day retention period after dropping an account before slot is freed</li>
+                  <li>Same edition and region as the provider account</li>
+                </ul>
+              </div>
+            </div>
+            <div class="code-block"><pre><span class="comment">-- Create a reader account for a customer</span>
+<span class="kw">USE ROLE</span> ACCOUNTADMIN;
+<span class="kw">CREATE MANAGED ACCOUNT</span> acme_reader
+  ADMIN_NAME     = <span class="str">'acme_admin'</span>,
+  ADMIN_PASSWORD = <span class="str">'&lt;strong-password&gt;'</span>,
+  TYPE           = READER;
+
+<span class="comment">-- Create a share and grant it to the reader</span>
+<span class="kw">CREATE SHARE</span> acme_share;
+<span class="kw">GRANT USAGE ON DATABASE</span> product_db <span class="kw">TO SHARE</span> acme_share;
+<span class="kw">GRANT USAGE ON SCHEMA</span> product_db.serving <span class="kw">TO SHARE</span> acme_share;
+<span class="kw">GRANT SELECT ON TABLE</span> product_db.serving.reports <span class="kw">TO SHARE</span> acme_share;
+
+<span class="comment">-- Assign the share to the reader account</span>
+<span class="kw">ALTER SHARE</span> acme_share <span class="kw">ADD ACCOUNT</span> = &lt;reader_account_locator&gt;;</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model 2: Open Sharing (Iceberg) -->
+      <div class="model-card" id="model-2">
+        <div class="model-card__summary" onclick="this.parentElement.classList.toggle('model-card--expanded')">
+          <div class="model-card__num" style="background: #d97706;">2</div>
+          <div class="model-card__info">
+            <h4>Open Sharing (Iceberg)</h4>
+            <p class="model-oneliner">Expose Snowflake-managed Iceberg tables via REST catalog. Customers read with Spark, Trino, DuckDB, Flink -- any Iceberg-compatible engine.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="model-card__tags">
+              <span class="mtag" style="background: #fef3c7; color: #92400e;">Preview</span>
+              <span class="mtag" style="background: #f5f3ff; color: #7c3aed;">Open Format</span>
+            </div>
+            <span class="model-card__chevron">&#9662;</span>
+          </div>
+        </div>
+        <div class="model-card__detail">
+          <div class="model-card__detail-inner">
+            <p style="font-size: 0.86rem; color: var(--text); margin-top: 14px; line-height: 1.6;">Two paths exist for Iceberg-based open sharing. <strong>Horizon Catalog</strong> (GA) exposes a Polaris-compatible REST endpoint from your Snowflake account -- external engines connect directly. <strong>Open Data Sharing</strong> (Public Preview) adds a formal sharing layer with external consumer identities and PAT-based auth for non-Snowflake customers.</p>
+            <div class="detail-grid">
+              <div class="detail-col">
+                <h5>Horizon Catalog (GA)</h5>
+                <ul>
+                  <li>Built into every Snowflake account -- no separate product</li>
+                  <li>Polaris-compatible Apache Iceberg REST endpoint at <code style="font-size: 0.75rem;">https://&lt;org&gt;-&lt;acct&gt;.snowflakecomputing.com/polaris/api/catalog</code></li>
+                  <li>Supports: Spark, Flink, Trino, DuckDB, Dremio, StarRocks, PyIceberg, Doris</li>
+                  <li>Auth: External OAuth, key-pair (JWT), PAT, Workload Identity Federation</li>
+                  <li>Read and write both GA. 0.5 credits / million API calls (billing starts H2 2026)</li>
+                </ul>
+              </div>
+              <div class="detail-col">
+                <h5>Open Data Sharing (Public Preview)</h5>
+                <ul>
+                  <li>CREATE EXTERNAL CONSUMER for non-Snowflake customers</li>
+                  <li>Issue a PAT per consumer for authenticated catalog access</li>
+                  <li>CREATE EXTERNAL LISTING with share + open_sharing config</li>
+                  <li><strong>Same-region only</strong> during Preview (no cross-region)</li>
+                  <li>Only PAT auth during Preview; OAuth planned</li>
+                </ul>
+              </div>
+            </div>
+            <div class="code-block"><pre><span class="comment">-- Path A: Horizon Catalog -- external engine reads your Iceberg table</span>
+<span class="comment">-- (Spark config pointing at your Snowflake account's REST endpoint)</span>
+<span class="comment">-- catalog_uri = https://&lt;org&gt;-&lt;acct&gt;.snowflakecomputing.com/polaris/api/catalog</span>
+<span class="comment">-- warehouse  = &lt;database_name&gt;</span>
+
+<span class="comment">-- Path B: Open Data Sharing -- formal sharing with external consumers</span>
+<span class="kw">USE ROLE</span> ACCOUNTADMIN;
+
+<span class="comment">-- 1. Create the Iceberg table</span>
+<span class="kw">CREATE ICEBERG TABLE</span> product_db.serving.reports (
+  tenant_id  <span class="kw">VARCHAR</span>,
+  report_id  <span class="kw">INT</span>,
+  report_data <span class="kw">VARIANT</span>
+) <span class="kw">EXTERNAL_VOLUME</span> = <span class="str">'SNOWFLAKE_MANAGED'</span>
+  <span class="kw">CATALOG</span> = <span class="str">'SNOWFLAKE'</span>;
+
+<span class="comment">-- 2. Create an external consumer identity</span>
+<span class="kw">CREATE EXTERNAL CONSUMER</span> acme_ext;
+
+<span class="comment">-- 3. Issue a PAT (save the secret -- it can't be retrieved later)</span>
+<span class="kw">ALTER EXTERNAL CONSUMER</span> acme_ext <span class="kw">ADD PAT</span> acme_pat;
+
+<span class="comment">-- 4. Create share and grant access to the Iceberg table</span>
+<span class="kw">CREATE SHARE</span> acme_open_share;
+<span class="kw">GRANT USAGE ON DATABASE</span> product_db <span class="kw">TO SHARE</span> acme_open_share;
+<span class="kw">GRANT USAGE ON SCHEMA</span> product_db.serving <span class="kw">TO SHARE</span> acme_open_share;
+<span class="kw">GRANT SELECT ON TABLE</span> product_db.serving.reports <span class="kw">TO SHARE</span> acme_open_share;
+
+<span class="comment">-- 5. Create external listing</span>
+<span class="kw">CREATE EXTERNAL LISTING</span> acme_listing <span class="kw">SHARE</span> acme_open_share <span class="kw">AS</span>
+$$
+title: <span class="str">"Product Reports - Acme"</span>
+description: <span class="str">"Live Iceberg data for external consumption"</span>
+open_sharing:
+  catalog_identifier: <span class="str">"acme-reports-catalog"</span>
+listing_terms:
+  type: <span class="str">"OFFLINE"</span>
+external_targets:
+  access:
+    - external_consumers: [ACME_EXT]
+$$;
+
+<span class="comment">-- 6. Get the catalog URL for the customer</span>
+<span class="kw">CALL</span> <span class="fn">SYSTEM$GET_LISTING_URL_FOR_EXTERNAL_CONSUMER</span>(<span class="str">'ACME_LISTING'</span>);</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model 3: Custom SaaS Application -->
+      <div class="model-card" id="model-3">
+        <div class="model-card__summary" onclick="this.parentElement.classList.toggle('model-card--expanded')">
+          <div class="model-card__num" style="background: #d97706;">3</div>
+          <div class="model-card__info">
+            <h4>Custom SaaS Application</h4>
+            <p class="model-oneliner">Your own web application (App Runtime, SPCS, or external hosting). Full branding, feature gating, user management. Highest investment, maximum control.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="model-card__tags">
+              <span class="mtag" style="background: #f0fdf4; color: #16a34a;">GA</span>
+              <span class="mtag" style="background: #fee2e2; color: #991b1b;">High Effort</span>
+            </div>
+            <span class="model-card__chevron">&#9662;</span>
+          </div>
+        </div>
+        <div class="model-card__detail">
+          <div class="model-card__detail-inner">
+            <div class="detail-grid">
+              <div class="detail-col">
+                <h5>Key Capabilities</h5>
+                <ul>
+                  <li>Full control over UI, branding, user experience, and feature gating</li>
+                  <li>Custom user management and authentication (not Snowflake users)</li>
+                  <li>Tier-based feature access (free/pro/enterprise)</li>
+                  <li>Can embed Cortex Agents for AI-powered features</li>
+                  <li>Snowflake App Runtime (Next.js on SPCS) or external hosting</li>
+                </ul>
+              </div>
+              <div class="detail-col">
+                <h5>When to Choose This</h5>
+                <ul>
+                  <li>Customer shouldn't know or care that Snowflake is involved</li>
+                  <li>You need white-label delivery or complex multi-tenant UX</li>
+                  <li>Feature gating, usage limits, and self-service are required</li>
+                  <li>You already have a web app and Snowflake is the backend</li>
+                </ul>
+                <h5 style="margin-top: 12px;">Trade-offs</h5>
+                <ul>
+                  <li>Significant engineering investment (frontend, auth, infra)</li>
+                  <li>You own the support and operations burden</li>
+                  <li>Not distributable via Snowflake Marketplace</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group B: Has Snowflake -->
+      <div class="model-group-header" style="background: #eff6ff; color: var(--sf-dark);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>
+        Customer HAS Snowflake
+      </div>
+
+      <!-- Model 4: Secure Data Sharing -->
+      <div class="model-card" id="model-4">
+        <div class="model-card__summary" onclick="this.parentElement.classList.toggle('model-card--expanded')">
+          <div class="model-card__num" style="background: var(--sf-primary);">4</div>
+          <div class="model-card__info">
+            <h4>Secure Data Sharing</h4>
+            <p class="model-oneliner">Zero-copy sharing of live data to customer Snowflake accounts. No ETL, always current, revocable instantly. Direct shares or listings (free / paid / trial).</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="model-card__tags">
+              <span class="mtag" style="background: #f0fdf4; color: #16a34a;">GA</span>
+              <span class="mtag" style="background: #eff6ff; color: #2563eb;">Zero-Copy</span>
+            </div>
+            <span class="model-card__chevron">&#9662;</span>
+          </div>
+        </div>
+        <div class="model-card__detail">
+          <div class="model-card__detail-inner">
+            <div class="detail-grid">
+              <div class="detail-col">
+                <h5>Listing Types</h5>
+                <ul>
+                  <li><strong>Free:</strong> Unlimited access, auto-fulfillment or manual replication for cross-region</li>
+                  <li><strong>Paid:</strong> Consumer pays. Cross-region requires auto-fulfillment</li>
+                  <li><strong>Limited Trial:</strong> Free sample of a paid product, or time-limited full access</li>
+                  <li><strong>Personalized:</strong> Private listing to specific accounts. Cannot use auto-fulfillment</li>
+                </ul>
+              </div>
+              <div class="detail-col">
+                <h5>Cross-Region (Auto-Fulfillment)</h5>
+                <ul>
+                  <li>Automatically replicates data to consumer's region on demand</li>
+                  <li>Paid listings must use auto-fulfillment for cross-region</li>
+                  <li>Provider cost incurred only when consumer demand exists</li>
+                  <li>Shareable objects: tables, views, secure views, secure UDFs, Iceberg tables</li>
+                </ul>
+              </div>
+            </div>
+            <div class="code-block"><pre><span class="comment">-- Create a share with governed data access</span>
+<span class="kw">CREATE SHARE</span> analytics_share;
+<span class="kw">GRANT USAGE ON DATABASE</span> product_db <span class="kw">TO SHARE</span> analytics_share;
+<span class="kw">GRANT USAGE ON SCHEMA</span> product_db.serving <span class="kw">TO SHARE</span> analytics_share;
+
+<span class="comment">-- Share a secure view (consumers see only their data)</span>
+<span class="kw">GRANT SELECT ON VIEW</span> product_db.serving.tenant_reports_vw
+  <span class="kw">TO SHARE</span> analytics_share;
+
+<span class="comment">-- Add a consumer account (same region = instant)</span>
+<span class="kw">ALTER SHARE</span> analytics_share <span class="kw">ADD ACCOUNT</span> = &lt;consumer_account&gt;;
+
+<span class="comment">-- Or publish as a Marketplace listing for broader distribution</span>
+<span class="comment">-- (listings support free, paid, trial, and personalized types)</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model 5: Declarative Native App -->
+      <div class="model-card" id="model-5">
+        <div class="model-card__summary" onclick="this.parentElement.classList.toggle('model-card--expanded')">
+          <div class="model-card__num" style="background: var(--sf-primary);">5</div>
+          <div class="model-card__info">
+            <h4>Declarative Native App <span style="font-size: 0.72rem; font-weight: 500; color: var(--sf-primary);">(TYPE=DATA)</span></h4>
+            <p class="model-oneliner">Data + notebooks + semantic views + agents packaged as an installable app. No setup script -- everything declared in a YAML manifest.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="model-card__tags">
+              <span class="mtag" style="background: #f0fdf4; color: #16a34a;">GA</span>
+              <span class="mtag" style="background: #eff6ff; color: #2563eb;">No Setup Script</span>
+            </div>
+            <span class="model-card__chevron">&#9662;</span>
+          </div>
+        </div>
+        <div class="model-card__detail">
+          <div class="model-card__detail-inner">
+            <div class="detail-grid">
+              <div class="detail-col">
+                <h5>Included Objects</h5>
+                <ul>
+                  <li><strong>Data:</strong> Tables (standard, dynamic, Iceberg), views</li>
+                  <li><strong>Semantic views:</strong> Referenced tables must also be shared</li>
+                  <li><strong>Functions and procedures:</strong> UDFs, stored procedures (shared by copy)</li>
+                  <li><strong>Cortex Agents:</strong> Bundle AI assistants with the data</li>
+                  <li><strong>Workspaces:</strong> Notebooks, docs, images, sample data</li>
+                </ul>
+              </div>
+              <div class="detail-col">
+                <h5>Constraints</h5>
+                <ul>
+                  <li>Data objects and logic objects must be in <strong>different schemas</strong></li>
+                  <li>Data shared by reference, code shared by copy</li>
+                  <li>Dynamic tables and Iceberg tables are read-only and don't auto-refresh in remote regions</li>
+                  <li>Versioned via RELEASE LIVE VERSION (no setup script versioning)</li>
+                </ul>
+              </div>
+            </div>
+            <div class="code-block"><pre><span class="comment">-- Create a declarative native app package</span>
+<span class="kw">CREATE APPLICATION PACKAGE</span> analytics_pkg <span class="kw">TYPE</span> = DATA;
+
+<span class="comment">-- manifest.yml (placed at package root)</span>
+<span class="comment">-- roles:</span>
+<span class="comment">--   - VIEWER:</span>
+<span class="comment">--       comment: "View dashboards and summaries"</span>
+<span class="comment">--   - ANALYST:</span>
+<span class="comment">--       comment: "Query detailed tables and semantic views"</span>
+<span class="comment">-- shared_content:</span>
+<span class="comment">--   databases:</span>
+<span class="comment">--     - ANALYTICS_DB:</span>
+<span class="comment">--         schemas:</span>
+<span class="comment">--           - DATA_SCHEMA:            # data objects</span>
+<span class="comment">--               tables:</span>
+<span class="comment">--                 - USAGE_METRICS:  { roles: [ANALYST] }</span>
+<span class="comment">--               semantic_views:</span>
+<span class="comment">--                 - USAGE_SV:       { roles: [ANALYST] }</span>
+<span class="comment">--           - LOGIC_SCHEMA:           # code objects (separate schema!)</span>
+<span class="comment">--               procedures:</span>
+<span class="comment">--                 - RUN_REPORT():   { roles: [ANALYST] }</span>
+<span class="comment">--               cortex_agents:</span>
+<span class="comment">--                 - USAGE_AGENT:    { roles: [VIEWER] }</span>
+<span class="comment">-- application_content:</span>
+<span class="comment">--   workspaces:</span>
+<span class="comment">--     - GETTING_STARTED:</span>
+<span class="comment">--         source: notebooks/</span>
+<span class="comment">--         roles: [VIEWER, ANALYST]</span>
+
+<span class="comment">-- Release to consumers</span>
+<span class="kw">ALTER APPLICATION PACKAGE</span> analytics_pkg <span class="kw">RELEASE LIVE VERSION</span>;</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model 6: Full Native App -->
+      <div class="model-card" id="model-6">
+        <div class="model-card__summary" onclick="this.parentElement.classList.toggle('model-card--expanded')">
+          <div class="model-card__num" style="background: var(--sf-primary);">6</div>
+          <div class="model-card__info">
+            <h4>Full Native App <span style="font-size: 0.72rem; font-weight: 500; color: var(--sf-primary);">(with setup script)</span></h4>
+            <p class="model-oneliner">Data + code + Streamlit UI + agents + optional containers (SPCS). Full provider control, versioned, Marketplace-distributable.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="model-card__tags">
+              <span class="mtag" style="background: #f0fdf4; color: #16a34a;">GA</span>
+              <span class="mtag" style="background: #fee2e2; color: #991b1b;">Med-High Effort</span>
+            </div>
+            <span class="model-card__chevron">&#9662;</span>
+          </div>
+        </div>
+        <div class="model-card__detail">
+          <div class="model-card__detail-inner">
+            <div class="detail-grid">
+              <div class="detail-col">
+                <h5>What's Included</h5>
+                <ul>
+                  <li><strong>Setup script (SQL):</strong> Runs on install/upgrade, creates objects, roles, grants</li>
+                  <li><strong>Streamlit UI:</strong> Default app dashboard via <code style="font-size: 0.75rem;">default_streamlit_app</code></li>
+                  <li><strong>Stored procedures and UDFs:</strong> Python/Java via Snowpark</li>
+                  <li><strong>Container services (SPCS):</strong> GPU-enabled, Docker images (AWS/Azure)</li>
+                  <li><strong>Cortex Agents:</strong> Embedded AI assistants</li>
+                  <li><strong>Versioning:</strong> Versions + patches + release channels + release directives</li>
+                </ul>
+              </div>
+              <div class="detail-col">
+                <h5>Declarative vs Full Native App</h5>
+                <ul>
+                  <li><strong>Declarative (TYPE=DATA):</strong> No setup script, YAML-only, lighter. Best when sharing data + notebooks + semantic views</li>
+                  <li><strong>Full:</strong> Setup script required, more powerful. Use when you need Streamlit UI, complex logic, SPCS containers, or consumer-account objects</li>
+                  <li>Both support Cortex Agents, UDFs, procedures</li>
+                  <li>Both are Marketplace-distributable</li>
+                </ul>
+              </div>
+            </div>
+            <div class="code-block"><pre><span class="comment">-- Full Native App manifest (manifest_version: 2)</span>
+<span class="comment">-- artifacts:</span>
+<span class="comment">--   setup_script: scripts/setup.sql</span>
+<span class="comment">--   readme: docs/README.md</span>
+<span class="comment">--   default_streamlit_app: apps/main.py</span>
+<span class="comment">-- privileges:</span>
+<span class="comment">--   - CREATE TABLE: { description: "Store app state" }</span>
+<span class="comment">-- references:</span>
+<span class="comment">--   - customer_data:</span>
+<span class="comment">--       label: "Customer Table"</span>
+<span class="comment">--       privileges: [SELECT]</span>
+<span class="comment">--       object_type: Table</span>
+<span class="comment">--       register_callback: app.update_reference</span>
+
+<span class="comment">-- Create package and add a version</span>
+<span class="kw">CREATE APPLICATION PACKAGE</span> my_analytics_app;
+<span class="kw">ALTER APPLICATION PACKAGE</span> my_analytics_app
+  <span class="kw">ADD VERSION</span> v1 <span class="kw">USING</span> <span class="str">'@my_stage/v1'</span>;
+
+<span class="comment">-- Install and test locally</span>
+<span class="kw">CREATE APPLICATION</span> my_app
+  <span class="kw">FROM APPLICATION PACKAGE</span> my_analytics_app
+  <span class="kw">USING VERSION</span> v1;</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model 7: MCP Connection -->
+      <div class="model-card" id="model-7">
+        <div class="model-card__summary" onclick="this.parentElement.classList.toggle('model-card--expanded')">
+          <div class="model-card__num" style="background: var(--sf-primary);">7</div>
+          <div class="model-card__info">
+            <h4>MCP Connection</h4>
+            <p class="model-oneliner">Expose data to AI tools and BI platforms via Model Context Protocol. Snowflake-managed MCP server with Cortex Search, Analyst, and custom tools.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="model-card__tags">
+              <span class="mtag" style="background: #f0fdf4; color: #16a34a;">GA</span>
+              <span class="mtag" style="background: #f5f3ff; color: #7c3aed;">AI Tools</span>
+            </div>
+            <span class="model-card__chevron">&#9662;</span>
+          </div>
+        </div>
+        <div class="model-card__detail">
+          <div class="model-card__detail-inner">
+            <div class="detail-grid">
+              <div class="detail-col">
+                <h5>Key Capabilities</h5>
+                <ul>
+                  <li>Snowflake-managed, fully-hosted MCP server -- a SQL object</li>
+                  <li>Tool types: CORTEX_SEARCH_SERVICE_QUERY, CORTEX_ANALYST_MESSAGE, Agents, SQL execution, custom tools</li>
+                  <li>Clients: Cursor, Claude Desktop, Cortex Code, any MCP-compatible client</li>
+                  <li>OAuth 2.0 authentication, MCP revision 2025-11-25</li>
+                </ul>
+              </div>
+              <div class="detail-col">
+                <h5>When to Choose This</h5>
+                <ul>
+                  <li>Customers use AI coding tools or MCP-compatible BI platforms</li>
+                  <li>You want schema-aware, authenticated data access for AI agents</li>
+                  <li>Low engineering effort -- define tools in a YAML spec</li>
+                  <li>Not available in government regions</li>
+                </ul>
+              </div>
+            </div>
+            <div class="code-block"><pre><span class="kw">CREATE MCP SERVER</span> customer_data_mcp <span class="kw">FROM SPECIFICATION</span> $$
+tools:
+  - name: <span class="str">"product-search"</span>
+    type: <span class="str">"CORTEX_SEARCH_SERVICE_QUERY"</span>
+    identifier: <span class="str">"app_db.search.product_search_svc"</span>
+    description: <span class="str">"Search product catalog by keyword"</span>
+    title: <span class="str">"Product Search"</span>
+  - name: <span class="str">"usage-analytics"</span>
+    type: <span class="str">"CORTEX_ANALYST_MESSAGE"</span>
+    identifier: <span class="str">"app_db.analytics.usage_semantic_view"</span>
+    description: <span class="str">"Query usage metrics with natural language"</span>
+    title: <span class="str">"Usage Analytics"</span>
+$$;</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model 8: Data Clean Room -->
+      <div class="model-card" id="model-8">
+        <div class="model-card__summary" onclick="this.parentElement.classList.toggle('model-card--expanded')">
+          <div class="model-card__num" style="background: var(--sf-primary);">8</div>
+          <div class="model-card__info">
+            <h4>Data Clean Room</h4>
+            <p class="model-oneliner">Privacy-safe analytics where customers run approved query templates but never see raw data. Cross-cloud supported. Covered in detail on <a href="6-3-data-clean-rooms.html" style="color: var(--sf-primary);" onclick="event.stopPropagation();">page 6.3</a>.</p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="model-card__tags">
+              <span class="mtag" style="background: #f0fdf4; color: #16a34a;">GA</span>
+              <span class="mtag" style="background: #fef3c7; color: #92400e;">Privacy</span>
+            </div>
+            <span class="model-card__chevron">&#9662;</span>
+          </div>
+        </div>
+        <div class="model-card__detail">
+          <div class="model-card__detail-inner">
+            <div class="detail-grid">
+              <div class="detail-col">
+                <h5>Key Capabilities</h5>
+                <ul>
+                  <li>Collaboration API (SQL stored procedures) installed via Marketplace</li>
+                  <li>Pre-built templates: audience overlap, activation, attribution</li>
+                  <li>Custom SQL templates with obfuscation (hide your query IP)</li>
+                  <li>Cross-cloud / cross-region clean rooms supported</li>
+                  <li>DCR Agent (Public Preview) for conversational clean room access</li>
+                </ul>
+              </div>
+              <div class="detail-col">
+                <h5>When to Choose This</h5>
+                <ul>
+                  <li>Customer needs analytics on your data but cannot see raw records</li>
+                  <li>PII, HIPAA, or contractual restrictions on data exposure</li>
+                  <li>Both parties contribute data; results are aggregate only</li>
+                  <li>Obfuscated templates require consumer Enterprise edition</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Matrix -->
+    <div class="concept-section">
+      <h2>Comparison Matrix</h2>
+      <div style="overflow-x: auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Customer Prereq</th>
+              <th>UX Control</th>
+              <th>Eng. Effort</th>
+              <th>Data Freshness</th>
+              <th>Monetization</th>
+              <th>Agent Add-on</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1. Reader Accounts</td>
+              <td>None</td>
+              <td>Low (Snowsight)</td>
+              <td>Minimal</td>
+              <td>Live (shared)</td>
+              <td>Provider pays all</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>2. Open Sharing (Iceberg)</td>
+              <td>Iceberg-compatible engine</td>
+              <td>None (their tools)</td>
+              <td>Low</td>
+              <td>Live (REST catalog)</td>
+              <td>No built-in billing</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>3. Custom SaaS App</td>
+              <td>None (your app)</td>
+              <td>Full</td>
+              <td>High</td>
+              <td>App-defined</td>
+              <td>Your billing system</td>
+              <td>Yes (embedded)</td>
+            </tr>
+            <tr>
+              <td>4. Secure Data Sharing</td>
+              <td>Snowflake account</td>
+              <td>Low (their tools)</td>
+              <td>Low</td>
+              <td>Live (zero-copy)</td>
+              <td>Paid listings</td>
+              <td>Yes (via share)</td>
+            </tr>
+            <tr>
+              <td>5. Declarative Native App</td>
+              <td>Snowflake account</td>
+              <td>Medium</td>
+              <td>Low-Medium</td>
+              <td>Live (shared data)</td>
+              <td>Paid listings</td>
+              <td>Yes (bundled)</td>
+            </tr>
+            <tr>
+              <td>6. Full Native App</td>
+              <td>Snowflake account</td>
+              <td>High</td>
+              <td>Medium-High</td>
+              <td>Live + app logic</td>
+              <td>Paid listings</td>
+              <td>Yes (bundled)</td>
+            </tr>
+            <tr>
+              <td>7. MCP Connection</td>
+              <td>MCP-compatible client</td>
+              <td>Low (their tools)</td>
+              <td>Low</td>
+              <td>Live (on query)</td>
+              <td>No built-in billing</td>
+              <td>Inherent</td>
+            </tr>
+            <tr>
+              <td>8. Data Clean Room</td>
+              <td>Snowflake account</td>
+              <td>High (privacy)</td>
+              <td>Medium</td>
+              <td>Live (approved queries)</td>
+              <td>Collaboration API</td>
+              <td>DCR Agent (preview)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Decision Tree -->
+    <div class="concept-section">
+      <h2>Decision Tree</h2>
+      <p>Start here and follow the branches to find the right model for a specific customer.</p>
+      <div class="decision-flow">
+        <div class="flow-node flow-node--question"><h4>Does the customer have a Snowflake account?</h4></div>
+        <div class="flow-arrow">&darr;</div>
+        <div class="flow-branch">
+          <div>
+            <div class="flow-branch-label" style="color: #d97706;">No</div>
+            <div class="flow-node flow-node--question"><h4>Do they use Spark / Trino / DuckDB?</h4></div>
+            <div class="flow-arrow" style="text-align: center;">&darr;</div>
+            <div class="flow-branch" style="max-width: 100%;">
+              <div>
+                <div class="flow-branch-label" style="color: #16a34a;">Yes</div>
+                <div class="flow-node flow-node--answer"><h4>Open Sharing (Iceberg)</h4><p>Expose via Horizon Catalog REST API</p></div>
+              </div>
+              <div>
+                <div class="flow-branch-label" style="color: #dc2626;">No</div>
+                <div class="flow-node flow-node--question" style="font-size: 0.85rem;"><h4>Need custom UI?</h4></div>
+                <div class="flow-arrow" style="text-align: center;">&darr;</div>
+                <div class="flow-branch" style="max-width: 100%;">
+                  <div>
+                    <div class="flow-branch-label" style="color: #16a34a;">Yes</div>
+                    <div class="flow-node flow-node--answer"><h4>Custom SaaS App</h4><p>Build your own frontend</p></div>
+                  </div>
+                  <div>
+                    <div class="flow-branch-label" style="color: #dc2626;">No</div>
+                    <div class="flow-node flow-node--answer"><h4>Reader Account</h4><p>Snowsight + SQL access</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="flow-branch-label" style="color: var(--sf-dark);">Yes</div>
+            <div class="flow-node flow-node--question"><h4>Do you need to ship code (UI, procedures, agents)?</h4></div>
+            <div class="flow-arrow" style="text-align: center;">&darr;</div>
+            <div class="flow-branch" style="max-width: 100%;">
+              <div>
+                <div class="flow-branch-label" style="color: #16a34a;">Yes</div>
+                <div class="flow-node flow-node--question" style="font-size: 0.85rem;"><h4>Need Streamlit UI or SPCS?</h4></div>
+                <div class="flow-arrow" style="text-align: center;">&darr;</div>
+                <div class="flow-branch" style="max-width: 100%;">
+                  <div>
+                    <div class="flow-branch-label" style="color: #16a34a;">Yes</div>
+                    <div class="flow-node flow-node--answer"><h4>Full Native App</h4><p>Setup script + Streamlit + SPCS</p></div>
+                  </div>
+                  <div>
+                    <div class="flow-branch-label" style="color: #dc2626;">No</div>
+                    <div class="flow-node flow-node--answer"><h4>Declarative Native App</h4><p>Data + code + agents (no setup script)</p></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="flow-branch-label" style="color: #dc2626;">No, data only</div>
+                <div class="flow-node flow-node--question" style="font-size: 0.85rem;"><h4>Privacy restrictions on raw data?</h4></div>
+                <div class="flow-arrow" style="text-align: center;">&darr;</div>
+                <div class="flow-branch" style="max-width: 100%;">
+                  <div>
+                    <div class="flow-branch-label" style="color: #16a34a;">Yes</div>
+                    <div class="flow-node flow-node--answer"><h4>Data Clean Room</h4><p>Aggregate results only</p></div>
+                  </div>
+                  <div>
+                    <div class="flow-branch-label" style="color: #dc2626;">No</div>
+                    <div class="flow-node flow-node--answer"><h4>Secure Data Sharing</h4><p>Zero-copy share or listing</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Snowflake Features Used -->
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/data-sharing-reader-create" target="_blank">
+          <h4>Reader Accounts</h4>
+          <p>CREATE MANAGED ACCOUNT ... TYPE=READER. Provider-owned Snowflake accounts for non-Snowflake customers. Max 20 per account (contact support to increase).</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/data-sharing-intro" target="_blank">
+          <h4>Secure Data Sharing</h4>
+          <p>Zero-copy sharing of live data via CREATE SHARE. Supports tables, views, secure UDFs, and Iceberg tables. Auto-fulfillment for cross-region.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/developer-guide/declarative-sharing/about" target="_blank">
+          <h4>Declarative Native Apps</h4>
+          <p>CREATE APPLICATION PACKAGE ... TYPE=DATA. Data + code + agents in a YAML manifest. No setup script. GA.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/developer-guide/native-apps/native-apps-about" target="_blank">
+          <h4>Native App Framework</h4>
+          <p>Full application packaging with setup scripts, Streamlit, UDFs, procedures, SPCS containers, and versioned releases.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon" target="_blank">
+          <h4>Horizon Catalog (Iceberg REST)</h4>
+          <p>Polaris-compatible REST endpoint exposing Snowflake-managed Iceberg tables to Spark, Trino, DuckDB, Flink, and other engines. GA.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/open-data-sharing" target="_blank">
+          <h4>Open Data Sharing</h4>
+          <p>External consumer identities + external listings for sharing Iceberg data with non-Snowflake customers. Public Preview.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/sql/create-mcp-server" target="_blank">
+          <h4>MCP Server</h4>
+          <p>CREATE MCP SERVER ... FROM SPECIFICATION. Snowflake-managed Model Context Protocol server for AI tools. OAuth 2.0, GA.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/cleanrooms/about" target="_blank">
+          <h4>Data Clean Rooms</h4>
+          <p>Privacy-safe analytics via Collaboration API. Pre-built and custom SQL templates. Cross-cloud supported. GA.</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Demo Storyboard -->
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <p>A progressive walkthrough: start with the simplest model and build up to the most complete. Each step shows a different delivery model applied to the same dataset.</p>
+
+      <div class="storyboard">
+        <!-- Step 1: The Dataset -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">1</div>
+              <h4>The Data Product</h4>
+            </div>
+            <p>You're a SaaS analytics company. Your data product is tenant-specific usage reports: API calls, feature adoption, cost breakdowns. The same dataset will be delivered via different models to different customer segments.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This is the starting point -- a table in your Snowflake account that every customer needs access to, filtered to their data.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- The data product: per-tenant analytics reports</span>
+<span class="kw">CREATE OR REPLACE TABLE</span> product_db.serving.tenant_reports (
+  tenant_id    <span class="kw">VARCHAR NOT NULL</span>,
+  report_date  <span class="kw">DATE NOT NULL</span>,
+  metric_name  <span class="kw">VARCHAR NOT NULL</span>,
+  metric_value <span class="kw">NUMBER</span>(18,4),
+  dimension    <span class="kw">VARCHAR</span>,
+  detail       <span class="kw">VARIANT</span>
+);
+
+<span class="comment">-- Secure view: each consumer only sees their data</span>
+<span class="kw">CREATE OR REPLACE SECURE VIEW</span>
+  product_db.serving.tenant_reports_vw
+<span class="kw">AS</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> product_db.serving.tenant_reports
+<span class="kw">WHERE</span> tenant_id = <span class="fn">CURRENT_ACCOUNT</span>();
+<span class="comment">-- For shares: CURRENT_ACCOUNT() resolves to consumer</span></pre></div>
+          </div>
+        </div>
+
+        <!-- Step 2: Reader Account -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">2</div>
+              <h4>Path A: Reader Account</h4>
+            </div>
+            <p>SMB customer "Acme" doesn't have Snowflake. Create a reader account, share the secure view, and they get SQL + Snowsight access. You pay for their compute.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Trade-off:</strong> Fastest to set up, but you absorb compute costs and they see the Snowsight UI (which you don't control).</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Create reader account for Acme</span>
+<span class="kw">CREATE MANAGED ACCOUNT</span> acme_reader
+  ADMIN_NAME     = <span class="str">'acme_admin'</span>,
+  ADMIN_PASSWORD = <span class="str">'&lt;strong-password&gt;'</span>,
+  TYPE           = READER;
+
+<span class="comment">-- Share the secure view</span>
+<span class="kw">CREATE SHARE</span> acme_share;
+<span class="kw">GRANT USAGE ON DATABASE</span> product_db <span class="kw">TO SHARE</span> acme_share;
+<span class="kw">GRANT USAGE ON SCHEMA</span> product_db.serving
+  <span class="kw">TO SHARE</span> acme_share;
+<span class="kw">GRANT SELECT ON VIEW</span>
+  product_db.serving.tenant_reports_vw
+  <span class="kw">TO SHARE</span> acme_share;
+
+<span class="comment">-- Add the reader account to the share</span>
+<span class="kw">ALTER SHARE</span> acme_share
+  <span class="kw">ADD ACCOUNT</span> = &lt;acme_reader_locator&gt;;
+
+<span class="comment">-- Protect yourself: set a resource monitor</span>
+<span class="comment">-- (provider pays compute for reader accounts)</span></pre></div>
+          </div>
+        </div>
+
+        <!-- Step 3: Secure Data Sharing -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">3</div>
+              <h4>Path B: Secure Data Sharing</h4>
+            </div>
+            <p>Enterprise customer "Globex" has their own Snowflake account. Share the same secure view -- zero-copy, always live. Globex pays their own compute. Publish as a free listing if they're in a different region.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Trade-off:</strong> No compute cost for you, always up to date, but customer sees raw data in their own tools.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Same share, different consumer</span>
+<span class="kw">CREATE SHARE</span> globex_share;
+<span class="kw">GRANT USAGE ON DATABASE</span> product_db <span class="kw">TO SHARE</span> globex_share;
+<span class="kw">GRANT USAGE ON SCHEMA</span> product_db.serving
+  <span class="kw">TO SHARE</span> globex_share;
+<span class="kw">GRANT SELECT ON VIEW</span>
+  product_db.serving.tenant_reports_vw
+  <span class="kw">TO SHARE</span> globex_share;
+
+<span class="comment">-- Direct share (same region)</span>
+<span class="kw">ALTER SHARE</span> globex_share
+  <span class="kw">ADD ACCOUNT</span> = &lt;globex_account&gt;;
+
+<span class="comment">-- Cross-region: publish as listing with auto-fulfillment</span>
+<span class="comment">-- Snowflake replicates on demand to Globex's region</span>
+<span class="comment">-- Enable auto-fulfillment (requires ORGADMIN):</span>
+<span class="comment">-- SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT(</span>
+<span class="comment">--   '&lt;account_name&gt;');</span></pre></div>
+          </div>
+        </div>
+
+        <!-- Step 4: Native App -->
+        <div class="story-step" style="border: 2px solid var(--sf-primary); background: linear-gradient(135deg, #f8fafc, #eff6ff);">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number" style="background: var(--sf-dark);">4</div>
+              <h4>Path C: Declarative Native App</h4>
+            </div>
+            <p>Mid-market customer "Initech" wants the data plus notebooks, a semantic view for natural language querying, and a Cortex Agent. Package it all as a Declarative Native App (TYPE=DATA) -- no setup script, YAML manifest only.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Trade-off:</strong> More than a share, less than a full app. Consumer gets data + analytical tools. No custom Streamlit UI.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Declarative app package</span>
+<span class="kw">CREATE APPLICATION PACKAGE</span> analytics_pkg
+  <span class="kw">TYPE</span> = DATA;
+
+<span class="comment">-- manifest.yml (simplified):</span>
+<span class="comment">-- roles:</span>
+<span class="comment">--   - VIEWER: { comment: "View reports" }</span>
+<span class="comment">--   - ANALYST: { comment: "Query + agent" }</span>
+<span class="comment">-- shared_content:</span>
+<span class="comment">--   databases:</span>
+<span class="comment">--     - ANALYTICS_DB:</span>
+<span class="comment">--         schemas:</span>
+<span class="comment">--           - DATA:</span>
+<span class="comment">--               tables:</span>
+<span class="comment">--                 - TENANT_REPORTS:</span>
+<span class="comment">--                     roles: [ANALYST]</span>
+<span class="comment">--               semantic_views:</span>
+<span class="comment">--                 - REPORTS_SV:</span>
+<span class="comment">--                     roles: [ANALYST]</span>
+<span class="comment">--           - LOGIC:</span>
+<span class="comment">--               cortex_agents:</span>
+<span class="comment">--                 - REPORT_AGENT:</span>
+<span class="comment">--                     roles: [VIEWER, ANALYST]</span>
+<span class="comment">-- application_content:</span>
+<span class="comment">--   workspaces:</span>
+<span class="comment">--     - GETTING_STARTED:</span>
+<span class="comment">--         source: notebooks/</span>
+<span class="comment">--         roles: [VIEWER, ANALYST]</span>
+
+<span class="kw">ALTER APPLICATION PACKAGE</span> analytics_pkg
+  <span class="kw">RELEASE LIVE VERSION</span>;</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 5: Decision Step -->
+        <div class="story-step" style="border: 2px dashed var(--sf-primary); background: #f8fafc;">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number" style="background: #475569;">5</div>
+              <h4>Decision: Which Model for Which Customer?</h4>
+            </div>
+            <p>The same data product, four delivery paths. The choice depends on the customer profile, not the data. Many SaaS companies use 2-3 models simultaneously for different customer segments.</p>
+          </div>
+          <div class="step-right">
+            <table class="result-table" style="margin-top: 0;">
+              <thead><tr><th>Customer</th><th>Has Snowflake?</th><th>Needs</th><th>Model</th></tr></thead>
+              <tbody>
+                <tr><td>Acme (SMB)</td><td>No</td><td>SQL access</td><td style="font-weight: 600; color: #d97706;">Reader Account</td></tr>
+                <tr><td>Globex (Enterprise)</td><td>Yes</td><td>Live data in their tools</td><td style="font-weight: 600; color: var(--sf-primary);">Secure Share</td></tr>
+                <tr><td>Initech (Mid-market)</td><td>Yes</td><td>Data + notebooks + AI</td><td style="font-weight: 600; color: var(--sf-primary);">Declarative App</td></tr>
+                <tr><td>DataCorp (Spark shop)</td><td>No</td><td>Iceberg in their lakehouse</td><td style="font-weight: 600; color: #d97706;">Open Sharing</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 14px; padding: 12px 16px; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border: 1px solid #bfdbfe; border-radius: 8px;">
+              <p style="font-size: 0.84rem; color: var(--sf-dark); margin: 0;"><strong>Key insight:</strong> Start with the simplest model that meets the customer's needs. You can always upgrade a Reader Account customer to a Native App later without changing the underlying data.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Agent Overlay -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">6</div>
+              <h4>Add an AI Layer (Any Model)</h4>
+            </div>
+            <p>Cortex Agents can be layered onto models 4-6 (any model where the consumer has Snowflake). Create a semantic view over the shared data, create an agent, and bundle it -- customers get natural language access to their data.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">See <a href="4-1-embedded-agents.html" style="color: var(--sf-primary);">4.1 Embedded Agents</a> for the full walkthrough of CREATE AGENT syntax and multi-tenant agent variables.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Semantic view for natural language querying</span>
+<span class="kw">CREATE OR REPLACE SEMANTIC VIEW</span>
+  product_db.analytics.reports_sv
+<span class="kw">TABLES</span> (
+  reports_t <span class="kw">AS</span> product_db.serving.tenant_reports
+    <span class="kw">PRIMARY KEY</span> (tenant_id, report_date, metric_name)
+    <span class="kw">COMMENT</span> = <span class="str">'Per-tenant analytics reports'</span>
+)
+<span class="kw">DIMENSIONS</span> (
+  reports_t.tenant   <span class="kw">AS</span> reports_t.tenant_id
+    <span class="kw">COMMENT</span> = <span class="str">'Customer organization'</span>,
+  reports_t.date     <span class="kw">AS</span> reports_t.report_date
+    <span class="kw">COMMENT</span> = <span class="str">'Report date'</span>,
+  reports_t.metric   <span class="kw">AS</span> reports_t.metric_name
+    <span class="kw">COMMENT</span> = <span class="str">'Metric name'</span>
+)
+<span class="kw">METRICS</span> (
+  reports_t.value    <span class="kw">AS</span>
+    <span class="fn">SUM</span>(reports_t.metric_value)
+    <span class="kw">COMMENT</span> = <span class="str">'Total metric value'</span>
+);
+
+<span class="comment">-- Agent (can be bundled in a Declarative or Full Native App)</span>
+<span class="kw">CREATE OR REPLACE AGENT</span> product_db.agents.report_agent
+<span class="kw">FROM SPECIFICATION</span> $$
+models:
+  base_model: claude-3.5-sonnet
+orchestration: cortex_default
+instructions: <span class="str">"You answer questions about tenant analytics."</span>
+tools:
+  - tool_spec:
+      type: cortex_analyst_text_to_sql
+      name: report_query
+tool_resources:
+  report_query:
+    semantic_view: product_db.analytics.reports_sv
+$$;</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 7: Multi-Model Architecture -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">7</div>
+              <h4>Multi-Model Architecture</h4>
+            </div>
+            <p>The final state: one data product, multiple distribution models, each optimized for the customer segment. Automation provisions new customers into the right model based on their profile.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Monitor via LISTING_ACCESS_HISTORY (who queries shared data), LISTING_REFRESH_HISTORY (cross-region sync status), and your application's metering pipeline (see <a href="1-3-usage-metering-billing.html" style="color: var(--sf-primary);">1.3 Usage Metering</a>).</p>
+          </div>
+          <div class="step-right">
+            <div style="border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+              <div style="padding: 8px 12px; font-size: 0.75rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">Multi-Model Distribution Architecture</div>
+              <div style="padding: 16px; background: white; font-size: 0.8rem; color: #334155;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div style="padding: 12px; background: #fffbeb; border-radius: 6px; border: 1px solid #fcd34d;">
+                    <div style="font-size: 0.7rem; font-weight: 600; color: #92400e; margin-bottom: 4px;">NO SNOWFLAKE</div>
+                    <div style="font-size: 0.78rem; color: #78350f;"><strong>SMB</strong> &rarr; Reader Accounts (20 slots)<br><strong>Data eng.</strong> &rarr; Iceberg / Horizon Catalog<br><strong>Custom UX</strong> &rarr; SaaS App (App Runtime)</div>
+                  </div>
+                  <div style="padding: 12px; background: #eff6ff; border-radius: 6px; border: 1px solid #93c5fd;">
+                    <div style="font-size: 0.7rem; font-weight: 600; color: #1e40af; margin-bottom: 4px;">HAS SNOWFLAKE</div>
+                    <div style="font-size: 0.78rem; color: #1e3a5f;"><strong>Enterprise</strong> &rarr; Secure Share + Agent<br><strong>Mid-market</strong> &rarr; Declarative App<br><strong>Partners</strong> &rarr; Full Native App<br><strong>Regulated</strong> &rarr; Data Clean Room</div>
+                  </div>
+                </div>
+                <div style="margin-top: 12px; padding: 10px; background: #f8fafc; border-radius: 6px; font-size: 0.75rem; color: #64748b; text-align: center;">
+                  All models share the same underlying data product &middot; Provisioned via automation &middot; Monitored via ACCOUNT_USAGE + metering pipeline
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p>
+  </footer>
+
+  <script>
+    function toggleModel(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.classList.toggle('model-card--expanded');
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  </script>
+</body>
+</html>
