@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>1.1 Multi-Tenant Governance | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; } .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    a.feature-item { text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    a.feature-item:hover { border-color: var(--sf-primary); box-shadow: 0 2px 8px rgba(41,181,232,0.1); }
+    a.feature-item h4::after { content: ' \2197'; font-size: 0.75rem; color: var(--sf-primary); }
+    .customer-story { background: var(--sf-lighter); border-left: 4px solid var(--sf-primary); border-radius: 0 8px 8px 0; padding: 20px; margin-top: 16px; }
+    .customer-story p { font-style: italic; margin-bottom: 8px; } .customer-story .attribution { font-style: normal; font-weight: 600; font-size: 0.85rem; color: var(--sf-dark); }
+    .page-container { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+
+    /* Decision matrix */
+    .decision-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+    .decision-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 24px; }
+    .decision-card h3 { font-size: 1rem; font-weight: 700; color: var(--sf-dark); margin-bottom: 4px; }
+    .decision-card .decision-label { font-size: 0.75rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .decision-card p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px; }
+    .decision-card ul { padding-left: 16px; margin: 0; } .decision-card li { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+    .decision-card.recommended { border-color: var(--sf-primary); border-width: 2px; }
+    .decision-card.recommended .decision-label { color: #10b981; }
+
+    /* Storyboard with left/right split */
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 24px; }
+    .story-step { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+    .step-left .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .step-number { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .step-left h4 { font-size: 1rem; font-weight: 650; color: var(--text-heading); margin: 0; }
+    .step-left p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+    .step-right { min-width: 0; }
+
+    /* Code blocks */
+    .code-block { background: #1e293b; border-radius: 8px; padding: 20px; overflow-x: auto; }
+    .code-block pre { margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.78rem; line-height: 1.6; color: #e2e8f0; white-space: pre; }
+    .code-block .kw { color: #7dd3fc; }
+    .code-block .str { color: #86efac; }
+    .code-block .comment { color: #64748b; font-style: italic; }
+    .code-block .fn { color: #c4b5fd; }
+
+    /* Diagram containers */
+    .diagram { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 24px; position: relative; }
+    .diagram-label { position: absolute; top: 8px; right: 12px; font-size: 0.7rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Flow diagram elements */
+    .flow-diagram { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .flow-box { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 0.75rem; font-weight: 500; color: var(--text-heading); text-align: center; min-width: 80px; }
+    .flow-box.highlight { border-color: var(--sf-primary); background: var(--sf-light); color: var(--sf-dark); }
+    .flow-box.snowflake { border-color: var(--sf-primary); background: var(--sf-dark); color: white; }
+    .flow-arrow { color: var(--sf-primary); font-size: 1.2rem; font-weight: 700; }
+
+    /* Tenant visual */
+    .tenant-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .tenant-panel { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .tenant-panel-header { padding: 8px 12px; font-size: 0.75rem; font-weight: 600; }
+    .tenant-panel-header.tenant-a { background: #dbeafe; color: #1e40af; }
+    .tenant-panel-header.tenant-b { background: #fce7f3; color: #9d174d; }
+    .tenant-panel-body { padding: 12px; background: white; }
+    .tenant-result { font-size: 0.78rem; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, 'Courier New', monospace; color: #475569; line-height: 1.6; white-space: pre; overflow-x: auto; }
+
+    /* Architecture layers */
+    .arch-stack { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
+    .arch-layer { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-radius: 6px; font-size: 0.78rem; }
+    .arch-layer .layer-name { font-weight: 600; min-width: 120px; }
+    .arch-layer .layer-desc { color: var(--text-muted); }
+    .arch-layer.app { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .arch-layer.sf { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .arch-layer.data { background: #fefce8; border: 1px solid #fef08a; }
+    .arch-layer.danger { background: #fef2f2; border: 1px solid #fecaca; }
+    .arch-layer.safe { background: #f0fdf4; border: 1px solid #86efac; }
+
+    @media (max-width: 900px) {
+      .story-step { grid-template-columns: 1fr; }
+      .decision-matrix { grid-template-columns: 1fr; }
+      .tenant-visual { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 1: Foundation &rarr; 1.1 Multi-Tenant Governance and Provisioning</div>
+
+    <div class="concept-hero">
+      <h1>Multi-Tenant Governance and Provisioning</h1>
+      <p class="subtitle">How to enforce tenant isolation at the data platform layer -- so developers write normal SQL, policies are enforced transparently, and cross-tenant data leakage is structurally impossible.</p>
+    </div>
+
+    <!-- How Companies Accomplish This Today -->
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <p>Most SaaS companies build tenant isolation at the application layer -- embedding WHERE clauses in every query, adding middleware to filter results, and relying on developers to never forget a tenant check.</p>
+      <ul>
+        <li><strong>Application-layer filtering:</strong> Every query includes a <code>tenant_id</code> filter, enforced by ORM middleware or API gateways. One missed filter = data leak.</li>
+        <li><strong>Separate databases per tenant:</strong> Physical isolation at the infrastructure level. Safe but expensive, hard to manage at scale, and makes cross-tenant analytics nearly impossible.</li>
+        <li><strong>Custom RBAC frameworks:</strong> Home-grown permission systems built on top of PostgreSQL RLS or application-side checks. Requires constant maintenance as the product evolves.</li>
+        <li><strong>Network-level isolation:</strong> VPCs or separate clusters per customer segment (enterprise tier). Becomes an operational nightmare beyond a few dozen tenants.</li>
+      </ul>
+    </div>
+
+    <!-- Roles -->
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card">
+          <h4>Platform Engineering</h4>
+          <p>Designs the tenancy model, manages database schemas, and enforces isolation guarantees across the stack.</p>
+        </div>
+        <div class="role-card">
+          <h4>Security / Compliance</h4>
+          <p>Audits access patterns, ensures SOC2/HIPAA compliance, validates that no cross-tenant data exposure is possible.</p>
+        </div>
+        <div class="role-card">
+          <h4>Application Developers</h4>
+          <p>Must correctly implement tenant filtering in every new feature, endpoint, and background job today. With Snowflake policies, they write normal SQL.</p>
+        </div>
+        <div class="role-card">
+          <h4>DevOps / SRE</h4>
+          <p>Manages infrastructure isolation (VPCs, clusters, connection pooling) and handles tenant-specific scaling and provisioning automation.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenges -->
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>Human error at scale:</strong> One developer forgets a tenant filter in a new API endpoint -- instant cross-tenant data leak. This is the #1 cause of SaaS security incidents.</li>
+        <li><strong>Audit complexity:</strong> Proving to SOC2 auditors that every single query path enforces isolation requires exhaustive code review and testing.</li>
+        <li><strong>Performance vs. isolation tradeoff:</strong> Physical separation (separate DBs) is safe but 10x more expensive. Logical separation (shared tables) is efficient but risky.</li>
+        <li><strong>Feature velocity drag:</strong> Every new feature requires re-implementing and re-testing tenant isolation, slowing engineering teams by 20-30%.</li>
+        <li><strong>AI makes it worse:</strong> Cortex Agents, AI functions, and generated SQL create new pathways for cross-tenant exposure. Securing AI features requires additional controls beyond WHERE clauses.</li>
+      </ul>
+    </div>
+
+    <!-- What Snowflake Offers -->
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <p>Snowflake moves tenant isolation from the application layer to the data platform layer -- making it structurally impossible, not just unlikely, for a query to return another tenant's data.</p>
+      <ul>
+        <li><strong>Guaranteed isolation without performance penalty:</strong> Row-access policies enforce tenant boundaries at the engine level, not the application level. No WHERE clause to forget.</li>
+        <li><strong>One shared schema, many tenants:</strong> Keep the operational simplicity of a single database while each tenant sees only their data -- no per-tenant infrastructure.</li>
+        <li><strong>Audit-ready by default:</strong> Access policies are declarative and centrally managed. Show auditors the policy definition, not thousands of lines of application code.</li>
+        <li><strong>Zero engineering tax on new features:</strong> Developers write normal SQL. Policies are enforced transparently -- no tenant-aware code required.</li>
+        <li><strong>AI-safe multi-tenancy:</strong> Cortex Agents inherit session attributes with <code>is_immutable_session_attribute</code>, so row-access policies apply to AI-generated queries automatically.</li>
+      </ul>
+    </div>
+
+    <!-- Role Hierarchy -->
+    <div class="concept-section">
+      <h2>The Role Hierarchy in a Multi-Tenant App</h2>
+      <p>A typical SaaS application on Snowflake uses three tiers of Snowflake roles. The row-access policy controls which tenant's rows are visible; the masking policy controls which columns are redacted within that tenant.</p>
+      <div style="margin-top: 16px;">
+        <div class="arch-stack">
+          <div class="arch-layer sf">
+            <span class="layer-name" style="min-width: 180px;">PLATFORM_ADMIN</span>
+            <span class="layer-desc">Your ops/engineering team (the SaaS provider). Bypasses the row-access policy -- sees all tenants. Used for cross-tenant analytics, debugging, provisioning.</span>
+          </div>
+          <div class="arch-layer app">
+            <span class="layer-name" style="min-width: 180px;">TENANT_ADMIN</span>
+            <span class="layer-desc">Your customer's admin (e.g., Acme's IT lead). Sees only their tenant's rows, but with full column visibility -- unmasked phone numbers, PII, etc.</span>
+          </div>
+          <div class="arch-layer data">
+            <span class="layer-name" style="min-width: 180px;">TENANT_USER</span>
+            <span class="layer-desc">Your customer's regular end-users (e.g., Acme's sales reps). Sees only their tenant's rows, and sensitive columns are fully masked -- phone numbers, SSNs, etc. are redacted.</span>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top: 16px; font-size: 0.88rem; color: var(--text-muted);">In practice, the application's service account (<code>APP_SERVICE_ROLE</code>) sets the tenant session variable at connection time, and your app logic maps the end-user's permissions to the appropriate Snowflake role (TENANT_ADMIN or TENANT_USER).</p>
+    </div>
+
+    <!-- Combine vs. Separate decision -->
+    <div class="concept-section">
+      <h2>The First Decision: Combine or Separate Tenants?</h2>
+      <p>Snowflake supports three tenancy patterns. The current guidance is to <strong>start with combining tenants</strong> and only separate when specific factors require it. Model your data for either approach from day one.</p>
+      <div class="decision-matrix">
+        <div class="decision-card recommended">
+          <div class="decision-label">Recommended starting point</div>
+          <h3>Combined Tenants (Shared Tables)</h3>
+          <p>All tenants share the same tables. A <code>tenant_id</code> column stamps every row. Row-access policies and session variables enforce isolation at query time.</p>
+          <ul>
+            <li>Scales from tens to millions of tenants</li>
+            <li>Simpler architecture -- fewer objects to manage</li>
+            <li>More cost-efficient (shared compute)</li>
+            <li>Cross-tenant analytics are trivial</li>
+            <li>Requires consistent data model across tenants</li>
+          </ul>
+        </div>
+        <div class="decision-card">
+          <div class="decision-label">Separate when needed</div>
+          <h3>Separated Tenants (Per-Tenant Objects)</h3>
+          <p>Each tenant gets its own database, schema, or table. RBAC controls which user/role can access which objects. Can be combined with shared compute.</p>
+          <ul>
+            <li>Unique data models per tenant</li>
+            <li>Contractual/legal isolation requirements</li>
+            <li>Per-tenant encryption keys (Tri-Secret Secure)</li>
+            <li>Direct Snowflake UI access per customer</li>
+            <li>Scales to tens-to-hundreds of tenants</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top: 16px; font-size: 0.88rem; color: var(--text-muted);"><strong>Key principle:</strong> Regardless of approach, stamp every row with a tenant identifier. This gives you the flexibility to migrate between models and prepares for Snowflake's future tenant-as-first-class-construct capabilities.</p>
+    </div>
+
+    <!-- Second Decision: Ownership vs. Entitlement -->
+    <div class="concept-section">
+      <h2>The Second Decision: Tenant-Owned Data or Entitlement-Based Access?</h2>
+      <p>Not every SaaS app works the same way. Some apps store each customer's data separately. Others provide a shared dataset where each customer sees a licensed slice. The row-access policy pattern changes depending on which model you're building.</p>
+      <div class="decision-matrix">
+        <div class="decision-card">
+          <div class="decision-label">Classic SaaS</div>
+          <h3>Tenant-Owned Data</h3>
+          <p>Each tenant generates and owns their data. Every row belongs to exactly one tenant. The row-access policy matches <code>tenant_id</code> directly against a session variable.</p>
+          <ul>
+            <li>CRM, project management, HR platforms</li>
+            <li>Each customer's data is distinct and private</li>
+            <li>Simple policy: <code>tenant_id = session_var</code></li>
+            <li>One tenant can never see another tenant's rows</li>
+          </ul>
+        </div>
+        <div class="decision-card">
+          <div class="decision-label">Data-as-a-Service</div>
+          <h3>Entitlement-Based Access</h3>
+          <p>One shared dataset owned by the provider. Each tenant is entitled to a subset based on business attributes -- regions, topics, asset classes, feeds. An entitlements table maps tenants to the slices they've licensed.</p>
+          <ul>
+            <li>Market data, threat intel, benchmarking, industry analytics</li>
+            <li>Rows don't "belong" to a tenant -- tenants get <em>access</em> to subsets</li>
+            <li>Policy joins to an entitlements table on a business key</li>
+            <li>Use memoizable functions for performance at scale</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top: 20px; font-size: 0.88rem; color: var(--text-muted);"><strong>Many apps are a hybrid.</strong> Your customers' own data (support tickets, usage logs) follows the tenant-owned model, while shared reference data (product catalog, benchmarks) follows the entitlement model. Both patterns can coexist in the same Snowflake account using different row-access policies per table.</p>
+    </div>
+
+    <!-- Snowflake Features Used -->
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/security-row-intro" target="_blank">
+          <h4>Row-Access Policies</h4>
+          <p>SQL-defined policies that automatically filter rows based on the querying user's context. Applied once, enforced on every query -- no application changes needed.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/security-column-ddm-intro" target="_blank">
+          <h4>Dynamic Data Masking</h4>
+          <p>Column-level policies that mask sensitive data differently per role. A support agent sees masked SSNs while an admin sees full values.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/functions/sys_context" target="_blank">
+          <h4>Session Variables / SYS_CONTEXT</h4>
+          <p>Set tenant context at connection time. Row-access policies reference <code>SYS_CONTEXT('SNOWFLAKE$SESSION_ATTRIBUTES', 'tenant_id')</code> to filter transparently.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/security-access-control-overview" target="_blank">
+          <h4>Database Roles and RBAC</h4>
+          <p>Granular, schema-scoped roles that map to SaaS concepts like "tenant admin" or "read-only analyst." Compose via role hierarchy without sprawl.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/object-tagging" target="_blank">
+          <h4>Object Tagging</h4>
+          <p>Tag tables and columns with metadata (sensitivity level, tenant ownership). Tags drive policy enforcement and simplify governance at scale.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/access-history" target="_blank">
+          <h4>Access History</h4>
+          <p>Full audit trail of who accessed what data, when, and through which policy. Powers compliance reporting and anomaly detection.</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Demo Storyboard -->
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <p>A complete walkthrough: from raw shared table to fully isolated multi-tenant access with row policies, masking, and automated provisioning.</p>
+
+      <div class="storyboard">
+        <!-- Step 1: Shared Schema -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">1</div>
+              <h4>Create the Shared Schema</h4>
+            </div>
+            <p>Start with a single <code>ORDERS</code> table containing data for three tenants. Every row has a <code>tenant_id</code>. A superuser can see all rows.</p>
+            <p style="font-size: 0.82rem; color: var(--sf-primary); font-weight: 500; margin-top: 8px;">This is the "combine tenants" approach -- the recommended starting point.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Shared multi-tenant table</span>
+<span class="kw">CREATE TABLE</span> app_db.serving.orders (
+  order_id    <span class="kw">INT</span>,
+  tenant_id   <span class="kw">VARCHAR</span>,
+  customer    <span class="kw">VARCHAR</span>,
+  product     <span class="kw">VARCHAR</span>,
+  amount      <span class="kw">DECIMAL</span>(10,2),
+  email       <span class="kw">VARCHAR</span>,
+  order_date  <span class="kw">DATE</span>
+);
+
+<span class="comment">-- Cluster by tenant_id for efficient pruning</span>
+<span class="kw">ALTER TABLE</span> app_db.serving.orders
+  <span class="kw">CLUSTER BY</span> (tenant_id, order_date);
+
+<span class="comment">-- Insert sample data for 3 tenants</span>
+<span class="kw">INSERT INTO</span> orders <span class="kw">VALUES</span>
+  (1, <span class="str">'acme'</span>,   <span class="str">'Alice'</span>, <span class="str">'Widget'</span>,  99.00, <span class="str">'alice@acme.com'</span>,   <span class="str">'2026-01-15'</span>),
+  (2, <span class="str">'acme'</span>,   <span class="str">'Bob'</span>,   <span class="str">'Gadget'</span>, 149.00, <span class="str">'bob@acme.com'</span>,     <span class="str">'2026-01-16'</span>),
+  (3, <span class="str">'globex'</span>, <span class="str">'Carol'</span>, <span class="str">'Sprocket'</span>, 75.00, <span class="str">'carol@globex.com'</span>, <span class="str">'2026-01-15'</span>),
+  (4, <span class="str">'initech'</span>,<span class="str">'Dave'</span>,  <span class="str">'Widget'</span>,  99.00, <span class="str">'dave@initech.com'</span>, <span class="str">'2026-01-17'</span>);</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 2: Row Access Policy -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">2</div>
+              <h4>Create the Row-Access Policy</h4>
+            </div>
+            <p>Define a policy that filters rows where <code>tenant_id</code> matches the current session's tenant context. This uses <code>SYS_CONTEXT</code> to read session attributes set by the application.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Key insight:</strong> The policy is applied once and enforced on every query against this table -- developers never write a WHERE clause for tenant filtering.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Create the row-access policy</span>
+<span class="kw">CREATE OR REPLACE ROW ACCESS POLICY</span> security.tenant_filter
+  <span class="kw">AS</span> (tenant_col <span class="kw">VARCHAR</span>) <span class="kw">RETURNS BOOLEAN</span> ->
+    <span class="comment">-- Match the row's tenant to the session variable</span>
+    tenant_col = <span class="fn">SYS_CONTEXT</span>(
+      <span class="str">'SNOWFLAKE$SESSION_ATTRIBUTES'</span>,
+      <span class="str">'tenant_id'</span>
+    )
+    <span class="comment">-- Allow platform admins to see all rows</span>
+    <span class="kw">OR IS_ROLE_IN_SESSION</span>(<span class="str">'PLATFORM_ADMIN'</span>);
+
+<span class="comment">-- Bind the policy to the tenant_id column</span>
+<span class="kw">ALTER TABLE</span> app_db.serving.orders
+  <span class="kw">ADD ROW ACCESS POLICY</span> security.tenant_filter
+  <span class="kw">ON</span> (tenant_id);</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 2b: Entitlement-Based Policy -->
+        <div class="story-step" style="border-left: 3px solid #f59e0b;">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number" style="background: #f59e0b;">2b</div>
+              <h4>Variant: Entitlement-Based Policy</h4>
+            </div>
+            <p>For data-as-a-service apps, the data isn't stamped with a <code>tenant_id</code>. Instead, an entitlements table maps each tenant to the regions (or topics, feeds, etc.) they've licensed.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The memoizable function caches each tenant's entitlements per-session, so the policy lookup doesn't re-execute for every row.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Entitlements table: which tenants see which regions</span>
+<span class="kw">CREATE TABLE</span> security.entitlements (
+  tenant_id  <span class="kw">VARCHAR</span>,
+  region     <span class="kw">VARCHAR</span>
+);
+<span class="comment">-- Acme licensed NA + EU; Globex licensed APAC only</span>
+<span class="kw">INSERT INTO</span> security.entitlements <span class="kw">VALUES</span>
+  (<span class="str">'acme'</span>, <span class="str">'NA'</span>), (<span class="str">'acme'</span>, <span class="str">'EU'</span>),
+  (<span class="str">'globex'</span>, <span class="str">'APAC'</span>);
+
+<span class="comment">-- Memoizable function for performance</span>
+<span class="kw">CREATE FUNCTION</span> security.allowed_regions()
+  <span class="kw">RETURNS ARRAY MEMOIZABLE AS</span>
+  <span class="str">'SELECT ARRAY_AGG(region) FROM security.entitlements
+   WHERE tenant_id = SYS_CONTEXT(
+     ''SNOWFLAKE$SESSION_ATTRIBUTES'', ''tenant_id'')'</span>;
+
+<span class="comment">-- Row-access policy using entitlements</span>
+<span class="kw">CREATE ROW ACCESS POLICY</span> security.region_entitlement
+  <span class="kw">AS</span> (region_col <span class="kw">VARCHAR</span>) <span class="kw">RETURNS BOOLEAN</span> ->
+    <span class="fn">ARRAY_CONTAINS</span>(region_col::<span class="kw">VARIANT</span>,
+      security.allowed_regions())
+    <span class="kw">OR IS_ROLE_IN_SESSION</span>(<span class="str">'PLATFORM_ADMIN'</span>);
+
+<span class="comment">-- Apply to the shared market data table</span>
+<span class="kw">ALTER TABLE</span> app_db.serving.market_data
+  <span class="kw">ADD ROW ACCESS POLICY</span> security.region_entitlement
+  <span class="kw">ON</span> (region);</pre></div>
+
+            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+              <div class="tenant-panel">
+                <div class="tenant-panel-header tenant-a">Acme (entitled: NA, EU)</div>
+                <div class="tenant-panel-body">
+                  <div class="tenant-result">region | symbol | price
+-------|--------|--------
+NA     | AAPL   | 234.50
+NA     | MSFT   | 412.30
+EU     | SAP    | 198.70</div>
+                </div>
+              </div>
+              <div class="tenant-panel">
+                <div class="tenant-panel-header tenant-b">Globex (entitled: APAC)</div>
+                <div class="tenant-panel-body">
+                  <div class="tenant-result">region | symbol | price
+-------|--------|--------
+APAC   | 9984   | 8450.0
+APAC   | 0700   | 392.20</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Application Sets Context -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">3</div>
+              <h4>Application Sets Tenant Context</h4>
+            </div>
+            <p>The application tier authenticates via key-pair auth, then sets the tenant session variable before issuing queries. Same SQL, different context, different results.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Users never know Snowflake exists -- they authenticate to your app, and your app handles the Snowflake connection.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment"># Python application tier</span>
+<span class="kw">import</span> snowflake.connector
+
+<span class="kw">def</span> <span class="fn">get_orders</span>(tenant_id: str):
+    conn = snowflake.connector.connect(
+        account=<span class="str">"myaccount"</span>,
+        user=<span class="str">"APP_SERVICE_USER"</span>,
+        private_key=<span class="fn">load_key_from_secrets</span>(),
+        role=<span class="str">"APP_SERVICE_ROLE"</span>,
+        warehouse=<span class="str">"APP_WH"</span>,
+        database=<span class="str">"APP_DB"</span>,
+        session_parameters={
+            <span class="str">"tenant_id"</span>: tenant_id  <span class="comment"># Set session var</span>
+        }
+    )
+    <span class="comment"># No WHERE tenant_id = ... needed!</span>
+    <span class="comment"># The row-access policy handles it.</span>
+    cur = conn.cursor()
+    cur.execute(<span class="str">"SELECT * FROM serving.orders"</span>)
+    <span class="kw">return</span> cur.fetchall()</pre></div>
+
+            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+              <div class="tenant-panel">
+                <div class="tenant-panel-header tenant-a">tenant_id = 'acme'</div>
+                <div class="tenant-panel-body">
+                  <div class="tenant-result">order_id | customer | product  | amount
+---------|----------|----------|-------
+1        | Alice    | Widget   | 99.00
+2        | Bob      | Gadget   | 149.00</div>
+                </div>
+              </div>
+              <div class="tenant-panel">
+                <div class="tenant-panel-header tenant-b">tenant_id = 'globex'</div>
+                <div class="tenant-panel-body">
+                  <div class="tenant-result">order_id | customer | product  | amount
+---------|----------|----------|-------
+3        | Carol    | Sprocket | 75.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Dynamic Masking -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">4</div>
+              <h4>Add Dynamic Masking</h4>
+            </div>
+            <p>Apply a masking policy on the <code>PHONE</code> column: full visibility for tenant admins, area-code-only for standard users. Different roles within the same tenant see different levels of detail.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This layers on top of row-access policies -- you get both row-level and column-level control.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Masking policy: full phone for admins, area code only for others</span>
+<span class="kw">CREATE OR REPLACE MASKING POLICY</span> security.phone_mask
+  <span class="kw">AS</span> (val <span class="kw">VARCHAR</span>) <span class="kw">RETURNS VARCHAR</span> ->
+    <span class="kw">CASE</span>
+      <span class="kw">WHEN IS_ROLE_IN_SESSION</span>(<span class="str">'TENANT_ADMIN'</span>)
+        <span class="kw">THEN</span> val
+      <span class="kw">ELSE</span> <span class="str">'***-***-****'</span>
+    <span class="kw">END</span>;
+
+<span class="comment">-- Apply to the phone column</span>
+<span class="kw">ALTER TABLE</span> app_db.serving.orders
+  <span class="kw">ALTER COLUMN</span> phone
+  <span class="kw">SET MASKING POLICY</span> security.phone_mask;</pre></div>
+
+            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+              <div class="tenant-panel">
+                <div class="tenant-panel-header tenant-a">TENANT_ADMIN role</div>
+                <div class="tenant-panel-body">
+                  <div class="tenant-result">customer | phone
+---------|----------------
+Alice    | (415) 555-1234
+Bob      | (415) 555-5678</div>
+                </div>
+              </div>
+              <div class="tenant-panel">
+                <div class="tenant-panel-header tenant-b">TENANT_USER role</div>
+                <div class="tenant-panel-body">
+                  <div class="tenant-result">customer | phone
+---------|----------------
+Alice    | ***-***-****
+Bob      | ***-***-****</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: AI-Safe Multi-Tenancy -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">5</div>
+              <h4>AI-Safe Multi-Tenancy</h4>
+            </div>
+            <p>When calling Cortex Agents, pass the tenant ID as an immutable session attribute. The agent can't override it -- row-access policies apply to all AI-generated SQL.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This is critical: without immutable attributes, a prompt injection could trick the agent into changing the tenant context.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">// Cortex Agent API call with tenant isolation</span>
+<span class="kw">POST</span> /api/v2/databases/APP_DB/schemas/AGENTS
+     /agents/support_agent:run
+
+{
+  <span class="str">"messages"</span>: [{
+    <span class="str">"role"</span>: <span class="str">"user"</span>,
+    <span class="str">"content"</span>: <span class="str">"Show my recent orders"</span>
+  }],
+  <span class="str">"variables"</span>: {
+    <span class="str">"tenant_id"</span>: {
+      <span class="str">"value"</span>: <span class="str">"acme"</span>,
+      <span class="str">"type"</span>: <span class="str">"string"</span>,
+      <span class="str">"is_immutable_session_attribute"</span>: <span class="kw">true</span>
+    }
+  }
+}</pre></div>
+            <div class="diagram" style="margin-top: 16px;">
+              <div class="diagram-label">Execution Flow</div>
+              <div class="flow-diagram" style="padding-top: 12px;">
+                <div class="flow-box">App sends<br>agent:run</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box snowflake">Snowflake sets<br>session attribute</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box highlight">Agent generates<br>SQL</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box snowflake">RAP filters<br>by tenant</div>
+                <div class="flow-arrow">&rarr;</div>
+                <div class="flow-box">Only tenant's<br>data returned</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Provisioning Automation -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">6</div>
+              <h4>Automated Provisioning</h4>
+            </div>
+            <p>Wrap tenant onboarding in a stored procedure. When a new customer signs up, call one procedure that sets up their role, mapping table entry, and default configuration.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">No manual SQL, no human error. The procedure is the template -- every tenant gets the same setup.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="kw">CREATE OR REPLACE PROCEDURE</span> admin.provision_tenant(
+  p_tenant_id <span class="kw">VARCHAR</span>,
+  p_admin_email <span class="kw">VARCHAR</span>
+)
+<span class="kw">RETURNS VARCHAR</span>
+<span class="kw">LANGUAGE SQL</span>
+<span class="kw">EXECUTE AS CALLER</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+  <span class="comment">-- 1. Create tenant-specific role</span>
+  <span class="kw">CREATE ROLE IF NOT EXISTS</span> IDENTIFIER(:p_tenant_id || <span class="str">'_ROLE'</span>);
+
+  <span class="comment">-- 2. Grant access to serving schema</span>
+  <span class="kw">GRANT USAGE ON DATABASE</span> app_db
+    <span class="kw">TO ROLE</span> IDENTIFIER(:p_tenant_id || <span class="str">'_ROLE'</span>);
+  <span class="kw">GRANT USAGE ON SCHEMA</span> app_db.serving
+    <span class="kw">TO ROLE</span> IDENTIFIER(:p_tenant_id || <span class="str">'_ROLE'</span>);
+  <span class="kw">GRANT SELECT ON ALL TABLES IN SCHEMA</span> app_db.serving
+    <span class="kw">TO ROLE</span> IDENTIFIER(:p_tenant_id || <span class="str">'_ROLE'</span>);
+
+  <span class="comment">-- 3. Register in entitlements table</span>
+  <span class="kw">INSERT INTO</span> security.tenant_registry
+    (tenant_id, admin_email, created_at, status)
+  <span class="kw">VALUES</span>
+    (:p_tenant_id, :p_admin_email, <span class="fn">CURRENT_TIMESTAMP</span>(), <span class="str">'active'</span>);
+
+  <span class="kw">RETURN</span> <span class="str">'Tenant '</span> || :p_tenant_id || <span class="str">' provisioned'</span>;
+<span class="kw">END</span>;
+
+<span class="comment">-- Provision a new tenant in one call</span>
+<span class="kw">CALL</span> admin.provision_tenant(<span class="str">'newcorp'</span>, <span class="str">'admin@newcorp.com'</span>);</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 7: Audit and Prove -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">7</div>
+              <h4>Audit and Prove</h4>
+            </div>
+            <p>Query <code>ACCESS_HISTORY</code> to show a complete log of who accessed what, proving to auditors that policies are enforced. Demonstrate that no Globex data was ever visible to the Acme session.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This is the "show auditors the policy, not thousands of lines of code" moment.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Show all access to the orders table in the last 24h</span>
+<span class="kw">SELECT</span>
+  query_start_time,
+  user_name,
+  role_name,
+  <span class="fn">PARSE_JSON</span>(direct_objects_accessed)[0]:<span class="str">'objectName'</span>
+    <span class="kw">AS</span> table_accessed,
+  <span class="fn">PARSE_JSON</span>(direct_objects_accessed)[0]:<span class="str">'columns'</span>
+    <span class="kw">AS</span> columns_accessed,
+  policies_referenced
+<span class="kw">FROM</span> snowflake.account_usage.access_history
+<span class="kw">WHERE</span> query_start_time > <span class="fn">DATEADD</span>(<span class="str">'day'</span>, -1, <span class="fn">CURRENT_TIMESTAMP</span>())
+  <span class="kw">AND</span> <span class="fn">ARRAY_CONTAINS</span>(
+    <span class="str">'ORDERS'</span>::<span class="kw">VARIANT</span>,
+    <span class="fn">TRANSFORM</span>(direct_objects_accessed,
+      x -> x:<span class="str">'objectName'</span>))
+<span class="kw">ORDER BY</span> query_start_time <span class="kw">DESC</span>;</pre></div>
+            <div class="diagram" style="margin-top: 16px;">
+              <div class="diagram-label">Audit View</div>
+              <div style="padding: 8px 0;">
+                <div class="arch-stack">
+                  <div class="arch-layer safe">
+                    <span class="layer-name">09:14:32 acme_role</span>
+                    <span class="layer-desc">SELECT orders &rarr; 2 rows returned &rarr; tenant_filter applied</span>
+                  </div>
+                  <div class="arch-layer safe">
+                    <span class="layer-name">09:15:01 globex_role</span>
+                    <span class="layer-desc">SELECT orders &rarr; 1 row returned &rarr; tenant_filter applied</span>
+                  </div>
+                  <div class="arch-layer safe">
+                    <span class="layer-name">09:16:44 PLATFORM_ADMIN</span>
+                    <span class="layer-desc">SELECT orders &rarr; 4 rows returned &rarr; admin bypass</span>
+                  </div>
+                  <div class="arch-layer danger">
+                    <span class="layer-name">09:17:02 unknown_role</span>
+                    <span class="layer-desc">SELECT orders &rarr; 0 rows returned &rarr; no tenant set</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p>
+  </footer>
+</body>
+</html>

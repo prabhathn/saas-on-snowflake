@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>4.2 AI Functions in the UI | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; } .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    a.feature-item { text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    a.feature-item:hover { border-color: var(--sf-primary); box-shadow: 0 2px 8px rgba(41,181,232,0.1); }
+    a.feature-item h4::after { content: ' \2197'; font-size: 0.75rem; color: var(--sf-primary); }
+    .customer-story { background: var(--sf-lighter); border-left: 4px solid var(--sf-primary); border-radius: 0 8px 8px 0; padding: 20px; margin-top: 16px; }
+    .customer-story p { font-style: italic; margin-bottom: 8px; } .customer-story .attribution { font-style: normal; font-weight: 600; font-size: 0.85rem; color: var(--sf-dark); }
+    .page-container { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+
+    /* Function catalog grid */
+    .fn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+    .fn-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+    .fn-card .fn-name { font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; }
+    .fn-card .fn-desc { font-size: 0.75rem; color: var(--text-muted); }
+    .fn-card .fn-modality { font-size: 0.65rem; font-weight: 500; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+
+    /* Storyboard with left/right split */
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 24px; }
+    .story-step { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+    .step-left .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .step-number { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .step-left h4 { font-size: 1rem; font-weight: 650; color: var(--text-heading); margin: 0; }
+    .step-left p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+    .step-right { min-width: 0; }
+
+    /* Code blocks */
+    .code-block { background: #1e293b; border-radius: 8px; padding: 20px; overflow-x: auto; }
+    .code-block pre { margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.78rem; line-height: 1.6; color: #e2e8f0; white-space: pre; }
+    .code-block .kw { color: #7dd3fc; }
+    .code-block .str { color: #86efac; }
+    .code-block .comment { color: #64748b; font-style: italic; }
+    .code-block .fn { color: #c4b5fd; }
+
+    /* Diagram containers */
+    .diagram { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 24px; position: relative; }
+    .diagram-label { position: absolute; top: 8px; right: 12px; font-size: 0.7rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Result mockup */
+    .result-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; margin-top: 12px; }
+    .result-table th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 8px 10px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+    .result-table td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; }
+    .result-table tr:hover { background: #f8fafc; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: 600; }
+    .badge-red { background: #fef2f2; color: #dc2626; }
+    .badge-green { background: #f0fdf4; color: #16a34a; }
+    .badge-blue { background: #eff6ff; color: #2563eb; }
+    .badge-amber { background: #fffbeb; color: #d97706; }
+
+    /* UI mockup panels */
+    .ui-panel { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 12px; }
+    .ui-panel-header { padding: 8px 12px; font-size: 0.75rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border); }
+    .ui-panel-body { padding: 14px; background: white; font-size: 0.8rem; color: #334155; line-height: 1.6; }
+
+    @media (max-width: 900px) {
+      .story-step { grid-template-columns: 1fr; }
+      .fn-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 4: AI Features &rarr; 4.2 AI Functions in the UI</div>
+
+    <div class="concept-hero">
+      <h1>AI Functions in the UI</h1>
+      <p class="subtitle">Enriching your product's interface with AI: classifying tickets, summarizing transcripts, extracting fields from documents, and analyzing sentiment -- all as SQL function calls. No model hosting, no API keys, no inference infrastructure.</p>
+    </div>
+
+    <!-- How Companies Accomplish This Today -->
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <ul>
+        <li><strong>Direct LLM API calls from the backend:</strong> Application code calls OpenAI/Anthropic APIs for each AI enrichment. Requires managing API keys, rate limits, retries, and cost tracking per feature.</li>
+        <li><strong>Batch processing pipelines:</strong> Nightly jobs that run AI enrichments on new records. Users see AI-generated content only the next day.</li>
+        <li><strong>Embedded third-party AI widgets:</strong> Drop-in components (Cohere, AWS Comprehend, Google NLP) that add latency, cost, and data-residency concerns.</li>
+        <li><strong>No AI enrichment:</strong> Users manually read full transcripts, hand-classify tickets, and scan documents for key information. Time-consuming and inconsistent.</li>
+      </ul>
+    </div>
+
+    <!-- Roles -->
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card"><h4>Product Designers</h4><p>Decides where AI enrichments add value in the UI -- what to summarize, classify, or extract, and how to present AI-generated content alongside source data.</p></div>
+        <div class="role-card"><h4>Backend Engineers</h4><p>Integrates AI function calls into the data pipeline or dynamic tables. No new microservice needed -- it's a SQL column.</p></div>
+        <div class="role-card"><h4>Frontend Engineers</h4><p>Renders pre-computed AI output: sentiment badges on tickets, extracted fields in forms, summaries next to source documents.</p></div>
+        <div class="role-card"><h4>Data / AI Team</h4><p>Evaluates AI quality, tunes prompts via AI Function Studio, and monitors output accuracy. Uses the create → evaluate → optimize lifecycle.</p></div>
+      </div>
+    </div>
+
+    <!-- Challenges -->
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>Integration complexity:</strong> Each AI capability (summarize, classify, extract) requires its own API integration, error handling, and cost tracking. Three features = three microservices.</li>
+        <li><strong>Latency at query time:</strong> Calling external LLM APIs adds 1-5 seconds per request. Unacceptable for UI interactions that should feel instant.</li>
+        <li><strong>Cost unpredictability:</strong> Token-based pricing makes AI feature costs hard to predict. A verbose transcript costs more to summarize than a short one.</li>
+        <li><strong>Data governance:</strong> Sending customer data to external AI APIs raises compliance concerns -- data residency, PII exposure, model training opt-out.</li>
+        <li><strong>Quality consistency:</strong> Different models, prompts, and context windows produce inconsistent results. No systematic way to evaluate and optimize.</li>
+      </ul>
+    </div>
+
+    <!-- What Snowflake Offers -->
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <ul>
+        <li><strong>AI as SQL functions:</strong> Call AI_CLASSIFY, AI_EXTRACT, AI_COMPLETE, AI_SENTIMENT directly in SQL queries. No API integration, no external service, no data movement.</li>
+        <li><strong>Every modality:</strong> Text, documents, images, audio, and video -- one function signature, one platform. Classify a PDF, extract fields from a scanned invoice, transcribe a call recording.</li>
+        <li><strong>Pre-compute and cache:</strong> Run AI functions in a dynamic table to pre-enrich records as they arrive. UI queries hit pre-computed results -- instant response, no LLM latency at page load.</li>
+        <li><strong>Data never leaves Snowflake:</strong> AI functions run inside the platform. Customer data stays in your Snowflake account -- no external API calls, full governance retained.</li>
+        <li><strong>Create → Evaluate → Optimize:</strong> AI Function Studio (in Cortex Code) drafts prompts, scores against ground truth, and optimizes model/prompt combinations automatically.</li>
+        <li><strong>Granular cost controls:</strong> Function-level RBAC, per-user quotas, tag-based budgets, and low-latency spend enforcement. AI credits tracked in CORTEX_USAGE and attributable to tenants.</li>
+      </ul>
+    </div>
+
+    <!-- Function Catalog -->
+    <div class="concept-section">
+      <h2>The Cortex AI Function Catalog</h2>
+      <p>Every function is a SQL call. Every function works on governed data. Choose the right function for your use case:</p>
+      <div class="fn-grid">
+        <div class="fn-card">
+          <div class="fn-modality">Text &middot; Docs &middot; Images &middot; Audio &middot; Video</div>
+          <div class="fn-name">AI_COMPLETE</div>
+          <div class="fn-desc">General-purpose LLM completion. Custom prompts for any task. Choose model per call.</div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-modality">Text &middot; Docs &middot; Images</div>
+          <div class="fn-name">AI_CLASSIFY</div>
+          <div class="fn-desc">Single or multi-label classification. Pass categories as an array -- no training data needed.</div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-modality">Text &middot; Docs</div>
+          <div class="fn-name">AI_EXTRACT</div>
+          <div class="fn-desc">Structured fields from unstructured text. Returns JSON with confidence scores and citations.</div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-modality">Text</div>
+          <div class="fn-name">AI_SENTIMENT</div>
+          <div class="fn-desc">Score text from -1 (negative) to +1 (positive). Instant sentiment on feedback, tickets, NPS.</div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-modality">Docs &middot; Images</div>
+          <div class="fn-name">AI_PARSE_DOCUMENT</div>
+          <div class="fn-desc">Layout-aware parsing + OCR. Tables, handwriting, multi-column. Up to 2,000 pages.</div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-modality">Text</div>
+          <div class="fn-name">AI_TRANSLATE</div>
+          <div class="fn-desc">Translate text between languages. Localize content at query time without pre-translation.</div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-modality">Audio &middot; Video</div>
+          <div class="fn-name">AI_TRANSCRIBE</div>
+          <div class="fn-desc">Speech-to-text with speaker diarization. Call recordings, meetings, podcasts.</div>
+        </div>
+        <div class="fn-card">
+          <div class="fn-modality">Custom</div>
+          <div class="fn-name">CUSTOM AI FUNCTION</div>
+          <div class="fn-desc">Build your own via AI Function Studio. Create, evaluate against ground truth, optimize.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Stories -->
+    <div class="concept-section">
+      <h2>Customer Stories</h2>
+      <div class="customer-story">
+        <p>"I don't think we could have gone down the LLM route at all without Cortex -- not without the costs outweighing the benefits."</p>
+        <span class="attribution">-- Mark Atkinson, Head of Data Science, Jet2 &middot; <a href="https://www.snowflake.com/en/customers/all-customers/case-study/jet2/" target="_blank" style="color: var(--sf-primary);">Case Study</a></span>
+      </div>
+      <div class="customer-story">
+        <p>"Snowflake has given us the power to really understand what drives our customers to our contact centre and is helping us ensure we focus on the right improvements to our systems and processes to continue providing best-in-class customer service."</p>
+        <span class="attribution">-- Gary Isaacs, CIO, Jet2 &middot; 2,000 calls analyzed daily, 3 months to production &middot; <a href="https://www.snowflake.com/en/customers/all-customers/case-study/jet2/" target="_blank" style="color: var(--sf-primary);">Case Study</a></span>
+      </div>
+    </div>
+
+    <!-- Snowflake Features Used -->
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/functions/ai_classify" target="_blank">
+          <h4>AI_CLASSIFY</h4>
+          <p>Classify text, images, or documents into predefined categories. Single or multi-label. Up to 100 categories per call.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/functions/ai_extract" target="_blank">
+          <h4>AI_EXTRACT</h4>
+          <p>Extract structured JSON from unstructured text or documents. Confidence scores and bounding-box citations on every value.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/functions/ai_complete" target="_blank">
+          <h4>AI_COMPLETE</h4>
+          <p>General-purpose LLM completion across all modalities. Choose model per call. Supports structured JSON output via response_format.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/functions/ai_sentiment" target="_blank">
+          <h4>AI_SENTIMENT</h4>
+          <p>Score text sentiment from -1 to +1. Apply to feedback, tickets, reviews for automated sentiment tracking.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank">
+          <h4>Dynamic Tables</h4>
+          <p>Pre-compute AI enrichments as new records arrive. UI queries hit pre-built columns -- zero LLM latency at page load.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/cost-managing-budgets" target="_blank">
+          <h4>Budgets and Quotas</h4>
+          <p>Tag-based budgets with custom actions, per-user quotas, and function-level RBAC. Control AI spend by team, by model, by function.</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Demo Storyboard -->
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <p>A concrete walkthrough: from raw support tickets to an AI-enriched product UI, with classification, extraction, sentiment, and pre-computation.</p>
+
+      <div class="storyboard">
+        <!-- Step 1: Raw Data -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">1</div>
+              <h4>The Raw Support Tickets Table</h4>
+            </div>
+            <p>Your SaaS product has a <code>SUPPORT_TICKETS</code> table with tenant_id, subject, body, and timestamp. Thousands of tickets arrive daily -- unstructured, unclassified, unscored.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Today, a human reads each ticket to determine priority, category, and sentiment. That's what we're about to automate.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- The raw tickets table</span>
+<span class="kw">CREATE TABLE</span> app_db.serving.support_tickets (
+  ticket_id   <span class="kw">INT</span>,
+  tenant_id   <span class="kw">VARCHAR</span>,
+  subject     <span class="kw">VARCHAR</span>,
+  body        <span class="kw">VARCHAR</span>,
+  created_at  <span class="kw">TIMESTAMP</span>
+);
+
+<span class="comment">-- Sample tickets</span>
+<span class="kw">INSERT INTO</span> support_tickets <span class="kw">VALUES</span>
+(1001, <span class="str">'acme'</span>, <span class="str">'Charged twice for May'</span>,
+ <span class="str">'Hi - I was charged twice for May. Card was hit on
+ the 3rd and again on the 17th for the same plan.
+ Can you refund the duplicate? Pretty frustrated,
+ this is the second time it''s happened.'</span>,
+ <span class="str">'2026-06-01 09:14:00'</span>),
+
+(1002, <span class="str">'acme'</span>, <span class="str">'API returning 500 errors'</span>,
+ <span class="str">'Our integration has been getting intermittent 500
+ errors from the /v2/reports endpoint since Monday.
+ Happening about 30% of requests. Logs attached.'</span>,
+ <span class="str">'2026-06-01 10:22:00'</span>),
+
+(1003, <span class="str">'globex'</span>, <span class="str">'Love the new dashboard'</span>,
+ <span class="str">'Just wanted to say the new analytics dashboard is
+ fantastic. The drill-down filters are exactly what
+ we needed. Great work!'</span>,
+ <span class="str">'2026-06-01 11:05:00'</span>);</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 2: AI_CLASSIFY -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">2</div>
+              <h4>Classify Tickets Instantly</h4>
+            </div>
+            <p>One SQL call classifies each ticket into your routing categories. No training data, no model fine-tuning -- just pass your categories as an array.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Multi-label mode</strong> returns all applicable labels, so a billing complaint that's also urgent gets both tags.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="kw">SELECT</span>
+  ticket_id,
+  subject,
+  <span class="fn">AI_CLASSIFY</span>(
+    body,
+    [<span class="str">'billing'</span>, <span class="str">'technical'</span>, <span class="str">'feature_request'</span>,
+     <span class="str">'account'</span>, <span class="str">'praise'</span>, <span class="str">'urgent'</span>],
+    { <span class="str">'output_mode'</span>: <span class="str">'multi'</span> }
+  ) <span class="kw">AS</span> categories
+<span class="kw">FROM</span> support_tickets;</pre></div>
+
+            <table class="result-table" style="margin-top: 16px;">
+              <thead><tr><th>ticket_id</th><th>subject</th><th>categories</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>1001</td>
+                  <td>Charged twice for May</td>
+                  <td><span class="badge badge-red">billing</span> <span class="badge badge-red">urgent</span></td>
+                </tr>
+                <tr>
+                  <td>1002</td>
+                  <td>API returning 500 errors</td>
+                  <td><span class="badge badge-blue">technical</span> <span class="badge badge-red">urgent</span></td>
+                </tr>
+                <tr>
+                  <td>1003</td>
+                  <td>Love the new dashboard</td>
+                  <td><span class="badge badge-green">praise</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Step 3: AI_SENTIMENT + AI_EXTRACT -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">3</div>
+              <h4>Score Sentiment and Extract Key Fields</h4>
+            </div>
+            <p>Add sentiment scoring and structured extraction in the same query. AI_SENTIMENT returns a score from -1 to +1. AI_EXTRACT pulls out specific fields you define.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The extracted JSON becomes queryable structured data -- filter by urgency, join on product area, aggregate by month.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="kw">SELECT</span>
+  ticket_id,
+  <span class="fn">AI_SENTIMENT</span>(body) <span class="kw">AS</span> sentiment,
+  <span class="fn">AI_EXTRACT</span>(
+    body,
+    { <span class="str">'issue_type'</span>: <span class="str">'string'</span>,
+      <span class="str">'affected_feature'</span>: <span class="str">'string'</span>,
+      <span class="str">'requested_action'</span>: <span class="str">'string'</span>,
+      <span class="str">'repeat_issue'</span>: <span class="str">'boolean'</span> }
+  ) <span class="kw">AS</span> extracted
+<span class="kw">FROM</span> support_tickets;</pre></div>
+
+            <table class="result-table" style="margin-top: 16px;">
+              <thead><tr><th>ticket</th><th>sentiment</th><th>extracted</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>1001</td>
+                  <td><span class="badge badge-red">-0.72</span></td>
+                  <td style="font-size: 0.7rem;">{"issue_type": "duplicate_charge",<br>"affected_feature": "billing",<br>"requested_action": "refund",<br>"repeat_issue": true}</td>
+                </tr>
+                <tr>
+                  <td>1002</td>
+                  <td><span class="badge badge-amber">-0.31</span></td>
+                  <td style="font-size: 0.7rem;">{"issue_type": "api_error",<br>"affected_feature": "/v2/reports",<br>"requested_action": "investigate",<br>"repeat_issue": false}</td>
+                </tr>
+                <tr>
+                  <td>1003</td>
+                  <td><span class="badge badge-green">+0.91</span></td>
+                  <td style="font-size: 0.7rem;">{"issue_type": "positive_feedback",<br>"affected_feature": "dashboard",<br>"requested_action": null,<br>"repeat_issue": false}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Step 4: Live vs Pre-Enrichment Decision -->
+        <div class="story-step" style="border: 2px solid var(--sf-primary); background: linear-gradient(135deg, #f8fafc, #eff6ff);">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number" style="background: var(--sf-dark);">4</div>
+              <h4>Decision: Live Query or Pre-Enrich?</h4>
+            </div>
+            <p>Steps 2-3 ran AI functions at query time — great for exploration and ad-hoc analysis. For production, you need to decide: call AI live per-request, or pre-compute results into a table?</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Most SaaS products end up with <strong>pre-enrichment for read-heavy features</strong> (ticket queues, dashboards) and <strong>live calls for interactive actions</strong> (on-demand summarize, user-triggered classify).</p>
+          </div>
+          <div class="step-right">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+
+              <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+                <div style="font-size: 0.75rem; font-weight: 600; color: #16a34a; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Pre-Enrich (Dynamic Table)</div>
+                <div style="font-size: 0.92rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px;">Best for: features that display AI results on page load</div>
+                <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
+                  <li>Ticket queue with pre-computed categories, sentiment, summary</li>
+                  <li>Dashboard with enriched metrics (avg sentiment by week)</li>
+                  <li>Search index built on AI-extracted fields</li>
+                  <li><strong>Latency:</strong> ~0ms at page load (pre-computed)</li>
+                  <li><strong>Cost model:</strong> AI runs once per record, regardless of how many times it's viewed</li>
+                  <li><strong>Freshness:</strong> Controlled by TARGET_LAG (1 min to 1 hour typical)</li>
+                </ul>
+              </div>
+
+              <div style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+                <div style="font-size: 0.75rem; font-weight: 600; color: #2563eb; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Live Query (On-Demand)</div>
+                <div style="font-size: 0.92rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px;">Best for: user-triggered actions on specific records</div>
+                <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
+                  <li>"Summarize this call" button — runs AI on the one transcript the user clicked</li>
+                  <li>Ad-hoc analysis: "Classify all tickets from last week by a custom category set"</li>
+                  <li>Translate a document into the user's language on demand</li>
+                  <li><strong>Latency:</strong> 1-10 seconds depending on input size and model</li>
+                  <li><strong>Cost model:</strong> AI runs every time the action is triggered</li>
+                  <li><strong>Throughput:</strong> Subject to concurrent query limits and model availability</li>
+                </ul>
+              </div>
+
+              <div style="background: #fffbeb; border: 1px solid #fef08a; border-radius: 8px; padding: 14px; font-size: 0.82rem; color: #92400e; line-height: 1.5;">
+                <strong>Throughput considerations:</strong> AI functions consume warehouse credits and are subject to model concurrency limits. For high-volume pre-enrichment (10k+ records/hour), use a dedicated warehouse and consider batching with INSERT...SELECT rather than a dynamic table if you need to control exactly when enrichment runs. Monitor via <code>CORTEX_AI_FUNCTIONS_USAGE_HISTORY</code>.
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Dynamic Table Pre-Enrichment -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">5</div>
+              <h4>Pre-Enrich with a Dynamic Table</h4>
+            </div>
+            <p>Wrap the AI functions in a dynamic table so enrichment runs continuously as new tickets arrive. The UI queries pre-computed columns -- <strong>zero LLM latency at page load</strong>.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Set <code>TARGET_LAG</code> to control freshness. 1 minute means new tickets are enriched within 60 seconds of creation.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="kw">CREATE OR REPLACE DYNAMIC TABLE</span> enriched_tickets
+  <span class="kw">TARGET_LAG</span> = <span class="str">'1 minute'</span>
+  <span class="kw">WAREHOUSE</span> = AI_WH
+<span class="kw">AS</span>
+<span class="kw">SELECT</span>
+  ticket_id,
+  tenant_id,
+  subject,
+  body,
+  created_at,
+
+  <span class="comment">-- Pre-computed AI enrichments</span>
+  <span class="fn">AI_CLASSIFY</span>(body,
+    [<span class="str">'billing'</span>, <span class="str">'technical'</span>, <span class="str">'feature_request'</span>,
+     <span class="str">'account'</span>, <span class="str">'praise'</span>, <span class="str">'urgent'</span>],
+    { <span class="str">'output_mode'</span>: <span class="str">'multi'</span> }
+  ) <span class="kw">AS</span> categories,
+
+  <span class="fn">AI_SENTIMENT</span>(body) <span class="kw">AS</span> sentiment,
+
+  <span class="fn">AI_EXTRACT</span>(body, {
+    <span class="str">'issue_type'</span>: <span class="str">'string'</span>,
+    <span class="str">'affected_feature'</span>: <span class="str">'string'</span>,
+    <span class="str">'requested_action'</span>: <span class="str">'string'</span>
+  }) <span class="kw">AS</span> extracted,
+
+  <span class="fn">AI_COMPLETE</span>(<span class="str">'claude-sonnet'</span>,
+    <span class="str">'Summarize this support ticket in one
+     sentence: '</span> || body
+  ) <span class="kw">AS</span> summary
+
+<span class="kw">FROM</span> support_tickets;</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 6: UI Mockup -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">6</div>
+              <h4>The Product UI</h4>
+            </div>
+            <p>Your frontend queries the dynamic table -- no AI calls at render time. Every ticket arrives pre-classified, pre-scored, pre-summarized.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The query is just a SELECT with filters. The intelligence is in the data, not the application code.</p>
+          </div>
+          <div class="step-right">
+            <div class="ui-panel">
+              <div class="ui-panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Support Queue -- Acme Corp</span>
+                <span style="font-size: 0.68rem; color: var(--sf-primary);">Auto-classified &middot; Auto-routed</span>
+              </div>
+              <div class="ui-panel-body" style="padding: 0;">
+                <table class="result-table" style="margin: 0;">
+                  <thead><tr><th style="width: 50px;">#</th><th>Subject</th><th>Category</th><th>Sentiment</th><th>Summary</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td>1001</td>
+                      <td>Charged twice for May</td>
+                      <td><span class="badge badge-red">billing</span> <span class="badge badge-red">urgent</span></td>
+                      <td><span class="badge badge-red">-0.72</span></td>
+                      <td style="font-size: 0.72rem;">Duplicate charge on May 3rd and 17th, requesting refund. Repeat issue.</td>
+                    </tr>
+                    <tr>
+                      <td>1002</td>
+                      <td>API returning 500 errors</td>
+                      <td><span class="badge badge-blue">technical</span> <span class="badge badge-red">urgent</span></td>
+                      <td><span class="badge badge-amber">-0.31</span></td>
+                      <td style="font-size: 0.72rem;">Intermittent 500s on /v2/reports since Monday, ~30% of requests.</td>
+                    </tr>
+                    <tr>
+                      <td>1003</td>
+                      <td>Love the new dashboard</td>
+                      <td><span class="badge badge-green">praise</span></td>
+                      <td><span class="badge badge-green">+0.91</span></td>
+                      <td style="font-size: 0.72rem;">Positive feedback on new analytics dashboard drill-down filters.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="code-block" style="margin-top: 16px;"><pre><span class="comment">-- The frontend query: no AI, just a SELECT</span>
+<span class="kw">SELECT</span> ticket_id, subject, categories,
+       sentiment, summary
+<span class="kw">FROM</span> enriched_tickets
+<span class="kw">WHERE</span> tenant_id = <span class="str">'acme'</span>
+  <span class="kw">AND</span> created_at > <span class="fn">DATEADD</span>(<span class="str">'day'</span>, -7, <span class="fn">CURRENT_DATE</span>())
+<span class="kw">ORDER BY</span> sentiment <span class="kw">ASC</span>;
+<span class="comment">-- Angriest tickets first</span></pre></div>
+          </div>
+        </div>
+
+        <!-- Step 7: Cost Governance -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">7</div>
+              <h4>Cost Governance</h4>
+            </div>
+            <p>Control who can use which functions, set per-user quotas, and track AI spend per tenant. Function-level RBAC ensures the support team can classify but can't run expensive completions.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This ties directly to <a href="1-2-unit-cost-attribution.html" style="color: var(--sf-primary);">1.2 Unit Cost Attribution</a> -- AI credits show up in the same CORTEX_USAGE views.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Function-level RBAC: restrict which roles can use which functions</span>
+<span class="kw">REVOKE USE AI FUNCTIONS ON ACCOUNT FROM ROLE</span> PUBLIC;
+
+<span class="kw">GRANT USE AI FUNCTION</span> AI_CLASSIFY
+  <span class="kw">ON ACCOUNT TO ROLE</span> support_role;
+<span class="kw">GRANT USE AI FUNCTION</span> AI_SENTIMENT
+  <span class="kw">ON ACCOUNT TO ROLE</span> support_role;
+
+<span class="comment">-- Only the AI team gets AI_COMPLETE (most expensive)</span>
+<span class="kw">GRANT USE AI FUNCTION</span> AI_COMPLETE
+  <span class="kw">ON ACCOUNT TO ROLE</span> ai_team_role;
+
+<span class="comment">-- Model-level RBAC: restrict expensive models</span>
+<span class="kw">CALL</span> SNOWFLAKE.MODELS.CORTEX_BASE_MODELS_REFRESH();
+<span class="kw">GRANT APPLICATION ROLE</span>
+  <span class="str">"CORTEX-MODEL-ROLE-CLAUDE-4-5-SONNET"</span>
+  <span class="kw">TO ROLE</span> ai_team_role;
+
+<span class="comment">-- Track AI spend per tenant</span>
+<span class="kw">SELECT</span>
+  <span class="fn">PARSE_JSON</span>(query_tag):<span class="str">'tenant_id'</span> <span class="kw">AS</span> tenant,
+  function_name,
+  <span class="fn">SUM</span>(credits_used) <span class="kw">AS</span> ai_credits
+<span class="kw">FROM</span> snowflake.account_usage
+  .cortex_ai_functions_usage_history
+<span class="kw">WHERE</span> start_time > <span class="fn">DATEADD</span>(<span class="str">'day'</span>, -30, <span class="fn">CURRENT_DATE</span>())
+<span class="kw">GROUP BY</span> 1, 2
+<span class="kw">ORDER BY</span> ai_credits <span class="kw">DESC</span>;</pre></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p>
+  </footer>
+</body>
+</html>

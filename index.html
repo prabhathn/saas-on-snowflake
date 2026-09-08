@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="snowflake-source" content="cortex-agent-authored" />
+  <title>Snowflake for SaaS -- Step by Step</title>
+  <script type="application/json" id="snowflake-report-metadata">
+  {
+    "generated": "2026-09-03",
+    "intent": "Master Table of Contents for Snowflake SaaS demo series",
+    "sections": [
+      { "id": "foundation", "title": "Foundation and Operations", "producerNotes": "Covers RBAC, tenant isolation, cost attribution, metering" },
+      { "id": "ingestion", "title": "Data Ingestion and Architecture", "producerNotes": "Clickstream, multi-source unification, federated architecture" },
+      { "id": "analytics", "title": "Analytics and Semantic Layer", "producerNotes": "SQL analytics, entity models, ML features" },
+      { "id": "ai-features", "title": "AI-Powered Features", "producerNotes": "Cortex agents, AI functions, coding agents" },
+      { "id": "connectivity", "title": "Connectivity and Access Patterns", "producerNotes": "App runtime, APIs, MCP" },
+      { "id": "distribution", "title": "Distribution and Collaboration", "producerNotes": "DWaaS, native apps, clean rooms" }
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/>
+          <path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/>
+          <circle cx="18" cy="18" r="4" fill="white"/>
+        </svg>
+        Snowflake for SaaS
+      </a>
+      <ul class="nav-links">
+        <li><a href="#foundation">Foundation</a></li>
+        <li><a href="#ingestion">Ingestion</a></li>
+        <li><a href="#analytics">Analytics</a></li>
+        <li><a href="#ai-features">AI</a></li>
+        <li><a href="#connectivity">Connectivity</a></li>
+        <li><a href="#distribution">Distribution</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <h1>Building SaaS on Snowflake</h1>
+    <p>A hands-on guide to powering every layer of your SaaS application with Snowflake -- from multi-tenant data governance to embedded AI. Each topic walks through the business challenge, the technical architecture, and a working demo.</p>
+  </header>
+
+  <!-- Section Overview -->
+  <div style="background: linear-gradient(165deg, #052B42 0%, #11567F 50%, #1a7aad 100%); padding: clamp(32px, 5vw, 56px) clamp(16px, 4vw, 48px);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h2 style="color: white; font-size: 1.2rem; font-weight: 700; margin-bottom: 4px;">The SaaS-on-Snowflake Stack</h2>
+        <p style="color: rgba(255,255,255,0.65); font-size: 0.85rem;">6 pillars for building production SaaS applications on Snowflake</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">
+
+        <!-- 1. Foundation -->
+        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 16px 12px; text-align: center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 4px; display: block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-bottom: 6px;">01</div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: white; margin-bottom: 10px;">Foundation</div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <a href="#foundation" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Governance &amp; Provisioning</a>
+            <a href="#foundation" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Unit Cost Attribution</a>
+            <a href="#foundation" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Usage Metering</a>
+          </div>
+        </div>
+
+        <!-- 2. Ingestion -->
+        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 16px 12px; text-align: center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 4px; display: block;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <div style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-bottom: 6px;">02</div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: white; margin-bottom: 10px;">Ingestion</div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <a href="#ingestion" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Product Analytics</a>
+            <a href="#ingestion" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Multi-Source Unification</a>
+          </div>
+        </div>
+
+        <!-- 3. Analytics -->
+        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 16px 12px; text-align: center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 4px; display: block;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <div style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-bottom: 6px;">03</div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: white; margin-bottom: 10px;">Analytics</div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <a href="#analytics" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Embedded Analytics</a>
+            <a href="#analytics" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Unified Entity Model</a>
+            <a href="#analytics" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">ML Product Features</a>
+          </div>
+        </div>
+
+        <!-- 4. AI -->
+        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 16px 12px; text-align: center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 4px; display: block;"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>
+          <div style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-bottom: 6px;">04</div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: white; margin-bottom: 10px;">AI Features</div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <a href="#ai-features" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Embedded Agents</a>
+            <a href="#ai-features" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">AI Functions in UI</a>
+            <a href="#ai-features" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Coding Agents</a>
+          </div>
+        </div>
+
+        <!-- 5. Connectivity -->
+        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 16px 12px; text-align: center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 4px; display: block;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+          <div style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-bottom: 6px;">05</div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: white; margin-bottom: 10px;">Connectivity</div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <a href="#connectivity" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">App Layer</a>
+            <a href="#connectivity" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">API &amp; MCP Access</a>
+          </div>
+        </div>
+
+        <!-- 6. Distribution -->
+        <div style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 16px 12px; text-align: center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 4px; display: block;"><path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+          <div style="font-size: 0.6rem; color: rgba(255,255,255,0.5); margin-bottom: 6px;">06</div>
+          <div style="font-size: 0.75rem; font-weight: 600; color: white; margin-bottom: 10px;">Distribution</div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <a href="#distribution" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">DWaaS Architecture</a>
+            <a href="#distribution" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Native Apps</a>
+            <a href="#distribution" style="display: block; padding: 4px 6px; border-radius: 4px; background: rgba(255,255,255,0.06); font-size: 0.62rem; color: rgba(255,255,255,0.75); text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='rgba(41,181,232,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">Data Clean Rooms</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: Foundation and Operations -->
+  <section class="section" id="foundation">
+    <div class="section-header">
+      <div class="section-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>1</div>
+      <h2 class="section-title">Foundation and Operations</h2>
+    </div>
+    <p class="section-value">"Set up the tenant, measure the cost, bill the customer. Snowflake customers reduce tenant-isolation engineering effort by 60-80% and identify 20-40% of previously invisible infrastructure spend."</p>
+    <p class="section-desc">The bedrock of any SaaS platform: isolating tenants, governing access, tracking per-customer costs, and building consumption-based billing.</p>
+    <div class="card-grid">
+      <a class="card" href="concepts/1-1-multi-tenant-governance.html">
+        <span class="card-number">1.1</span>
+        <h3>Multi-Tenant Governance and Provisioning</h3>
+        <p>How to enforce tenant isolation with RBAC, row-access policies, and dynamic masking -- plus automating tenant onboarding with stored procedures and session variables.</p>
+        <div class="card-tags">
+          <span class="tag">RBAC</span>
+          <span class="tag">Row-Access Policies</span>
+          <span class="tag">Provisioning</span>
+          <span class="tag">Session Variables</span>
+          <span class="tag tag--storyboard">Storyboard</span>
+        </div>
+      </a>
+      <a class="card" href="concepts/1-2-unit-cost-attribution.html">
+        <span class="card-number">1.2</span>
+        <h3>Unit Cost Attribution</h3>
+        <p>Pinpointing the cost of serving each tenant: warehouse isolation, query tagging, ACCOUNT_USAGE views, resource monitors, and AI-spend attribution via CORTEX_USAGE.</p>
+        <div class="card-tags">
+          <span class="tag">Query Tagging</span>
+          <span class="tag">ACCOUNT_USAGE</span>
+          <span class="tag">CORTEX_USAGE</span>
+          <span class="tag tag--storyboard">Storyboard</span>
+        </div>
+      </a>
+      <a class="card" href="concepts/1-3-usage-metering-billing.html">
+        <span class="card-number">1.3</span>
+        <h3>Usage Metering and Billing</h3>
+        <p>Building consumption-based billing: tracking feature usage, API call counts, storage per tenant, and translating Snowflake metrics into customer invoices.</p>
+        <div class="card-tags">
+          <span class="tag">QUERY_HISTORY</span>
+          <span class="tag">Dynamic Tables</span>
+          <span class="tag">Custom Metering</span>
+          <span class="tag tag--storyboard">Storyboard</span>
+        </div>
+      </a>
+      <a class="card card--reference" href="concepts/1-4-other-topics.html">
+        <span class="card-number">1.4</span>
+        <h3>Other Topics</h3>
+        <p>Cross-tenant data sharing, operational monitoring and alerting, session policies, network security.</p>
+        <div class="card-tags">
+          <span class="tag">Reference</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Section 2: Data Ingestion and Architecture -->
+  <section class="section" id="ingestion">
+    <div class="section-header">
+      <div class="section-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>2</div>
+      <h2 class="section-title">Data Ingestion and Architecture</h2>
+    </div>
+    <p class="section-value">"With Snowpipe Streaming and Snowflake Postgres, SaaS platforms eliminate the latency gap between their operational database and their analytics layer -- sub-second event capture with zero infrastructure to manage."</p>
+    <p class="section-desc">Getting data in fast, unifying multi-source data, and keeping Snowflake in sync with your operational systems.</p>
+    <div class="card-grid">
+      <a class="card card--draft" href="concepts/2-1-product-analytics-clickstream.html">
+        <span class="card-number">2.1</span>
+        <h3>Product Analytics / Clickstream</h3>
+        <p>Capturing user behavior at scale: Snowpipe Streaming for sub-second ingestion, Hybrid Tables for hot lookups, Snowflake Postgres for OLTP-adjacent workloads, and mirroring for unified analytics.</p>
+        <div class="card-tags">
+          <span class="tag">Hybrid Tables</span>
+          <span class="tag">Snowflake Postgres</span>
+          <span class="tag">Snowpipe Streaming</span>
+        </div>
+      </a>
+      <a class="card card--draft" href="concepts/2-2-multi-source-data-unification.html">
+        <span class="card-number">2.2</span>
+        <h3>Multi-Source Data Unification</h3>
+        <p>Deduplicating records across sources, fuzzy entity matching, identity resolution, plus federated access via Iceberg tables and catalog integrations when data can't move.</p>
+        <div class="card-tags">
+          <span class="tag">Entity Resolution</span>
+          <span class="tag">Iceberg Tables</span>
+          <span class="tag">Fuzzy Matching</span>
+        </div>
+      </a>
+      <a class="card card--reference" href="concepts/2-3-other-topics.html">
+        <span class="card-number">2.3</span>
+        <h3>Other Topics</h3>
+        <p>Event-driven pipelines, CDC and data mirroring, hybrid and federated architecture, Snowpipe Streaming configuration.</p>
+        <div class="card-tags">
+          <span class="tag">Reference</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Section 3: Analytics and Semantic Layer -->
+  <section class="section" id="analytics">
+    <div class="section-header">
+      <div class="section-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>3</div>
+      <h2 class="section-title">Analytics and Semantic Layer</h2>
+    </div>
+    <p class="section-value">"SaaS platforms running analytics on Snowflake serve customer-facing dashboards with sub-second response times at thousands of concurrent queries -- while a unified semantic layer lets agents, APIs, and BI tools share one source of truth."</p>
+    <p class="section-desc">Powering your product's analytics, building cross-domain entity models, and serving ML predictions directly from Snowflake.</p>
+    <div class="card-grid">
+      <a class="card card--draft" href="concepts/3-1-embedded-sql-analytics.html">
+        <span class="card-number">3.1</span>
+        <h3>Embedded SQL Analytics</h3>
+        <p>Serving customer-facing dashboards and reports: parameterized queries, result caching, query acceleration, and materialized views for instant aggregations.</p>
+        <div class="card-tags">
+          <span class="tag">SQL API</span>
+          <span class="tag">Result Cache</span>
+          <span class="tag">Query Acceleration</span>
+        </div>
+      </a>
+      <a class="card card--draft" href="concepts/3-2-unified-entity-model.html">
+        <span class="card-number">3.2</span>
+        <h3>Unified Entity Model</h3>
+        <p>Building a logical entity model that abstracts physical schemas: semantic views, ontology design with typed relationships, and multi-hop traversal for cross-domain queries.</p>
+        <div class="card-tags">
+          <span class="tag">Semantic Views</span>
+          <span class="tag">Ontology</span>
+          <span class="tag">Graph Traversal</span>
+        </div>
+      </a>
+      <a class="card card--draft" href="concepts/3-3-ml-powered-product-features.html">
+        <span class="card-number">3.3</span>
+        <h3>ML-Powered Product Features</h3>
+        <p>Deploying models as SQL functions: feature store for consistent inputs, UDF-based inference for real-time scoring, and Cortex fine-tuning for domain-specific models.</p>
+        <div class="card-tags">
+          <span class="tag">Feature Store</span>
+          <span class="tag">UDFs</span>
+          <span class="tag">Model Registry</span>
+        </div>
+      </a>
+      <a class="card card--reference" href="concepts/3-4-other-topics.html">
+        <span class="card-number">3.4</span>
+        <h3>Other Topics</h3>
+        <p>ML training and model registry, feature store deep dive, compute pools and GPUs.</p>
+        <div class="card-tags">
+          <span class="tag">Reference</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Section 4: AI-Powered Features -->
+  <section class="section" id="ai-features">
+    <div class="section-header">
+      <div class="section-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"/></svg>4</div>
+      <h2 class="section-title">AI-Powered Features</h2>
+    </div>
+    <p class="section-value">"Snowflake Cortex lets SaaS teams ship AI features in days instead of months -- no model hosting, no vector database, no separate inference infrastructure. One SQL call adds summarization, classification, or a full conversational agent to your product."</p>
+    <p class="section-desc">Adding intelligence to your product: embedded AI agents, LLM-powered UI components, and coding agents for automation.</p>
+    <div class="card-grid">
+      <a class="card" href="concepts/4-1-embedded-agents.html">
+        <span class="card-number">4.1</span>
+        <h3>Embedded Agents</h3>
+        <p>Giving your users a conversational AI interface: Cortex Agents API for tool-use, semantic views for structured data access, and REST API integration with external agent frameworks.</p>
+        <div class="card-tags">
+          <span class="tag">Cortex Agents</span>
+          <span class="tag">REST API</span>
+          <span class="tag">Semantic Views</span>
+          <span class="tag tag--storyboard">Storyboard</span>
+        </div>
+      </a>
+      <a class="card" href="concepts/4-2-ai-functions-ui.html">
+        <span class="card-number">4.2</span>
+        <h3>AI Functions in the UI</h3>
+        <p>Enriching your product's interface with AI: summarizing transcripts, classifying support tickets, extracting entities from documents, and sentiment analysis -- all as SQL function calls.</p>
+        <div class="card-tags">
+          <span class="tag">AI_COMPLETE</span>
+          <span class="tag">AI_CLASSIFY</span>
+          <span class="tag">AI_EXTRACT</span>
+          <span class="tag tag--storyboard">Storyboard</span>
+        </div>
+      </a>
+      <a class="card card--draft" href="concepts/4-3-embedded-coding-agents.html">
+        <span class="card-number">4.3</span>
+        <h3>Embedded Coding Agents</h3>
+        <p>Giving your product AI-powered code generation and automation: Cortex Code SDK for embedding coding agents that can write, execute, and iterate on code within your application.</p>
+        <div class="card-tags">
+          <span class="tag">Cortex Code SDK</span>
+          <span class="tag">Code Generation</span>
+          <span class="tag">Automation</span>
+        </div>
+      </a>
+      <a class="card card--reference" href="concepts/4-4-other-topics.html">
+        <span class="card-number">4.4</span>
+        <h3>Other Topics</h3>
+        <p>RAG and knowledge bases, Cortex Search, Cortex fine-tuning.</p>
+        <div class="card-tags">
+          <span class="tag">Reference</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Section 5: Connectivity and Access Patterns -->
+  <section class="section" id="connectivity">
+    <div class="section-header">
+      <div class="section-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>5</div>
+      <h2 class="section-title">Connectivity and Access Patterns</h2>
+    </div>
+    <p class="section-value">"Snowflake becomes the backend for your product with zero middleware. SQL API, App Runtime, and MCP connections let you serve data to any frontend -- React apps, mobile clients, BI tools, or AI agents."</p>
+    <p class="section-desc">How your application connects to and serves data from Snowflake: hosting the app layer, exposing APIs, and modern connectivity patterns.</p>
+    <div class="card-grid">
+      <a class="card card--draft" href="concepts/5-1-building-app-layer.html">
+        <span class="card-number">5.1</span>
+        <h3>Building the App Layer</h3>
+        <p>Running your application on Snowflake itself: Snowflake App Runtime (Next.js on SPCS) for full-stack web apps, and Streamlit-in-Snowflake for internal tools and rapid prototyping.</p>
+        <div class="card-tags">
+          <span class="tag">App Runtime</span>
+          <span class="tag">SPCS</span>
+          <span class="tag">Streamlit</span>
+        </div>
+      </a>
+      <a class="card card--draft" href="concepts/5-2-api-mcp-access-patterns.html">
+        <span class="card-number">5.2</span>
+        <h3>API and MCP Access Patterns</h3>
+        <p>Exposing Snowflake data as APIs: SQL API for direct queries, SPCS-hosted REST endpoints, MCP connections for AI tool integration, and authentication patterns.</p>
+        <div class="card-tags">
+          <span class="tag">SQL API</span>
+          <span class="tag">SPCS</span>
+          <span class="tag">MCP</span>
+          <span class="tag">OAuth</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Section 6: Distribution and Collaboration -->
+  <section class="section" id="distribution">
+    <div class="section-header">
+      <div class="section-number"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>6</div>
+      <h2 class="section-title">Distribution and Collaboration</h2>
+    </div>
+    <p class="section-value">"Stop giving customers raw Snowflake logins. From Reader Accounts to Native Apps to Data Clean Rooms, there's a distribution model for every level of control, investment, and data sensitivity."</p>
+    <p class="section-desc">How you get your data, analytics, and AI capabilities into your customers' hands -- ranging from lightweight sharing to full application distribution.</p>
+    <div class="card-grid">
+      <a class="card card--draft" href="concepts/6-1-managed-dwaas-architecture.html">
+        <span class="card-number">6.1</span>
+        <h3>Managed Data-as-a-Service Architecture</h3>
+        <p>The decision framework for delivering data to customers: from direct Snowflake access (and why to stop) through Reader Accounts, Secure Shares, Native Apps, and full SaaS applications. 8 options, 4 decision points.</p>
+        <div class="card-tags">
+          <span class="tag">Decision Framework</span>
+          <span class="tag">Reader Accounts</span>
+          <span class="tag">Secure Shares</span>
+        </div>
+      </a>
+      <a class="card card--draft" href="concepts/6-2-native-app-distribution.html">
+        <span class="card-number">6.2</span>
+        <h3>Native App Distribution</h3>
+        <p>Distributing your SaaS as a Snowflake Native App: application packages, versioning, marketplace listing, and the provider/consumer model for B2B distribution.</p>
+        <div class="card-tags">
+          <span class="tag">Native Apps</span>
+          <span class="tag">App Packages</span>
+          <span class="tag">Marketplace</span>
+        </div>
+      </a>
+      <a class="card card--draft" href="concepts/6-3-data-clean-rooms.html">
+        <span class="card-number">6.3</span>
+        <h3>Data Clean Rooms</h3>
+        <p>Controlled collaboration where customers run analytics against data they can't see: privacy-safe joins, secure computation, and multi-party data sharing for sensitive use cases.</p>
+        <div class="card-tags">
+          <span class="tag">Clean Rooms</span>
+          <span class="tag">Privacy-Safe Joins</span>
+          <span class="tag">Secure Computation</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p>
+  </footer>
+
+</body>
+</html>

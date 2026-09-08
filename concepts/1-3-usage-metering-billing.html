@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>1.3 Usage Metering and Billing | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .roles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .role-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .role-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; } .role-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    a.feature-item { text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    a.feature-item:hover { border-color: var(--sf-primary); box-shadow: 0 2px 8px rgba(41,181,232,0.1); }
+    a.feature-item h4::after { content: ' \2197'; font-size: 0.75rem; color: var(--sf-primary); }
+    .customer-story { background: var(--sf-lighter); border-left: 4px solid var(--sf-primary); border-radius: 0 8px 8px 0; padding: 20px; margin-top: 16px; }
+    .customer-story p { font-style: italic; margin-bottom: 8px; } .customer-story .attribution { font-style: normal; font-weight: 600; font-size: 0.85rem; color: var(--sf-dark); }
+    .page-container { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+
+    /* Pricing decision cards */
+    .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
+    .pricing-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 22px; }
+    .pricing-card h3 { font-size: 1rem; font-weight: 700; color: var(--sf-dark); margin-bottom: 4px; }
+    .pricing-card .pricing-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .pricing-card p { font-size: 0.86rem; color: var(--text-muted); margin-bottom: 10px; }
+    .pricing-card ul { padding-left: 16px; margin: 0; } .pricing-card li { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 5px; }
+    .pricing-card.recommended { border-color: var(--sf-primary); border-width: 2px; }
+    .pricing-card.recommended .pricing-label { color: #10b981; }
+
+    /* Metering pipeline visual */
+    .pipeline-visual { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+    .pipeline-stage { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: center; position: relative; }
+    .pipeline-stage .stage-num { font-size: 0.65rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .pipeline-stage h4 { font-size: 0.95rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px; }
+    .pipeline-stage p { font-size: 0.8rem; color: var(--text-muted); margin: 0; text-align: left; }
+    .pipeline-stage::after { content: '\2192'; position: absolute; right: -14px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: var(--sf-primary); font-weight: 700; }
+    .pipeline-stage:last-child::after { content: none; }
+
+    /* Storyboard with left/right split */
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 24px; }
+    .story-step { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+    .step-left .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .step-number { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .step-left h4 { font-size: 1rem; font-weight: 650; color: var(--text-heading); margin: 0; }
+    .step-left p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+    .step-right { min-width: 0; }
+
+    /* Code blocks */
+    .code-block { background: #1e293b; border-radius: 8px; padding: 20px; overflow-x: auto; }
+    .code-block pre { margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.78rem; line-height: 1.6; color: #e2e8f0; white-space: pre; }
+    .code-block .kw { color: #7dd3fc; }
+    .code-block .str { color: #86efac; }
+    .code-block .comment { color: #64748b; font-style: italic; }
+    .code-block .fn { color: #c4b5fd; }
+
+    /* Diagram containers */
+    .diagram { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 24px; position: relative; }
+    .diagram-label { position: absolute; top: 8px; right: 12px; font-size: 0.7rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Result mockup */
+    .result-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; margin-top: 12px; }
+    .result-table th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 8px 10px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+    .result-table td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: top; }
+    .result-table tr:hover { background: #f8fafc; }
+
+    /* UI mockup panels */
+    .ui-panel { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 12px; }
+    .ui-panel-header { padding: 8px 12px; font-size: 0.75rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border); }
+    .ui-panel-body { padding: 14px; background: white; font-size: 0.8rem; color: #334155; line-height: 1.6; }
+
+    /* Metric boxes for dashboard mockup */
+    .metric-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+    .metric-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; text-align: center; }
+    .metric-box .metric-label { font-size: 0.68rem; color: #64748b; margin-bottom: 2px; }
+    .metric-box .metric-value { font-size: 1.1rem; font-weight: 700; color: var(--text-heading); }
+    .metric-box .metric-sub { font-size: 0.65rem; color: #94a3b8; margin-top: 2px; }
+
+    @media (max-width: 900px) {
+      .story-step { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .pipeline-visual { grid-template-columns: 1fr; }
+      .pipeline-stage::after { content: none; }
+      .metric-row { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 1: Foundation &rarr; 1.3 Usage Metering and Billing</div>
+
+    <div class="concept-hero">
+      <h1>Usage Metering and Billing</h1>
+      <p class="subtitle">Building consumption-based billing on Snowflake: tracking every tenant's usage in real time, choosing the right pricing model, and translating metered events into customer invoices -- all without a custom metering pipeline.</p>
+    </div>
+
+    <!-- How Companies Accomplish This Today -->
+    <div class="concept-section">
+      <h2>How Companies Accomplish This Today</h2>
+      <ul>
+        <li><strong>Application-level counters:</strong> Increment Redis/DynamoDB counters for every API call, feature usage, or record created. Requires instrumentation in every service -- miss one, and you're giving away a feature for free.</li>
+        <li><strong>Log aggregation pipelines:</strong> Ship application logs to Kafka, aggregate in Flink or Spark, write to a billing DB. Complex, expensive, and typically 1-6 hours behind real time.</li>
+        <li><strong>Third-party metering platforms:</strong> Tools like Metronome, Amberflo, or Orb that sit between your app and billing system. Add cost, another integration point, and a data residency concern.</li>
+        <li><strong>Manual reconciliation:</strong> Finance teams manually reconcile infrastructure costs with customer accounts monthly. Doesn't scale past ~100 customers.</li>
+      </ul>
+    </div>
+
+    <!-- Roles -->
+    <div class="concept-section">
+      <h2>Roles and People Involved</h2>
+      <div class="roles-grid">
+        <div class="role-card"><h4>Revenue Operations</h4><p>Translates usage data into invoices, manages billing disputes, and ensures metering accuracy matches contractual terms.</p></div>
+        <div class="role-card"><h4>Product / Pricing</h4><p>Designs usage-based pricing models, defines billable units, and sets tier thresholds. Owns the value metric decision.</p></div>
+        <div class="role-card"><h4>Backend Engineering</h4><p>Instruments the application to emit metering events and integrates the billing pipeline with Stripe, Chargebee, or a custom system.</p></div>
+        <div class="role-card"><h4>Customer Success</h4><p>Helps customers understand their usage, provides cost optimization guidance, and handles bill-shock escalations.</p></div>
+      </div>
+    </div>
+
+    <!-- Challenges -->
+    <div class="concept-section">
+      <h2>Challenges Today</h2>
+      <ul>
+        <li><strong>Instrumentation debt:</strong> Every new feature needs metering code. Miss one endpoint and you're giving away value for free.</li>
+        <li><strong>Accuracy at scale:</strong> At millions of events per day, even small counting errors compound into significant billing discrepancies.</li>
+        <li><strong>Real-time vs. batch:</strong> Customers want to see their current usage in real time, but metering pipelines are typically batch-processed with hours of lag.</li>
+        <li><strong>Billing flexibility:</strong> Changing pricing models (per-seat to per-query to per-AI-call) requires re-engineering the entire metering pipeline.</li>
+        <li><strong>Bill shock:</strong> 78% of IT leaders reported unexpected charges from consumption-based SaaS in 2026 (Zylo). Without usage alerts and estimators, consumption pricing erodes trust.</li>
+      </ul>
+    </div>
+
+    <!-- What Snowflake Offers -->
+    <div class="concept-section">
+      <h2>What Snowflake Offers</h2>
+      <p>Snowflake gives you the metering infrastructure as a byproduct of running your platform. Every query, every AI call, every byte stored is already tracked in ACCOUNT_USAGE views. Layer application-level events on top, and you have a complete billing pipeline in SQL.</p>
+      <ul>
+        <li><strong>Platform metering for free:</strong> QUERY_ATTRIBUTION_HISTORY, CORTEX_AI_FUNCTIONS_USAGE_HISTORY, and TABLE_STORAGE_METRICS already track credits and bytes per tenant (via query_tag). No additional instrumentation for infrastructure costs.</li>
+        <li><strong>Application event metering:</strong> Stream custom events (API calls, feature invocations) via Snowpipe Streaming. Sub-second latency from your app to the metering table.</li>
+        <li><strong>Real-time aggregation:</strong> Dynamic tables continuously compute per-tenant billing totals. TARGET_LAG = 1 minute means your customer's usage dashboard is always current.</li>
+        <li><strong>Flexible rating logic:</strong> Change your billing unit from "queries" to "report views" to "AI tokens" with a SQL change -- no pipeline rebuild.</li>
+        <li><strong>Auditable by default:</strong> Every metering record is immutable, timestamped, and queryable. Dispute resolution is a Time Travel query, not a forensic investigation.</li>
+      </ul>
+    </div>
+
+    <!-- The Metering Stack -->
+    <div class="concept-section">
+      <h2>The Metering Stack on Snowflake</h2>
+      <p>Consumption billing has three stages. Snowflake handles all three with native capabilities:</p>
+      <div class="pipeline-visual">
+        <div class="pipeline-stage">
+          <div class="stage-num">Stage 1</div>
+          <h4>Meter</h4>
+          <p>Capture raw usage events: API calls from your app (Snowpipe Streaming), platform costs from ACCOUNT_USAGE views, AI credits from CORTEX_USAGE. Every event has tenant_id + timestamp.</p>
+        </div>
+        <div class="pipeline-stage">
+          <div class="stage-num">Stage 2</div>
+          <h4>Rate</h4>
+          <p>Convert raw events into billable units. A Dynamic Table applies your pricing logic: map "5 queries" to "1 report view", apply tier discounts, deduct committed use. Updated continuously.</p>
+        </div>
+        <div class="pipeline-stage">
+          <div class="stage-num">Stage 3</div>
+          <h4>Invoice</h4>
+          <p>Snapshot the rated usage at period end. Apply final pricing rules, generate a JSON invoice record, and push to Stripe/Chargebee via external access integration.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Model Decision -->
+    <div class="concept-section">
+      <h2>Choosing Your Pricing Model</h2>
+      <p>77% of large SaaS companies now use some form of consumption pricing (Metronome 2025). The question isn't whether to adopt it, but which model fits your product. In 2026, <strong>hybrid</strong> (platform fee + usage) is the dominant pattern at 37% adoption.</p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-label" style="color: #6b7280;">Traditional</div>
+          <h3>Per-Seat + Platform Fee</h3>
+          <p>Flat monthly fee per user. Predictable for customers and for your revenue forecast.</p>
+          <ul>
+            <li>Simple to implement and explain</li>
+            <li>Predictable revenue for you and costs for customer</li>
+            <li>Misaligned with AI: one agent does the work of 10 seats</li>
+            <li>Limits expansion revenue -- heavy users pay the same</li>
+            <li><strong>Best for:</strong> products where value scales with team size</li>
+          </ul>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-label" style="color: #2563eb;">Pure Usage</div>
+          <h3>Per-Unit (Pay-as-You-Go)</h3>
+          <p>Bill per API call, query, GB stored, or AI token. Perfect alignment between usage and price.</p>
+          <ul>
+            <li>Zero barrier to entry -- start free, pay as you grow</li>
+            <li>Natural expansion revenue as usage increases</li>
+            <li>Bill shock risk: 78% of buyers hit unexpected charges</li>
+            <li>Revenue volatility -- hard to forecast</li>
+            <li><strong>Best for:</strong> API-first platforms, data products, AI services</li>
+          </ul>
+        </div>
+        <div class="pricing-card recommended">
+          <div class="pricing-label">2026 consensus</div>
+          <h3>Hybrid (Platform + Usage)</h3>
+          <p>Base platform fee for access + usage-based component for consumption. Predictability meets alignment.</p>
+          <ul>
+            <li>Predictable base revenue + usage-driven expansion</li>
+            <li>Committed tiers with overage protect both sides</li>
+            <li>Customers can budget the base, grow into usage</li>
+            <li>Most flexibility for AI feature pricing</li>
+            <li><strong>Best for:</strong> most SaaS products in 2026</li>
+          </ul>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-label" style="color: #d97706;">Volume Tiered</div>
+          <h3>Committed Tiers with Overage</h3>
+          <p>Customer commits to a usage tier (e.g., 10K queries/month). Lower per-unit rate. Overage billed at a premium.</p>
+          <ul>
+            <li>Predictable for customer within committed range</li>
+            <li>Lower COGS per unit at volume (pass through savings)</li>
+            <li>Requires usage estimation -- wrong tier = waste</li>
+            <li>Overage rates can cause bill shock</li>
+            <li><strong>Best for:</strong> enterprise contracts with high-volume tenants</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- From COGS to Price -->
+    <div class="concept-section">
+      <h2>From COGS to Price: Setting Your Rates</h2>
+      <p>Section <a href="1-2-unit-cost-attribution.html" style="color: var(--sf-primary);">1.2 Unit Cost Attribution</a> gives you the cost floor: what it costs you to serve each tenant. This section shows how to set your customer-facing price on top of that.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px;">
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Step 1</div>
+          <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px;">Know Your Cost Floor</div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">Query QUERY_ATTRIBUTION_HISTORY and CORTEX_AI_FUNCTIONS_USAGE_HISTORY to calculate your blended cost per billable unit. Example: if one "report view" costs you 0.003 credits ($0.009), that's your floor.</p>
+        </div>
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Step 2</div>
+          <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px;">Apply Target Margin</div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">Target 70-80% gross margin. If your cost floor is $0.009, your customer price is $0.03-$0.045 per unit. Build in headroom for growth, support, and R&D amortization.</p>
+        </div>
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
+          <div style="font-size: 0.72rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px;">Step 3</div>
+          <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px;">Prevent Bill Shock</div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">Offer committed use agreements (lower per-unit rates for volume commitments). Add usage alerts at 50%/80%/100% of committed tier. Show a real-time cost estimator in your product.</p>
+        </div>
+      </div>
+      <p style="margin-top: 16px; font-size: 0.88rem; color: var(--text-muted);"><strong>Key insight:</strong> Choose a "value metric" that correlates with customer value, not just your cost. "Report views" is better than "queries" because the customer understands the value of a report. "AI insights generated" is better than "tokens consumed" because the customer pays for the outcome, not the input.</p>
+    </div>
+
+    <!-- Tenant Spend Governance -->
+    <div class="concept-section">
+      <h2>Helping Tenants Control Their Own Spend</h2>
+      <p>In a managed SaaS model, you (the provider) own the Snowflake account. Your tenants can't log in to Snowsight and set their own budgets. But you can build self-service spend controls into your product using Snowflake's governance features as the enforcement layer.</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
+
+        <!-- Resource Monitors -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid #16a34a; border-radius: 2px 10px 10px 2px; padding: 22px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 650; color: var(--text-heading);">Resource Monitors</div>
+              <div style="font-size: 0.68rem; color: #16a34a; font-weight: 600;">GA &middot; Hard Stop</div>
+            </div>
+          </div>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Attach a credit quota to a tenant's warehouse. When the quota hits, the warehouse suspends -- hard stop, no overage.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #f0fdf4; color: #16a34a; font-weight: 600;">Warehouse Compute</span>
+          </div>
+          <ul style="padding-left: 16px; margin: 0; font-size: 0.8rem; color: var(--text-muted);">
+            <li><strong>Provider:</strong> CREATE RESOURCE MONITOR, assign to tenant warehouse</li>
+            <li><strong>Tenant self-service:</strong> Your app calls ALTER RESOURCE MONITOR on their behalf</li>
+            <li><strong>Limit:</strong> Warehouse compute only -- no serverless, AI, or storage</li>
+          </ul>
+        </div>
+
+        <!-- Custom Budgets -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--sf-primary); border-radius: 2px 10px 10px 2px; padding: 22px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#29B5E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 650; color: var(--text-heading);">Custom Budgets</div>
+              <div style="font-size: 0.68rem; color: var(--sf-primary); font-weight: 600;">GA &middot; Alert + Action</div>
+            </div>
+          </div>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Tag tenant objects with <code style="font-size: 0.78rem;">tenant_id = 'acme'</code>, create a budget for that tag. Monitors all services.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">Compute</span>
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">Serverless</span>
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">AI</span>
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">Clustering</span>
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">Agents</span>
+          </div>
+          <ul style="padding-left: 16px; margin: 0; font-size: 0.8rem; color: var(--text-muted);">
+            <li><strong>Provider:</strong> Create budget, set limit, configure webhooks (Slack/PagerDuty)</li>
+            <li><strong>Tenant self-service:</strong> Your app calls <code style="font-size: 0.75rem;">budget!SET_SPENDING_LIMIT()</code></li>
+            <li><strong>Limit:</strong> Alert only -- no hard stop. Triggers stored procs at threshold. Max 100/account</li>
+          </ul>
+        </div>
+
+        <!-- Per-User Quotas -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid #7c3aed; border-radius: 2px 10px 10px 2px; padding: 22px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 650; color: var(--text-heading);">Per-User Quotas</div>
+              <div style="font-size: 0.68rem; color: #7c3aed; font-weight: 600;">Public Preview &middot; Hard Stop</div>
+            </div>
+          </div>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Daily or monthly credit caps per Snowflake user. When hit, AI function calls and Agent interactions pause. ~5 min enforcement.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #f5f3ff; color: #7c3aed; font-weight: 600;">AI Functions</span>
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #f5f3ff; color: #7c3aed; font-weight: 600;">Agents</span>
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #f5f3ff; color: #7c3aed; font-weight: 600;">Cortex Code</span>
+          </div>
+          <ul style="padding-left: 16px; margin: 0; font-size: 0.8rem; color: var(--text-muted);">
+            <li><strong>Provider:</strong> Map tenant to service user, set daily/monthly quota</li>
+            <li><strong>Tenant self-service:</strong> Expose in app UI, call quota API on their behalf</li>
+            <li><strong>Best for:</strong> AI spend control. Pairs with function-level RBAC</li>
+          </ul>
+        </div>
+
+        <!-- Application-Level -->
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid #d97706; border-radius: 2px 10px 10px 2px; padding: 22px;">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <div>
+              <div style="font-size: 0.95rem; font-weight: 650; color: var(--text-heading);">Application-Level Controls</div>
+              <div style="font-size: 0.68rem; color: #d97706; font-weight: 600;">DIY &middot; Full Flexibility</div>
+            </div>
+          </div>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Query your rated_usage dynamic table before allowing expensive operations. Check spend against the tenant's plan limit.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #fffbeb; color: #d97706; font-weight: 600;">Everything</span>
+            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #fffbeb; color: #d97706; font-weight: 600;">Custom Logic</span>
+          </div>
+          <ul style="padding-left: 16px; margin: 0; font-size: 0.8rem; color: var(--text-muted);">
+            <li><strong>Pattern:</strong> Check <code style="font-size: 0.75rem;">rated_usage</code> before each expensive operation</li>
+            <li><strong>Tenant self-service:</strong> Full control -- alerts, auto-downgrade, buy more</li>
+            <li><strong>Advantage:</strong> No Snowflake dependency. Your logic, your limits, your UX</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Recommendation callout -->
+      <div style="margin-top: 20px; padding: 16px 20px; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border: 1px solid #bfdbfe; border-radius: 10px; display: flex; align-items: flex-start; gap: 12px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sf-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <p style="font-size: 0.86rem; color: var(--sf-dark); margin: 0; line-height: 1.5;"><strong>Recommended approach:</strong> Use <strong>custom budgets</strong> (tag-based) for account-wide alerting across all services. Add <strong>resource monitors</strong> for hard-stop warehouse controls on high-spend tenants. Layer <strong>application-level checks</strong> for fine-grained, tenant-facing spend controls in your product UI. The three layers complement each other.</p>
+      </div>
+    </div>
+
+    <!-- Snowflake Features Used -->
+    <div class="concept-section">
+      <h2>Snowflake Features Used</h2>
+      <div class="feature-list">
+        <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/account-usage/query_attribution_history" target="_blank">
+          <h4>QUERY_ATTRIBUTION_HISTORY</h4>
+          <p>Per-query credit attribution on standard warehouses. Includes query_tag for tenant-level cost breakdowns. The foundation for compute-based COGS.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/info-schema/table_storage_metrics" target="_blank">
+          <h4>TABLE_STORAGE_METRICS</h4>
+          <p>Per-table storage bytes (active, Time Travel, Failsafe). For OPT models, gives per-tenant storage directly. For MTT, estimate via row counts.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/dynamic-tables/overview" target="_blank">
+          <h4>Dynamic Tables</h4>
+          <p>Continuously materialized billing aggregations. Running totals per tenant per billing period, updated automatically. TARGET_LAG = 1 minute for real-time dashboards.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/data-load-snowpipe-streaming-overview" target="_blank">
+          <h4>Snowpipe Streaming</h4>
+          <p>Ingest application-level usage events in real time. Sub-second latency from your app's API middleware to the metering table.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/developer-guide/logging-tracing/event-table-setting-up" target="_blank">
+          <h4>Event Tables</h4>
+          <p>Capture structured telemetry from UDFs, procedures, and SPCS services. Track function invocations, errors, and latency per tenant automatically.</p>
+        </a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/data-time-travel" target="_blank">
+          <h4>Time Travel</h4>
+          <p>Query metering data as it existed at any point in the past. Dispute resolution is a SQL query: "show me what the meter read at invoice time."</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Demo Storyboard -->
+    <div class="concept-section">
+      <h2>Demo Storyboard</h2>
+      <p>A complete walkthrough: from raw usage events to a customer-facing invoice, showing the full meter → rate → invoice pipeline.</p>
+
+      <div class="storyboard">
+        <!-- Step 1: Metering Events Table -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">1</div>
+              <h4>Define the Metering Events Table</h4>
+            </div>
+            <p>A single table captures every billable event: API calls from your app, compute from Snowflake, AI invocations, storage snapshots. Every row has <code>tenant_id</code>, <code>event_type</code>, <code>quantity</code>, and optional metadata.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This is the "raw meter" -- the single source of truth for all billing.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="kw">CREATE TABLE</span> billing.metering_events (
+  event_id     <span class="kw">VARCHAR DEFAULT</span> <span class="fn">UUID_STRING</span>(),
+  tenant_id    <span class="kw">VARCHAR NOT NULL</span>,
+  event_type   <span class="kw">VARCHAR NOT NULL</span>,
+  metric_name  <span class="kw">VARCHAR NOT NULL</span>,
+  quantity     <span class="kw">NUMBER</span>(18,4) <span class="kw">NOT NULL</span>,
+  metadata     <span class="kw">VARIANT</span>,
+  event_ts     <span class="kw">TIMESTAMP_NTZ DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>()
+);
+
+<span class="comment">-- Sample events across 4 types</span>
+<span class="kw">INSERT INTO</span> billing.metering_events
+  (tenant_id, event_type, metric_name, quantity, metadata)
+<span class="kw">VALUES</span>
+  <span class="comment">-- Application-level: API calls from your middleware</span>
+  (<span class="str">'acme'</span>,    <span class="str">'app'</span>,     <span class="str">'api_calls'</span>,       142, <span class="kw">NULL</span>),
+  (<span class="str">'acme'</span>,    <span class="str">'app'</span>,     <span class="str">'report_views'</span>,     38, <span class="kw">NULL</span>),
+  <span class="comment">-- Platform: compute credits (from QUERY_ATTRIBUTION)</span>
+  (<span class="str">'acme'</span>,    <span class="str">'compute'</span>, <span class="str">'credits_used'</span>,   4.23, <span class="kw">NULL</span>),
+  <span class="comment">-- AI: Cortex function credits</span>
+  (<span class="str">'acme'</span>,    <span class="str">'ai'</span>,      <span class="str">'ai_credits'</span>,     1.87, <span class="kw">NULL</span>),
+  <span class="comment">-- Storage: daily snapshot</span>
+  (<span class="str">'acme'</span>,    <span class="str">'storage'</span>, <span class="str">'gb_stored'</span>,     12.4, <span class="kw">NULL</span>),
+  <span class="comment">-- Globex tenant</span>
+  (<span class="str">'globex'</span>,  <span class="str">'app'</span>,     <span class="str">'api_calls'</span>,        67, <span class="kw">NULL</span>),
+  (<span class="str">'globex'</span>,  <span class="str">'compute'</span>, <span class="str">'credits_used'</span>,   1.12, <span class="kw">NULL</span>),
+  (<span class="str">'globex'</span>,  <span class="str">'ai'</span>,      <span class="str">'ai_credits'</span>,     0.34, <span class="kw">NULL</span>);</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 2: Stream Events from App -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">2</div>
+              <h4>Stream Events from Your App</h4>
+            </div>
+            <p>Your API middleware intercepts every tenant request and emits a metering event via Snowpipe Streaming. No batch jobs, no separate metering service -- events land in Snowflake in under a second.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This replaces the Kafka → Flink → Redis → billing DB pipeline with a single SDK call.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment"># FastAPI middleware that emits metering events</span>
+<span class="kw">from</span> snowflake.streaming <span class="kw">import</span> SnowflakeStreamingClient
+
+client = SnowflakeStreamingClient(...)
+channel = client.open_channel(
+    name=<span class="str">"metering_channel"</span>,
+    database=<span class="str">"APP_DB"</span>,
+    schema=<span class="str">"BILLING"</span>,
+    table=<span class="str">"METERING_EVENTS"</span>
+)
+
+<span class="kw">async def</span> <span class="fn">metering_middleware</span>(request, call_next):
+    <span class="comment"># Get tenant from auth context</span>
+    tenant_id = request.state.tenant_id
+    response = <span class="kw">await</span> call_next(request)
+
+    <span class="comment"># Emit metering event -- sub-second to Snowflake</span>
+    channel.insert_row({
+        <span class="str">"tenant_id"</span>:   tenant_id,
+        <span class="str">"event_type"</span>:  <span class="str">"app"</span>,
+        <span class="str">"metric_name"</span>: <span class="str">"api_calls"</span>,
+        <span class="str">"quantity"</span>:    1,
+        <span class="str">"metadata"</span>:    {
+            <span class="str">"endpoint"</span>: request.url.path,
+            <span class="str">"method"</span>:   request.method,
+            <span class="str">"status"</span>:   response.status_code
+        }
+    })
+    <span class="kw">return</span> response</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 3: Aggregate into Billing Periods -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">3</div>
+              <h4>Aggregate into Billing Periods</h4>
+            </div>
+            <p>A dynamic table continuously computes per-tenant, per-month totals by metric. With <code>TARGET_LAG = '1 minute'</code>, your customer's usage dashboard is always within 60 seconds of current.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">No cron jobs, no schedulers, no ETL orchestration. The aggregation just runs.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="kw">CREATE OR REPLACE DYNAMIC TABLE</span> billing.usage_summary
+  <span class="kw">TARGET_LAG</span> = <span class="str">'1 minute'</span>
+  <span class="kw">WAREHOUSE</span> = billing_wh
+<span class="kw">AS</span>
+<span class="kw">SELECT</span>
+  tenant_id,
+  <span class="fn">DATE_TRUNC</span>(<span class="str">'month'</span>, event_ts) <span class="kw">AS</span> billing_month,
+  metric_name,
+  <span class="fn">SUM</span>(quantity)              <span class="kw">AS</span> total_quantity,
+  <span class="fn">COUNT</span>(*)                   <span class="kw">AS</span> event_count,
+  <span class="fn">MIN</span>(event_ts)              <span class="kw">AS</span> first_event,
+  <span class="fn">MAX</span>(event_ts)              <span class="kw">AS</span> last_event
+<span class="kw">FROM</span> billing.metering_events
+<span class="kw">GROUP BY</span> tenant_id, billing_month, metric_name;</pre></div>
+
+            <table class="result-table" style="margin-top: 16px;">
+              <thead><tr><th>tenant</th><th>month</th><th>metric</th><th>total</th></tr></thead>
+              <tbody>
+                <tr><td>acme</td><td>2026-06</td><td>api_calls</td><td>14,230</td></tr>
+                <tr><td>acme</td><td>2026-06</td><td>report_views</td><td>3,820</td></tr>
+                <tr><td>acme</td><td>2026-06</td><td>ai_credits</td><td>187.4</td></tr>
+                <tr><td>acme</td><td>2026-06</td><td>gb_stored</td><td>12.4</td></tr>
+                <tr><td>globex</td><td>2026-06</td><td>api_calls</td><td>6,710</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Step 4: Enrich with Platform Costs -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">4</div>
+              <h4>Enrich with Platform Costs</h4>
+            </div>
+            <p>Join your application events with Snowflake's ACCOUNT_USAGE views to add actual infrastructure costs. This is the bridge to <a href="1-2-unit-cost-attribution.html" style="color: var(--sf-primary);">1.2 Unit Cost Attribution</a>.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Now you have both sides: what the customer consumed (your value metric) and what it cost you (your COGS). The ratio is your gross margin.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Compute costs per tenant from QUERY_ATTRIBUTION</span>
+<span class="kw">INSERT INTO</span> billing.metering_events
+  (tenant_id, event_type, metric_name, quantity)
+<span class="kw">SELECT</span>
+  <span class="fn">PARSE_JSON</span>(query_tag):<span class="str">'tenant_id'</span>::<span class="kw">VARCHAR</span>,
+  <span class="str">'compute'</span>,
+  <span class="str">'credits_used'</span>,
+  <span class="fn">SUM</span>(credits_used_compute)
+<span class="kw">FROM</span> snowflake.account_usage.query_attribution_history
+<span class="kw">WHERE</span> start_time >= <span class="fn">DATE_TRUNC</span>(<span class="str">'day'</span>, <span class="fn">CURRENT_DATE</span>())
+  <span class="kw">AND</span> query_tag <span class="kw">IS NOT NULL</span>
+<span class="kw">GROUP BY</span> 1;
+
+<span class="comment">-- AI costs per tenant from CORTEX_USAGE</span>
+<span class="kw">INSERT INTO</span> billing.metering_events
+  (tenant_id, event_type, metric_name, quantity)
+<span class="kw">SELECT</span>
+  <span class="fn">PARSE_JSON</span>(query_tag):<span class="str">'tenant_id'</span>::<span class="kw">VARCHAR</span>,
+  <span class="str">'ai'</span>,
+  <span class="str">'ai_credits'</span>,
+  <span class="fn">SUM</span>(credits_used)
+<span class="kw">FROM</span> snowflake.account_usage
+  .cortex_ai_functions_usage_history
+<span class="kw">WHERE</span> start_time >= <span class="fn">DATE_TRUNC</span>(<span class="str">'day'</span>, <span class="fn">CURRENT_DATE</span>())
+  <span class="kw">AND</span> query_tag <span class="kw">IS NOT NULL</span>
+<span class="kw">GROUP BY</span> 1;</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 5: Rating Logic -->
+        <div class="story-step" style="border: 2px solid var(--sf-primary); background: linear-gradient(135deg, #f8fafc, #eff6ff);">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number" style="background: var(--sf-dark);">5</div>
+              <h4>Apply Rating Logic</h4>
+            </div>
+            <p>Convert raw metered quantities into dollar amounts using your pricing rules. This is where you define what a "unit" costs the customer -- and where committed use discounts and tier pricing apply.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The pricing table is a regular Snowflake table. Change a rate, and the next billing cycle reflects it -- no code deploy.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="comment">-- Pricing rules table (maintained by RevOps)</span>
+<span class="kw">CREATE TABLE</span> billing.pricing_rules (
+  metric_name    <span class="kw">VARCHAR</span>,
+  tier_min       <span class="kw">NUMBER</span>,
+  tier_max       <span class="kw">NUMBER</span>,
+  price_per_unit <span class="kw">NUMBER</span>(10,6),
+  description    <span class="kw">VARCHAR</span>
+);
+
+<span class="kw">INSERT INTO</span> billing.pricing_rules <span class="kw">VALUES</span>
+  (<span class="str">'report_views'</span>,     0,  1000, 0.050, <span class="str">'First 1K views'</span>),
+  (<span class="str">'report_views'</span>,  1001,  5000, 0.035, <span class="str">'1K-5K tier'</span>),
+  (<span class="str">'report_views'</span>,  5001, 99999, 0.020, <span class="str">'Volume tier'</span>),
+  (<span class="str">'api_calls'</span>,        0, 99999, 0.001, <span class="str">'Per API call'</span>),
+  (<span class="str">'ai_credits'</span>,       0, 99999, 3.000, <span class="str">'Per AI credit'</span>),
+  (<span class="str">'gb_stored'</span>,        0, 99999, 0.400, <span class="str">'Per GB/month'</span>);
+
+<span class="comment">-- Rated usage: apply tiered pricing</span>
+<span class="kw">CREATE OR REPLACE DYNAMIC TABLE</span> billing.rated_usage
+  <span class="kw">TARGET_LAG</span> = <span class="str">'5 minutes'</span>
+  <span class="kw">WAREHOUSE</span> = billing_wh
+<span class="kw">AS</span>
+<span class="kw">SELECT</span>
+  u.tenant_id,
+  u.billing_month,
+  u.metric_name,
+  u.total_quantity,
+  p.price_per_unit,
+  u.total_quantity * p.price_per_unit <span class="kw">AS</span> line_amount
+<span class="kw">FROM</span> billing.usage_summary u
+<span class="kw">JOIN</span> billing.pricing_rules p
+  <span class="kw">ON</span> u.metric_name = p.metric_name
+  <span class="kw">AND</span> u.total_quantity <span class="kw">BETWEEN</span>
+      p.tier_min <span class="kw">AND</span> p.tier_max;</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 6: Customer Dashboard -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">6</div>
+              <h4>Customer-Facing Usage Dashboard</h4>
+            </div>
+            <p>Your frontend queries the rated_usage dynamic table. The customer sees their current period usage, broken down by metric, with a projected monthly total. Updated every 5 minutes.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The query is just a SELECT with a tenant filter. All the complexity is in the dynamic tables behind it.</p>
+          </div>
+          <div class="step-right">
+            <div class="ui-panel">
+              <div class="ui-panel-header" style="display: flex; justify-content: space-between;">
+                <span>Usage Dashboard -- Acme Corp</span>
+                <span style="font-size: 0.68rem; color: var(--sf-primary);">Billing Period: June 2026</span>
+              </div>
+              <div class="ui-panel-body" style="padding: 16px;">
+                <div class="metric-row">
+                  <div class="metric-box">
+                    <div class="metric-label">Report Views</div>
+                    <div class="metric-value">3,820</div>
+                    <div class="metric-sub">$133.70 (tier 2)</div>
+                  </div>
+                  <div class="metric-box">
+                    <div class="metric-label">API Calls</div>
+                    <div class="metric-value">14,230</div>
+                    <div class="metric-sub">$14.23</div>
+                  </div>
+                  <div class="metric-box">
+                    <div class="metric-label">AI Credits</div>
+                    <div class="metric-value">187.4</div>
+                    <div class="metric-sub">$562.20</div>
+                  </div>
+                  <div class="metric-box">
+                    <div class="metric-label">Storage (GB)</div>
+                    <div class="metric-value">12.4</div>
+                    <div class="metric-sub">$4.96</div>
+                  </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 16px; background: #eff6ff; border-radius: 8px; font-size: 0.85rem;">
+                  <span style="color: #475569;">Current Period Total</span>
+                  <span style="font-weight: 700; color: var(--sf-dark);">$715.09</span>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.72rem; color: #94a3b8; text-align: center;">Committed tier: $500/mo | Overage: $215.09 at tier 2 rates</div>
+              </div>
+            </div>
+
+            <div class="code-block" style="margin-top: 16px;"><pre><span class="comment">-- The frontend query: just a SELECT</span>
+<span class="kw">SELECT</span> metric_name, total_quantity,
+       price_per_unit, line_amount
+<span class="kw">FROM</span> billing.rated_usage
+<span class="kw">WHERE</span> tenant_id = <span class="str">'acme'</span>
+  <span class="kw">AND</span> billing_month = <span class="fn">DATE_TRUNC</span>(<span class="str">'month'</span>,
+        <span class="fn">CURRENT_DATE</span>())
+<span class="kw">ORDER BY</span> line_amount <span class="kw">DESC</span>;</pre></div>
+          </div>
+        </div>
+
+        <!-- Step 7: Invoice Generation -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">7</div>
+              <h4>Invoice Generation</h4>
+            </div>
+            <p>At period end, a stored procedure snapshots the rated usage, applies final rules (committed use deduction, minimum charges), and produces a JSON invoice record ready for your billing system.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The snapshot uses Time Travel semantics -- if a customer disputes an invoice, you can query exactly what the meter read at billing time.</p>
+          </div>
+          <div class="step-right">
+            <div class="code-block"><pre><span class="kw">CREATE OR REPLACE PROCEDURE</span> billing.generate_invoice(
+  p_tenant_id <span class="kw">VARCHAR</span>,
+  p_billing_month <span class="kw">DATE</span>
+)
+<span class="kw">RETURNS VARIANT</span>
+<span class="kw">LANGUAGE SQL</span>
+<span class="kw">AS</span>
+<span class="kw">BEGIN</span>
+  <span class="kw">LET</span> invoice := (
+    <span class="kw">SELECT</span> <span class="fn">OBJECT_CONSTRUCT</span>(
+      <span class="str">'tenant_id'</span>,     :p_tenant_id,
+      <span class="str">'billing_month'</span>, :p_billing_month,
+      <span class="str">'generated_at'</span>,  <span class="fn">CURRENT_TIMESTAMP</span>(),
+      <span class="str">'line_items'</span>,    <span class="fn">ARRAY_AGG</span>(
+        <span class="fn">OBJECT_CONSTRUCT</span>(
+          <span class="str">'metric'</span>,   metric_name,
+          <span class="str">'quantity'</span>, total_quantity,
+          <span class="str">'rate'</span>,     price_per_unit,
+          <span class="str">'amount'</span>,   line_amount
+        )
+      ),
+      <span class="str">'subtotal'</span>,      <span class="fn">SUM</span>(line_amount),
+      <span class="str">'committed_use'</span>, 500.00,
+      <span class="str">'overage'</span>,       <span class="fn">GREATEST</span>(
+        <span class="fn">SUM</span>(line_amount) - 500.00, 0),
+      <span class="str">'total_due'</span>,     <span class="fn">GREATEST</span>(
+        <span class="fn">SUM</span>(line_amount), 500.00)
+    )
+    <span class="kw">FROM</span> billing.rated_usage
+    <span class="kw">WHERE</span> tenant_id = :p_tenant_id
+      <span class="kw">AND</span> billing_month = :p_billing_month
+  );
+
+  <span class="comment">-- Store the invoice snapshot</span>
+  <span class="kw">INSERT INTO</span> billing.invoices
+    (tenant_id, billing_month, invoice_data)
+  <span class="kw">VALUES</span>
+    (:p_tenant_id, :p_billing_month, :invoice);
+
+  <span class="kw">RETURN</span> :invoice;
+<span class="kw">END</span>;
+
+<span class="comment">-- Generate Acme's June invoice</span>
+<span class="kw">CALL</span> billing.generate_invoice(<span class="str">'acme'</span>, <span class="str">'2026-06-01'</span>);</pre></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p>
+  </footer>
+</body>
+</html>
