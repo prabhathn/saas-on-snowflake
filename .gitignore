@@ -1,0 +1,9 @@
+.DS_Store
+.snowflake/
+
+# Incomplete capstone stub pages (in progress)
+concepts/2-0-*.html
+concepts/3-0-*.html
+concepts/4-0-*.html
+concepts/5-0-*.html
+concepts/6-0-*.html
