@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2.0 Real-Time Product Intelligence | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .page-container { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+    .phase-pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 20px; }
+    .phase-stage { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 12px; text-align: center; position: relative; }
+    .phase-stage .phase-num { font-size: 0.6rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .phase-stage h4 { font-size: 0.82rem; font-weight: 650; color: var(--text-heading); margin-bottom: 4px; }
+    .phase-stage p { font-size: 0.72rem; color: var(--text-muted); margin: 0; }
+    .phase-stage::after { content: '\2192'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--sf-primary); font-weight: 700; z-index: 1; }
+    .phase-stage:last-child::after { content: none; }
+    .ref-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px; }
+    .ref-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--sf-primary); border-radius: 2px 10px 10px 2px; padding: 20px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; display: block; }
+    .ref-card:hover { box-shadow: 0 2px 8px rgba(41,181,232,0.1); }
+    .ref-card h4 { font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 6px; }
+    .ref-card p { font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+    .ref-link { font-size: 0.75rem; font-weight: 600; color: var(--sf-primary); margin-top: 10px; display: block; }
+    .ref-link::after { content: ' \2192'; }
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 24px; }
+    .story-step { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .step-left .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .step-number { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .step-left h4 { font-size: 0.95rem; font-weight: 650; color: var(--text-heading); margin: 0; }
+    .step-left p { font-size: 0.86rem; color: var(--text-muted); line-height: 1.6; }
+    .step-right { min-width: 0; font-size: 0.86rem; color: var(--text-muted); line-height: 1.7; }
+    @media (max-width: 900px) { .story-step { grid-template-columns: 1fr; } .phase-pipeline { grid-template-columns: 1fr; } .phase-stage::after { content: none; } .ref-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 2: Data Ingestion &rarr; 2.0 Real-Time Product Intelligence</div>
+
+    <div class="concept-hero">
+      <h1>Real-Time Product Intelligence</h1>
+      <p class="subtitle">Turn your data pipeline into an intelligence layer that detects signals, triggers actions, and keeps your team ahead of what customers are experiencing.</p>
+    </div>
+
+    <!-- The Opportunity -->
+    <div class="concept-section">
+      <h2>The Opportunity</h2>
+      <p>Most SaaS platforms collect data. Fewer act on it in real time. Once your product analytics and multi-source data flow into Snowflake, the infrastructure is already in place to do more than store and query. You can detect meaningful signals as they emerge: a tenant's engagement dropping, an anomaly in API usage, a cohort approaching a churn threshold. Combined with Snowflake's native task and alert capabilities, those signals can trigger automated actions across your platform without building a separate eventing system.</p>
+    </div>
+
+    <!-- Journey Overview -->
+    <div class="concept-section">
+      <h2>The Journey</h2>
+      <div class="phase-pipeline">
+        <div class="phase-stage"><div class="phase-num">Step 1</div><h4>Capture Events</h4><p>Stream product analytics and application events in real time</p></div>
+        <div class="phase-stage"><div class="phase-num">Step 2</div><h4>Unify Identities</h4><p>Resolve entities across sources to a canonical tenant</p></div>
+        <div class="phase-stage"><div class="phase-num">Step 3</div><h4>Detect Signals</h4><p>Continuously compute health scores and anomaly indicators</p></div>
+        <div class="phase-stage"><div class="phase-num">Step 4</div><h4>Trigger Actions</h4><p>Fire alerts and tasks when signals cross thresholds</p></div>
+        <div class="phase-stage"><div class="phase-num">Step 5</div><h4>Measure Impact</h4><p>Track outcomes and refine signal definitions over time</p></div>
+      </div>
+    </div>
+
+    <!-- Foundation -->
+    <div class="concept-section">
+      <h2>Foundation</h2>
+      <p>This capstone builds on the technical foundations covered in Sections 2.1 and 2.2:</p>
+      <div class="ref-grid">
+        <a class="ref-card" href="2-1-product-analytics-clickstream.html">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">A</span>Product Analytics and Clickstream</h4>
+          <p>Real-time event ingestion via Snowpipe Streaming, Hybrid Tables for hot lookups, and the sub-second pipeline from your application to Snowflake.</p>
+          <span class="ref-link">See 2.1</span>
+        </a>
+        <a class="ref-card" href="2-2-multi-source-data-unification.html">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">B</span>Multi-Source Data Unification</h4>
+          <p>Entity resolution and identity mapping across data sources so every event ties back to a single canonical customer record.</p>
+          <span class="ref-link">See 2.2</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Storyboard -->
+    <div class="concept-section">
+      <h2>Storyboard</h2>
+      <div class="storyboard">
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header"><div class="step-number">1</div><h4>Events Flow In</h4></div>
+            <p>Raw clickstream events, API calls, and feature usage land in Snowflake via Snowpipe Streaming. Every event carries a tenant identifier and timestamp. Nothing is batched.</p>
+          </div>
+          <div class="step-right">See <a href="2-1-product-analytics-clickstream.html" style="color: var(--sf-primary);">2.1</a> for the ingestion pipeline. The key output: a live <code>product_events</code> table with sub-second latency from your application to Snowflake.</div>
+        </div>
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header"><div class="step-number">2</div><h4>Identities Are Resolved</h4></div>
+            <p>Events from different sources (your app, your CRM, your billing system) may refer to the same customer with different identifiers. Entity resolution maps them all to a canonical <code>tenant_id</code>.</p>
+          </div>
+          <div class="step-right">See <a href="2-2-multi-source-data-unification.html" style="color: var(--sf-primary);">2.2</a> for the identity resolution pipeline. The output: a <code>canonical_entities</code> table that bridges all source identifiers to a single customer record.</div>
+        </div>
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header"><div class="step-number">3</div><h4>Signals Are Computed</h4></div>
+            <p>A dynamic table continuously computes a rolling engagement score per tenant based on the last 7 days of activity. It updates every 5 minutes. No cron jobs, no schedulers.</p>
+          </div>
+          <div class="step-right">A simple example: <code>engagement_score = (active_days / 7) * log(api_calls + 1)</code> computed as a dynamic table with <code>TARGET_LAG = '5 minutes'</code>. Scores below a threshold flag a tenant as at-risk.</div>
+        </div>
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header"><div class="step-number">4</div><h4>Actions Are Triggered</h4></div>
+            <p>A Snowflake Alert monitors the engagement score dynamic table. When a tenant drops below the at-risk threshold, a Snowflake Task calls an external webhook to notify your CS team or trigger an in-app nudge.</p>
+          </div>
+          <div class="step-right">This replaces a Kafka consumer, Lambda function, and a separate alerting service with two native Snowflake objects: an Alert and a Task. The entire pipeline stays within Snowflake.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coming Soon -->
+    <div style="padding: 24px; background: var(--sf-lighter); border: 1px dashed var(--border); border-radius: 10px; text-align: center;">
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">This capstone is under active development. The sub-sections it builds on are available now: <a href="2-1-product-analytics-clickstream.html" style="color: var(--sf-primary);">2.1 Product Analytics</a> and <a href="2-2-multi-source-data-unification.html" style="color: var(--sf-primary);">2.2 Multi-Source Unification</a>.</p>
+    </div>
+
+  </div>
+  <footer class="footer"><p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p></footer>
+</body>
+</html>

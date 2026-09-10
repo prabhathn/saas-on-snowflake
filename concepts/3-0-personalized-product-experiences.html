@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3.0 Personalized Product Experiences | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .page-container { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+    .phase-pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 20px; }
+    .phase-stage { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 12px; text-align: center; position: relative; }
+    .phase-stage .phase-num { font-size: 0.6rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .phase-stage h4 { font-size: 0.82rem; font-weight: 650; color: var(--text-heading); margin-bottom: 4px; }
+    .phase-stage p { font-size: 0.72rem; color: var(--text-muted); margin: 0; }
+    .phase-stage::after { content: '\2192'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--sf-primary); font-weight: 700; z-index: 1; }
+    .phase-stage:last-child::after { content: none; }
+    .ref-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+    .ref-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--sf-primary); border-radius: 2px 10px 10px 2px; padding: 20px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; display: block; }
+    .ref-card:hover { box-shadow: 0 2px 8px rgba(41,181,232,0.1); }
+    .ref-card h4 { font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 6px; }
+    .ref-card p { font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+    .ref-link { font-size: 0.75rem; font-weight: 600; color: var(--sf-primary); margin-top: 10px; display: block; }
+    .ref-link::after { content: ' \2192'; }
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 24px; }
+    .story-step { display: grid; grid-template-columns: 280px 1fr; gap: 24px; align-items: start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .step-left .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .step-number { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .step-left h4 { font-size: 0.95rem; font-weight: 650; color: var(--text-heading); margin: 0; }
+    .step-left p { font-size: 0.86rem; color: var(--text-muted); line-height: 1.6; }
+    .step-right { min-width: 0; font-size: 0.86rem; color: var(--text-muted); line-height: 1.7; }
+    @media (max-width: 900px) { .story-step { grid-template-columns: 1fr; } .phase-pipeline { grid-template-columns: 1fr; } .phase-stage::after { content: none; } .ref-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 3: Analytics &rarr; 3.0 Personalized Product Experiences</div>
+
+    <div class="concept-hero">
+      <h1>Personalized Product Experiences</h1>
+      <p class="subtitle">Make every customer's product experience adapt to their data, behavior, and predicted needs by combining embedded analytics, a unified entity model, and ML-powered features.</p>
+    </div>
+
+    <!-- The Opportunity -->
+    <div class="concept-section">
+      <h2>The Opportunity</h2>
+      <p>Most SaaS products serve every customer the same default view. The data to do better is usually there — usage patterns, support history, billing data, engagement signals — but it lives in separate systems without a unified model that connects them. When you combine embedded analytics, a semantic layer that abstracts the physical schema, and ML models that score and predict, you can serve each customer a product that surfaces what's relevant to them specifically: their risks, their opportunities, their next best action. The result is a product that feels like it knows the customer, not just one that stores their data.</p>
+    </div>
+
+    <!-- Journey Overview -->
+    <div class="concept-section">
+      <h2>The Journey</h2>
+      <div class="phase-pipeline">
+        <div class="phase-stage"><div class="phase-num">Step 1</div><h4>Capture Behavior</h4><p>Track feature usage, session data, and engagement signals per tenant</p></div>
+        <div class="phase-stage"><div class="phase-num">Step 2</div><h4>Model the Entity</h4><p>Unify usage, support, and billing into a single customer entity via semantic views</p></div>
+        <div class="phase-stage"><div class="phase-num">Step 3</div><h4>Score and Predict</h4><p>Run ML models for churn risk, next-best-action, and feature affinity</p></div>
+        <div class="phase-stage"><div class="phase-num">Step 4</div><h4>Personalize the UI</h4><p>Surface tailored alerts, recommendations, and defaults per customer</p></div>
+        <div class="phase-stage"><div class="phase-num">Step 5</div><h4>Iterate</h4><p>A/B test personalization strategies and refine models based on outcomes</p></div>
+      </div>
+    </div>
+
+    <!-- Foundation -->
+    <div class="concept-section">
+      <h2>Foundation</h2>
+      <p>This capstone builds on the three technical foundations in Section 3:</p>
+      <div class="ref-grid">
+        <a class="ref-card" href="3-1-embedded-sql-analytics.html">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">A</span>Embedded SQL Analytics</h4>
+          <p>Serving customer-facing dashboards with parameterized queries, result caching, and query acceleration for instant response times.</p>
+          <span class="ref-link">See 3.1</span>
+        </a>
+        <a class="ref-card" href="3-2-unified-entity-model.html">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">B</span>Unified Entity Model</h4>
+          <p>A semantic layer that abstracts the physical schema into a logical customer entity, joining usage, support, and billing data into one traversable model.</p>
+          <span class="ref-link">See 3.2</span>
+        </a>
+        <a class="ref-card" href="3-3-ml-powered-product-features.html">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">C</span>ML-Powered Features</h4>
+          <p>Deploying churn prediction, feature affinity, and next-best-action models as SQL functions that your application queries like any other column.</p>
+          <span class="ref-link">See 3.3</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Storyboard -->
+    <div class="concept-section">
+      <h2>Storyboard</h2>
+      <div class="storyboard">
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header"><div class="step-number">1</div><h4>Behavior Is Captured</h4></div>
+            <p>Product usage events are captured per tenant and surfaced in embedded analytics dashboards. Each customer can see their own usage patterns, feature adoption, and trends in real time.</p>
+          </div>
+          <div class="step-right">See <a href="3-1-embedded-sql-analytics.html" style="color: var(--sf-primary);">3.1</a> for the embedded analytics pattern: parameterized queries, result caching, and warehouse sizing for concurrent dashboard loads. This is the "current state" view for each customer.</div>
+        </div>
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header"><div class="step-number">2</div><h4>The Entity Is Modeled</h4></div>
+            <p>A semantic view unifies the customer's product usage, open support tickets, billing status, and contract terms into a single logical entity. Queries against this view feel like querying one table.</p>
+          </div>
+          <div class="step-right">See <a href="3-2-unified-entity-model.html" style="color: var(--sf-primary);">3.2</a> for the semantic view and entity model. The customer entity becomes the foundation for everything that follows: ML scoring, recommendation logic, and personalized defaults.</div>
+        </div>
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header"><div class="step-number">3</div><h4>ML Scores Are Applied</h4></div>
+            <p>An ML model scores each customer for churn risk and surfaces a next-best-action recommendation. The model runs as a UDF — a single SQL function call returns a score for any tenant_id.</p>
+          </div>
+          <div class="step-right">See <a href="3-3-ml-powered-product-features.html" style="color: var(--sf-primary);">3.3</a> for model deployment as UDFs and the feature store pattern. Scores are pre-computed in a dynamic table so the UI query hits pre-built results without invoking ML inference at render time.</div>
+        </div>
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header"><div class="step-number">4</div><h4>The UI Personalizes</h4></div>
+            <p>The product frontend queries the customer entity + ML scores and renders personalized alerts ("your usage is trending toward your tier limit"), default views (most-used features surfaced first), and next-best-action prompts specific to each customer.</p>
+          </div>
+          <div class="step-right">The frontend query is a single SELECT against the customer entity view filtered by tenant_id. The personalization logic lives in the data layer, not the application code. Adding a new signal means updating the semantic view, not redeploying the app.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coming Soon -->
+    <div style="padding: 24px; background: var(--sf-lighter); border: 1px dashed var(--border); border-radius: 10px; text-align: center;">
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">This capstone is under active development. The sub-sections it builds on are available now: <a href="3-1-embedded-sql-analytics.html" style="color: var(--sf-primary);">3.1 Embedded Analytics</a>, <a href="3-2-unified-entity-model.html" style="color: var(--sf-primary);">3.2 Unified Entity Model</a>, and <a href="3-3-ml-powered-product-features.html" style="color: var(--sf-primary);">3.3 ML-Powered Features</a>.</p>
+    </div>
+
+  </div>
+  <footer class="footer"><p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p></footer>
+</body>
+</html>
