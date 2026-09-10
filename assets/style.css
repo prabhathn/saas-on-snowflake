@@ -176,6 +176,10 @@ body {
 }
 
 /* Card Grid */
+.section > .card-grid {
+  margin-left: 23px; /* align with section title text (3px border + 20px padding) */
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
