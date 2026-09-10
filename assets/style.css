@@ -141,10 +141,9 @@ body {
   padding-left: 20px;
   margin-bottom: 28px;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: 14px;
-  row-gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .section-label {
@@ -167,8 +166,8 @@ body {
 }
 
 .section-title {
-  flex: 1;
-  min-width: 200px;
+  flex: unset;
+  min-width: unset;
   font-size: clamp(1.3rem, 3vw, 1.6rem);
   font-weight: 700;
   color: var(--text-heading);
@@ -176,7 +175,7 @@ body {
 }
 
 .section-desc {
-  width: 100%;
+  width: unset;
   color: var(--text-muted);
   margin: 0;
   font-size: 0.92rem;
