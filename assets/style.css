@@ -1,42 +1,28 @@
 :root {
   --sf-primary: #29B5E8;
-  --sf-primary-light: #7DD3F0;
   --sf-dark: #11567F;
-  --sf-darker: #0D3B56;
   --sf-navy: #052B42;
   --sf-light: #EAF6FC;
   --sf-lighter: #F4FAFD;
   --sf-white: #FFFFFF;
-  --sf-gray-50: #F8FAFC;
-  --sf-gray-100: #F1F5F9;
   --sf-gray-200: #E2E8F0;
-  --sf-gray-300: #CBD5E1;
   --sf-gray-600: #475569;
-  --sf-gray-700: #334155;
   --sf-gray-800: #1E293B;
-  --sf-gray-900: #0F172A;
-  --sf-success: #10B981;
   --radius: 12px;
-  --shadow-md: 0 4px 16px rgba(41,181,232,0.10), 0 2px 4px rgba(0,0,0,0.04);
   --shadow-lg: 0 10px 30px rgba(41,181,232,0.14), 0 4px 8px rgba(0,0,0,0.05);
 
   /* Light mode (default) */
   --bg: var(--sf-white);
-  --bg-section: var(--sf-lighter);
   --text: var(--sf-gray-800);
   --text-muted: var(--sf-gray-600);
   --text-heading: var(--sf-navy);
   --border: var(--sf-gray-200);
   --card-bg: var(--sf-white);
   --nav-bg: rgba(255,255,255,0.95);
-  --tag-bg: var(--sf-light);
-  --tag-color: var(--sf-dark);
-  --tag-demo-bg: #ECFDF5;
-  --tag-demo-color: #065F46;
+  --tag-bg: rgba(0,0,0,0.04);
+  --tag-color: #607B8A;
   --link-hover-bg: var(--sf-light);
 }
-
-
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -191,8 +177,6 @@ body {
 }
 
 .section-title {
-  flex: unset;
-  min-width: unset;
   font-size: clamp(1.3rem, 3vw, 1.6rem);
   font-weight: 700;
   color: var(--text-heading);
@@ -200,7 +184,6 @@ body {
 }
 
 .section-desc {
-  width: unset;
   color: var(--text-muted);
   margin: 0;
   font-size: 0.92rem;
@@ -210,7 +193,7 @@ body {
 /* Card Grid */
 .section > .card-grid {
   margin-left: 23px;
-  margin-right: 24px; /* align with section title text (3px border + 20px padding) */
+  margin-right: 24px;
 }
 
 .card-grid {
@@ -257,7 +240,6 @@ body {
   border-color: var(--sf-primary);
 }
 
-
 .card-number {
   font-size: 1rem;
   font-weight: 700;
@@ -296,16 +278,6 @@ body {
   color: var(--tag-color);
 }
 
-.tag--demo {
-  background: var(--tag-demo-bg);
-  color: var(--tag-demo-color);
-}
-
-.tag--storyboard {
-  background: #FEF3C7;
-  color: #92400E;
-}
-
 /* Divider between sections */
 .section + .section {
   border-top: 1px solid var(--border);
@@ -326,8 +298,4 @@ body {
 @media (max-width: 900px) {
   .nav-links { display: none; }
   .card-grid { grid-template-columns: 1fr; }
-  .section-desc { margin-left: 0; }
-}
-@media (max-width: 768px) {
-  .nav-links { display: none; }
 }
