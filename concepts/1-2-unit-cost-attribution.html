@@ -87,7 +87,7 @@
     <div class="concept-section">
       <h2>How Companies Accomplish This Today</h2>
       <ul>
-        <li><strong>Proportional allocation:</strong> Divide total infrastructure bill by number of tenants or by revenue share. Inaccurate -- a 1-user tenant may consume more than a 100-user tenant.</li>
+        <li><strong>Proportional allocation:</strong> Divide total infrastructure bill by number of tenants or by revenue share. Inaccurate; a 1-user tenant may consume more than a 100-user tenant.</li>
         <li><strong>Warehouse-per-tenant:</strong> Give each customer their own compute cluster. Accurate but expensive (idle costs) and operationally complex beyond ~50 tenants.</li>
         <li><strong>Log analysis and sampling:</strong> Parse query logs, correlate with tenant IDs, and estimate cost attribution after the fact. Delayed, approximate, and fragile.</li>
         <li><strong>Custom metering infrastructure:</strong> Build a sidecar system that tracks every API call, query, and storage operation per tenant. 6-12 months of engineering.</li>
@@ -121,7 +121,7 @@
       <ul>
         <li><strong>Attribution accuracy:</strong> Shared infrastructure (caches, indexes, background jobs) makes it hard to assign costs to specific tenants with confidence.</li>
         <li><strong>AI cost opacity:</strong> LLM inference, embedding generation, and agent calls are new cost categories with no established attribution patterns.</li>
-        <li><strong>Delayed visibility:</strong> Cost data is often only available days or weeks after consumption -- too late to prevent budget overruns.</li>
+        <li><strong>Delayed visibility:</strong> Cost data is often only available days or weeks after consumption, too late to prevent budget overruns.</li>
         <li><strong>Multi-dimensional costs:</strong> A single tenant action (e.g., "generate report") may hit compute, storage, AI inference, and external API costs simultaneously.</li>
         <li><strong>Granularity vs. overhead tradeoff:</strong> Tracking every query to a tenant adds latency and complexity. Most companies settle for estimates.</li>
       </ul>
@@ -130,10 +130,10 @@
     <div class="concept-section">
       <h2>What Snowflake Offers</h2>
       <ul>
-        <li><strong>Native query tagging:</strong> Tag every query with tenant_id at the session level. Snowflake records it in QUERY_HISTORY -- no custom logging needed.</li>
+        <li><strong>Native query tagging:</strong> Tag every query with tenant_id at the session level. Snowflake records it in QUERY_HISTORY. No custom logging needed.</li>
         <li><strong>Credit-level attribution:</strong> ACCOUNT_USAGE views break down credit consumption by warehouse, user, and query tag. Map directly to tenants.</li>
-        <li><strong>AI-spend visibility:</strong> CORTEX_USAGE tracks token consumption by model, function, and query -- attributable to the same tenant tags.</li>
-        <li><strong>Real-time monitoring:</strong> Resource monitors alert when a tenant approaches their credit threshold -- before they overspend, not after.</li>
+        <li><strong>AI-spend visibility:</strong> CORTEX_USAGE tracks token consumption by model, function, and query, attributable to the same tenant tags.</li>
+        <li><strong>Real-time monitoring:</strong> Resource monitors alert when a tenant approaches their credit threshold, before they overspend, not after.</li>
       </ul>
     </div>
 
@@ -150,7 +150,7 @@
         </a>
         <a class="feature-item" href="https://docs.snowflake.com/en/sql-reference/account-usage/cortex_ai_functions_usage_history" target="_blank">
           <h4>Cortex AI Functions Usage</h4>
-          <p>Tracks token consumption, model invocations, and credit usage for all Cortex AI functions. Has query_tag natively -- no join needed for per-tenant attribution.</p>
+          <p>Tracks token consumption, model invocations, and credit usage for all Cortex AI functions. Has query_tag natively. No join needed for per-tenant attribution.</p>
         </a>
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/resource-monitors" target="_blank">
           <h4>Resource Monitors</h4>
@@ -158,7 +158,7 @@
         </a>
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/warehouses-overview" target="_blank">
           <h4>Warehouse Isolation</h4>
-          <p>For enterprise tenants, dedicate a warehouse. All queries from that tenant run on their compute -- attribution is exact and performance is isolated.</p>
+          <p>For enterprise tenants, dedicate a warehouse. All queries from that tenant run on their compute; attribution is exact and performance is isolated.</p>
         </a>
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/budgets" target="_blank">
           <h4>Budgets</h4>
@@ -175,7 +175,7 @@
 
         <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
           <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--sf-dark); margin-bottom: 4px;">Warehouse Compute</h4>
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">The primary cost driver -- virtual warehouses running SQL queries on behalf of tenants.</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">The primary cost driver: virtual warehouses running SQL queries on behalf of tenants.</p>
           <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
             <thead><tr style="border-bottom: 2px solid var(--border);"><th style="text-align: left; padding: 6px 8px; font-weight: 600;">View</th><th style="text-align: left; padding: 6px 8px; font-weight: 600;">Description</th></tr></thead>
             <tbody>
@@ -204,7 +204,7 @@
 
         <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
           <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--sf-dark); margin-bottom: 4px;">Serverless Compute</h4>
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Background services that run automatically -- costs accumulate without explicit queries.</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Background services that run automatically; costs accumulate without explicit queries.</p>
           <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
             <thead><tr style="border-bottom: 2px solid var(--border);"><th style="text-align: left; padding: 6px 8px; font-weight: 600;">View</th><th style="text-align: left; padding: 6px 8px; font-weight: 600;">Description</th></tr></thead>
             <tbody>
@@ -220,7 +220,7 @@
 
         <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px;">
           <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--sf-dark); margin-bottom: 4px;">Storage and Data Transfer</h4>
-          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Scales with data volume per tenant -- often the most predictable COGS component.</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Scales with data volume per tenant, often the most predictable COGS component.</p>
           <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 0.78rem;">
             <thead><tr style="border-bottom: 2px solid var(--border);"><th style="text-align: left; padding: 6px 8px; font-weight: 600;">View</th><th style="text-align: left; padding: 6px 8px; font-weight: 600;">Description</th></tr></thead>
             <tbody>
@@ -261,7 +261,7 @@
       <!-- ERD Diagram -->
       <div style="margin-top: 32px; background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 28px;">
         <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-heading); margin-bottom: 4px;">How These Views Link Together for Per-Tenant Attribution</h4>
-        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;">QUERY_HISTORY is the central join table. Newer Cortex views carry query_tag natively -- no join required for AI cost attribution.</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;">QUERY_HISTORY is the central join table. Newer Cortex views carry query_tag natively. No join required for AI cost attribution.</p>
         <div style="overflow-x: auto;">
           <svg viewBox="0 0 780 340" style="width: 100%; max-width: 780px; height: auto; display: block; margin: 0 auto;" xmlns="http://www.w3.org/2000/svg" font-family="Inter, system-ui, sans-serif">
             <!-- QUERY_HISTORY (center) -->
@@ -407,7 +407,7 @@ conn = snowflake.connector.<span class="fn">connect</span>(
             <div class="step-number">3</div>
             <h4>AI Cost Attribution</h4>
           </div>
-          <p>CORTEX_AI_FUNCTIONS_USAGE_HISTORY has query_tag natively -- no join needed. Group AI spend by tenant, model, and function directly.</p>
+          <p>CORTEX_AI_FUNCTIONS_USAGE_HISTORY has query_tag natively. No join needed. Group AI spend by tenant, model, and function directly.</p>
         </div>
         <div class="step-right">
           <div class="diagram">
@@ -446,7 +446,7 @@ conn = snowflake.connector.<span class="fn">connect</span>(
         </div>
         <div class="step-right">
           <div class="dashboard-mockup">
-            <div class="dashboard-header">Tenant Cost Attribution -- Acme Corp (Enterprise)</div>
+            <div class="dashboard-header">Tenant Cost Attribution: Acme Corp (Enterprise)</div>
             <div class="dashboard-body">
               <div class="metric-row">
                 <div class="metric-box"><div class="label">Compute</div><div class="value">$842</div><div class="sub">247 credits</div></div>

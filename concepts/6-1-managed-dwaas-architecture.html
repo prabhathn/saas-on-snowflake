@@ -113,14 +113,14 @@
 
     <div class="concept-hero">
       <h1>Managed Data-as-a-Service Architecture</h1>
-      <p class="subtitle">The decision framework for delivering data to customers: from Reader Accounts and Secure Shares through Native Apps, open Iceberg access, and full SaaS applications -- with the right model for every customer profile.</p>
+      <p class="subtitle">The decision framework for delivering data to customers: from Reader Accounts and Secure Shares through Native Apps, open Iceberg access, and full SaaS applications, with the right model for every customer profile.</p>
     </div>
 
     <!-- How Companies Accomplish This Today -->
     <div class="concept-section">
       <h2>How Companies Accomplish This Today</h2>
       <ul>
-        <li><strong>Direct database logins:</strong> Create a user in your data platform for each customer. They connect directly, run queries, and see the raw platform UI. Easy to set up, but difficult to govern -- platform UI changes hit your customers without warning, and you become a support proxy for a product you don't own. On Snowflake, this pattern is <a href="#anti-pattern" style="color: var(--sf-primary);">not supported by the Terms of Service</a>.</li>
+        <li><strong>Direct database logins:</strong> Create a user in your data platform for each customer. They connect directly, run queries, and see the raw platform UI. Easy to set up, but difficult to govern. Platform UI changes hit your customers without warning, and you become a support proxy for a product you don't own. On Snowflake, this pattern is <a href="#anti-pattern" style="color: var(--sf-primary);">not supported by the Terms of Service</a>.</li>
         <li><strong>Separate platform accounts per customer:</strong> Full isolation but extreme operational overhead. Every schema change, every software update must be rolled out N times.</li>
         <li><strong>Custom portal with JDBC backend:</strong> Build a web app that queries the data platform on behalf of customers. Full control but significant engineering investment.</li>
         <li><strong>File-based delivery:</strong> Export data to S3/SFTP for customer pickup. No interactivity, always stale, no governance after delivery.</li>
@@ -134,7 +134,7 @@
         <div class="role-card"><h4>Product / GTM</h4><p>Decides the delivery model: what level of self-service, interactivity, and customization customers get.</p></div>
         <div class="role-card"><h4>Legal / Compliance</h4><p>Ensures the delivery model complies with Snowflake TOS (service bureau restrictions), data processing agreements, and customer contracts.</p></div>
         <div class="role-card"><h4>Platform Engineering</h4><p>Builds and maintains the delivery infrastructure: shares, apps, APIs, and customer onboarding automation.</p></div>
-        <div class="role-card"><h4>Customer Success</h4><p>Handles the support burden when customers hit issues -- the primary symptom of the direct-login anti-pattern.</p></div>
+        <div class="role-card"><h4>Customer Success</h4><p>Handles the support burden when customers hit issues: the primary symptom of the direct-login anti-pattern.</p></div>
       </div>
     </div>
 
@@ -156,7 +156,7 @@
       <div style="background: linear-gradient(135deg, #fef2f2, #fff7ed); border: 2px solid #fca5a5; border-radius: 12px; padding: 24px; margin-top: 16px;">
         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span style="font-size: 1.05rem; font-weight: 700; color: #991b1b;">This pattern violates Snowflake's Terms of Service -- Snowflake does not condone it</span>
+          <span style="font-size: 1.05rem; font-weight: 700; color: #991b1b;">This pattern violates Snowflake's Terms of Service. Snowflake does not condone it</span>
         </div>
         <p style="font-size: 0.92rem; color: #7f1d1d; line-height: 1.7; margin-bottom: 16px;">The pattern is straightforward: a provider creates Snowflake users in their own account for each customer, gives them a role scoped to their data, and lets them log in to Snowsight or connect via JDBC/ODBC. It may appear easy to set up, but it violates Snowflake's Terms of Service and creates serious technical, security, and operational problems that compound over time.</p>
 
@@ -185,10 +185,10 @@
             </div>
             <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: #7f1d1d; line-height: 1.6;">
               <li style="margin-bottom: 6px;"><a href="https://www.snowflake.com/en/legal/terms-of-service/" target="_blank" style="color: #991b1b; font-weight: 600;">Section 2.3 of the TOS</a> prohibits making the Snowflake Technology available to a third party <em>"or in a service bureau or outsourcing offering"</em></li>
-              <li style="margin-bottom: 6px;">The TOS carves out an exception for <em>"Service features expressly intended to enable Customer to provide its third parties with access to Customer Data"</em> -- i.e., Reader Accounts, Secure Sharing, Listings, and Native Apps</li>
-              <li style="margin-bottom: 6px;">Creating Snowflake users for your customers in your account does not fall under this exception -- it is granting direct platform access, not using an approved sharing feature</li>
+              <li style="margin-bottom: 6px;">The TOS carves out an exception for <em>"Service features expressly intended to enable Customer to provide its third parties with access to Customer Data"</em> (i.e., Reader Accounts, Secure Sharing, Listings, and Native Apps)</li>
+              <li style="margin-bottom: 6px;">Creating Snowflake users for your customers in your account does not fall under this exception; it is granting direct platform access, not using an approved sharing feature</li>
               <li style="margin-bottom: 6px;">An <strong>MSP addendum</strong> exists for managed service providers (negotiated through your Snowflake account team), but it has specific requirements and obligations</li>
-              <li>Enforcement can range from a warning to account suspension -- risk increases with scale</li>
+              <li>Enforcement can range from a warning to account suspension; risk increases with scale</li>
             </ul>
           </div>
           <div style="background: white; border: 1px solid #fecaca; border-radius: 8px; padding: 16px;">
@@ -197,9 +197,9 @@
               <span style="font-size: 0.88rem; font-weight: 650; color: #991b1b;">Shared Security Model Breakdown</span>
             </div>
             <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: #7f1d1d; line-height: 1.6;">
-              <li style="margin-bottom: 6px;">Customer users exist in <strong>your identity plane</strong> -- a misconfigured role can expose other tenants' data</li>
+              <li style="margin-bottom: 6px;">Customer users exist in <strong>your identity plane</strong>. A misconfigured role can expose other tenants' data</li>
               <li style="margin-bottom: 6px;">Customers can see your account structure: warehouse names, database names, and metadata via SHOW commands</li>
-              <li style="margin-bottom: 6px;">You cannot enforce <strong>your customer's</strong> security policies (SSO, MFA) -- they use your account's auth settings</li>
+              <li style="margin-bottom: 6px;">You cannot enforce <strong>your customer's</strong> security policies (SSO, MFA). They use your account's auth settings</li>
               <li>ACCOUNTADMIN remains a single point of compromise for all customer data</li>
             </ul>
           </div>
@@ -212,10 +212,10 @@
               <span style="font-size: 0.88rem; font-weight: 650; color: #991b1b;">Operational Risks</span>
             </div>
             <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: #7f1d1d; line-height: 1.6;">
-              <li style="margin-bottom: 6px;">Customer queries compete for warehouse resources -- one customer's heavy query affects all others</li>
-              <li style="margin-bottom: 6px;">Snowsight UI changes hit your customers without notice -- you become Snowflake's support proxy</li>
+              <li style="margin-bottom: 6px;">Customer queries compete for warehouse resources; one customer's heavy query affects all others</li>
+              <li style="margin-bottom: 6px;">Snowsight UI changes hit your customers without notice; you become Snowflake's support proxy</li>
               <li style="margin-bottom: 6px;">No feature gating: every customer gets the same Snowflake capabilities regardless of their plan tier</li>
-              <li>Cost attribution is approximate at best -- query_tag helps but requires consistent discipline</li>
+              <li>Cost attribution is approximate at best; query_tag helps but requires consistent discipline</li>
             </ul>
           </div>
           <div style="background: white; border: 1px solid #fecaca; border-radius: 8px; padding: 16px;">
@@ -225,9 +225,9 @@
             </div>
             <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: #7f1d1d; line-height: 1.6;">
               <li style="margin-bottom: 6px;">User management grows linearly: onboarding, offboarding, password resets, and role changes for every customer user</li>
-              <li style="margin-bottom: 6px;">Customer-specific customization is impossible -- everyone sees the same Snowsight interface</li>
+              <li style="margin-bottom: 6px;">Customer-specific customization is impossible; everyone sees the same Snowsight interface</li>
               <li style="margin-bottom: 6px;">Audit and compliance become complex: separating customer activity in ACCESS_HISTORY requires careful tagging</li>
-              <li>Migrating away later is painful -- customers have built workflows against your account's URLs and object names</li>
+              <li>Migrating away later is painful; customers have built workflows against your account's URLs and object names</li>
             </ul>
           </div>
         </div>
@@ -242,7 +242,7 @@
     <!-- What Snowflake Offers -->
     <div class="concept-section">
       <h2>What Snowflake Offers</h2>
-      <p>Snowflake provides a spectrum of data delivery models -- from zero-code shares to full application frameworks. The right choice depends on who your customer is, what tools they use, and how much control you need.</p>
+      <p>Snowflake provides a spectrum of data delivery models: from zero-code shares to full application frameworks. The right choice depends on who your customer is, what tools they use, and how much control you need.</p>
       <ul>
         <li><strong>For customers without Snowflake:</strong> Reader Accounts (SQL access, you pay compute), Open Sharing via Iceberg (any engine reads your data via standard REST catalog), or a Custom SaaS App (full control).</li>
         <li><strong>For customers with Snowflake:</strong> Secure Data Sharing (zero-copy, always live), Declarative Native Apps (data + code, no setup script), Full Native Apps (complete application framework), MCP (AI tool integration), or Data Clean Rooms (privacy-safe analytics).</li>
@@ -353,7 +353,7 @@
           <div class="model-card__num" style="background: #d97706;">2</div>
           <div class="model-card__info">
             <h4>Open Sharing (Iceberg)</h4>
-            <p class="model-oneliner">Expose Snowflake-managed Iceberg tables via REST catalog. Customers read with Spark, Trino, DuckDB, Flink -- any Iceberg-compatible engine.</p>
+            <p class="model-oneliner">Expose Snowflake-managed Iceberg tables via REST catalog. Customers read with Spark, Trino, DuckDB, Flink, or any Iceberg-compatible engine.</p>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <div class="model-card__tags">
@@ -365,12 +365,12 @@
         </div>
         <div class="model-card__detail">
           <div class="model-card__detail-inner">
-            <p style="font-size: 0.86rem; color: var(--text); margin-top: 14px; line-height: 1.6;">Two paths exist for Iceberg-based open sharing. <strong>Horizon Catalog</strong> (GA) exposes a Polaris-compatible REST endpoint from your Snowflake account -- external engines connect directly. <strong>Open Data Sharing</strong> (Public Preview) adds a formal sharing layer with external consumer identities and PAT-based auth for non-Snowflake customers.</p>
+            <p style="font-size: 0.86rem; color: var(--text); margin-top: 14px; line-height: 1.6;">Two paths exist for Iceberg-based open sharing. <strong>Horizon Catalog</strong> (GA) exposes a Polaris-compatible REST endpoint from your Snowflake account; external engines connect directly. <strong>Open Data Sharing</strong> (Public Preview) adds a formal sharing layer with external consumer identities and PAT-based auth for non-Snowflake customers.</p>
             <div class="detail-grid">
               <div class="detail-col">
                 <h5>Horizon Catalog (GA)</h5>
                 <ul>
-                  <li>Built into every Snowflake account -- no separate product</li>
+                  <li>Built into every Snowflake account. No separate product</li>
                   <li>Polaris-compatible Apache Iceberg REST endpoint at <code style="font-size: 0.75rem;">https://&lt;org&gt;-&lt;acct&gt;.snowflakecomputing.com/polaris/api/catalog</code></li>
                   <li>Supports: Spark, Flink, Trino, DuckDB, Dremio, StarRocks, PyIceberg, Doris</li>
                   <li>Auth: External OAuth, key-pair (JWT), PAT, Workload Identity Federation</li>
@@ -553,7 +553,7 @@ $$;
           <div class="model-card__num" style="background: var(--sf-primary);">5</div>
           <div class="model-card__info">
             <h4>Declarative Native App <span style="font-size: 0.72rem; font-weight: 500; color: var(--sf-primary);">(TYPE=DATA)</span></h4>
-            <p class="model-oneliner">Data + notebooks + semantic views + agents packaged as an installable app. No setup script -- everything declared in a YAML manifest.</p>
+            <p class="model-oneliner">Data + notebooks + semantic views + agents packaged as an installable app. No setup script; everything declared in a YAML manifest.</p>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <div class="model-card__tags">
@@ -710,7 +710,7 @@ $$;
               <div class="detail-col">
                 <h5>Key Capabilities</h5>
                 <ul>
-                  <li>Snowflake-managed, fully-hosted MCP server -- a SQL object</li>
+                  <li>Snowflake-managed, fully-hosted MCP server: a SQL object</li>
                   <li>Tool types: CORTEX_SEARCH_SERVICE_QUERY, CORTEX_ANALYST_MESSAGE, Agents, SQL execution, custom tools</li>
                   <li>Clients: Cursor, Claude Desktop, Cortex Code, any MCP-compatible client</li>
                   <li>OAuth 2.0 authentication, MCP revision 2025-11-25</li>
@@ -721,7 +721,7 @@ $$;
                 <ul>
                   <li>Customers use AI coding tools or MCP-compatible BI platforms</li>
                   <li>You want schema-aware, authenticated data access for AI agents</li>
-                  <li>Low engineering effort -- define tools in a YAML spec</li>
+                  <li>Low engineering effort; define tools in a YAML spec</li>
                   <li>Not available in government regions</li>
                 </ul>
               </div>
@@ -1009,7 +1009,7 @@ $$;</pre></div>
               <h4>The Data Product</h4>
             </div>
             <p>You're a SaaS analytics company. Your data product is tenant-specific usage reports: API calls, feature adoption, cost breakdowns. The same dataset will be delivered via different models to different customer segments.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">This is the starting point -- a table in your Snowflake account that every customer needs access to, filtered to their data.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This is the starting point: a table in your Snowflake account that every customer needs access to, filtered to their data.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="comment">-- The data product: per-tenant analytics reports</span>
@@ -1074,7 +1074,7 @@ $$;</pre></div>
               <div class="step-number">3</div>
               <h4>Path B: Secure Data Sharing</h4>
             </div>
-            <p>Enterprise customer "Globex" has their own Snowflake account. Share the same secure view -- zero-copy, always live. Globex pays their own compute. Publish as a free listing if they're in a different region.</p>
+            <p>Enterprise customer "Globex" has their own Snowflake account. Share the same secure view; zero-copy, always live. Globex pays their own compute. Publish as a free listing if they're in a different region.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Trade-off:</strong> No compute cost for you, always up to date, but customer sees raw data in their own tools.</p>
           </div>
           <div class="step-right">
@@ -1106,7 +1106,7 @@ $$;</pre></div>
               <div class="step-number" style="background: var(--sf-dark);">4</div>
               <h4>Path C: Declarative Native App</h4>
             </div>
-            <p>Mid-market customer "Initech" wants the data plus notebooks, a semantic view for natural language querying, and a Cortex Agent. Package it all as a Declarative Native App (TYPE=DATA) -- no setup script, YAML manifest only.</p>
+            <p>Mid-market customer "Initech" wants the data plus notebooks, a semantic view for natural language querying, and a Cortex Agent. Package it all as a Declarative Native App (TYPE=DATA); no setup script, YAML manifest only.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Trade-off:</strong> More than a share, less than a full app. Consumer gets data + analytical tools. No custom Streamlit UI.</p>
           </div>
           <div class="step-right">
@@ -1176,7 +1176,7 @@ $$;</pre></div>
               <div class="step-number">6</div>
               <h4>Add an AI Layer (Any Model)</h4>
             </div>
-            <p>Cortex Agents can be layered onto models 4-6 (any model where the consumer has Snowflake). Create a semantic view over the shared data, create an agent, and bundle it -- customers get natural language access to their data.</p>
+            <p>Cortex Agents can be layered onto models 4-6 (any model where the consumer has Snowflake). Create a semantic view over the shared data, create an agent, and bundle it; customers get natural language access to their data.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;">See <a href="4-1-embedded-agents.html" style="color: var(--sf-primary);">4.1 Embedded Agents</a> for the full walkthrough of CREATE AGENT syntax and multi-tenant agent variables.</p>
           </div>
           <div class="step-right">

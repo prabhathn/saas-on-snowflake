@@ -129,7 +129,7 @@
       <ul>
         <li><strong>Data access governance:</strong> Agents need access to data but must respect tenant boundaries. Traditional frameworks have no built-in multi-tenant awareness.</li>
         <li><strong>Accuracy and grounding:</strong> Agents hallucinate when they don't have access to the right data. Ensuring answers are grounded in actual database records is difficult.</li>
-        <li><strong>Infrastructure complexity:</strong> Running agent frameworks requires vector databases, embedding services, model hosting, and orchestration -- 5+ systems to deploy and maintain.</li>
+        <li><strong>Infrastructure complexity:</strong> Running agent frameworks requires vector databases, embedding services, model hosting, and orchestration: 5+ systems to deploy and maintain.</li>
         <li><strong>Cost unpredictability:</strong> Token costs scale with usage. Without attribution to tenants, AI costs become an unmanageable line item.</li>
         <li><strong>Tool definition maintenance:</strong> As your product evolves, agent tools must be updated. Schema changes break tool definitions silently.</li>
       </ul>
@@ -140,24 +140,24 @@
       <p>Two approaches to embedding agents, depending on your needs:</p>
       <div class="method-grid">
         <div class="method-card">
-          <div class="method-label">Method 1 -- Fully Managed</div>
+          <div class="method-label">Method 1: Fully Managed</div>
           <h3>Cortex Agent API</h3>
           <p>A complete, managed agent runtime. Define tools (semantic views, Cortex Search, custom functions) and Snowflake handles orchestration, tool calling, and response streaming.</p>
           <ul>
             <li>Built-in multi-tenant governance via row-access policies</li>
             <li>Semantic views translate natural language to governed SQL</li>
             <li>Cortex Search provides RAG retrieval as a tool</li>
-            <li>No infrastructure to manage -- call via REST</li>
+            <li>No infrastructure to manage; call via REST</li>
             <li>Best for: teams that want to ship fast without managing agent orchestration</li>
           </ul>
         </div>
         <div class="method-card">
-          <div class="method-label">Method 2 -- Bring Your Own Framework</div>
+          <div class="method-label">Method 2: Bring Your Own Framework</div>
           <h3>Cortex REST API as Inference Layer</h3>
           <p>Use Snowflake's Cortex REST API (AI_COMPLETE endpoint) as the LLM inference backend for LangChain, LangGraph, or any agent framework. Your orchestration, Snowflake's models.</p>
           <ul>
             <li>Keep your existing LangChain/LangGraph agent logic</li>
-            <li>Swap OpenAI/Anthropic with Cortex REST API -- data never leaves Snowflake</li>
+            <li>Swap OpenAI/Anthropic with Cortex REST API; data never leaves Snowflake</li>
             <li>Full control over tool definitions, routing, and conversation state</li>
             <li>Access to Snowflake-hosted models (Llama, Mistral, etc.) at Snowflake-managed scale</li>
             <li>Best for: teams with existing agent investments who want Snowflake as the inference + data layer</li>
@@ -173,7 +173,7 @@
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-llm-rest-api" target="_blank"><h4>Cortex REST API (AI_COMPLETE)</h4><p>LLM inference endpoint callable from any framework. Supports Llama, Mistral, and other models. Drop-in replacement for OpenAI's completion API in your agent code.</p></a>
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/views-semantic" target="_blank"><h4>Semantic Views</h4><p>Business-friendly data models that describe tables in natural language. Cortex Agents use these to translate user questions into accurate, governed SQL.</p></a>
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview" target="_blank"><h4>Cortex Search</h4><p>Semantic search over unstructured data. Used as a retrieval tool by agents for RAG-grounded answers over docs, tickets, and knowledge bases.</p></a>
-        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/security-row-intro" target="_blank"><h4>Row-Access Policies (Agent Context)</h4><p>Policies enforce tenant isolation on agent-generated queries. The agent sees only what the calling tenant is allowed to see -- no custom filtering code.</p></a>
+        <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/security-row-intro" target="_blank"><h4>Row-Access Policies (Agent Context)</h4><p>Policies enforce tenant isolation on agent-generated queries. The agent sees only what the calling tenant is allowed to see. No custom filtering code.</p></a>
       </div>
     </div>
 
@@ -188,7 +188,7 @@
               <div class="step-number">1</div>
               <h4>Create a Semantic View</h4>
             </div>
-            <p>Define a semantic view over your ORDERS and CUSTOMERS tables. This gives the agent a structured, described interface to your data -- metrics, dimensions, and relationships the agent can reason about.</p>
+            <p>Define a semantic view over your ORDERS and CUSTOMERS tables. This gives the agent a structured, described interface to your data: metrics, dimensions, and relationships the agent can reason about.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="kw">CREATE OR REPLACE SEMANTIC VIEW</span> saas_analytics_sv
@@ -314,8 +314,8 @@
               <div class="step-number">4</div>
               <h4>Multi-Tenant Isolation</h4>
             </div>
-            <p>The key insight: <strong>pass the tenant context directly in the <code>agent:run</code> API call</strong> via the <code>variables</code> block. Snowflake sets immutable session attributes before any SQL executes -- and the Row Access Policy (RAP) filters rows based on those attributes.</p>
-            <p style="margin-top: 12px;">No separate query needed. No prompt engineering for filters. The agent-generated SQL runs unmodified -- data isolation is enforced at the engine level via <code>SYS_CONTEXT</code>.</p>
+            <p>The key insight: <strong>pass the tenant context directly in the <code>agent:run</code> API call</strong> via the <code>variables</code> block. Snowflake sets immutable session attributes before any SQL executes, and the Row Access Policy (RAP) filters rows based on those attributes.</p>
+            <p style="margin-top: 12px;">No separate query needed. No prompt engineering for filters. The agent-generated SQL runs unmodified; data isolation is enforced at the engine level via <code>SYS_CONTEXT</code>.</p>
             <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);"><strong>Flow:</strong> Your app authenticates the user &rarr; resolves their tenant_id &rarr; passes it as an immutable variable in the agent:run call &rarr; RAP filters transparently.</p>
           </div>
           <div class="step-right">
@@ -343,7 +343,7 @@
               <!-- Step B: Agent generates SQL -->
               <div style="display: flex; align-items: center; gap: 10px; margin: 8px 0;">
                 <div class="flow-box snowflake" style="min-width: 100px;">Agent SQL</div>
-                <div style="font-size: 0.72rem; color: var(--text-muted);">No tenant filter -- same for everyone</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">No tenant filter; same for everyone</div>
               </div>
               <div class="code-block" style="padding: 12px 16px; margin-bottom: 8px;">
                 <pre style="font-size: 0.72rem;"><span class="comment">-- Agent-generated (identical for all tenants)</span>

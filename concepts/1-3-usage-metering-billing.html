@@ -102,14 +102,14 @@
 
     <div class="concept-hero">
       <h1>Usage Metering and Billing</h1>
-      <p class="subtitle">Building consumption-based billing on Snowflake: tracking every tenant's usage in real time, choosing the right pricing model, and translating metered events into customer invoices -- all without a custom metering pipeline.</p>
+      <p class="subtitle">Building consumption-based billing on Snowflake: tracking every tenant's usage in real time, choosing the right pricing model, and translating metered events into customer invoices, all without a custom metering pipeline.</p>
     </div>
 
     <!-- How Companies Accomplish This Today -->
     <div class="concept-section">
       <h2>How Companies Accomplish This Today</h2>
       <ul>
-        <li><strong>Application-level counters:</strong> Increment Redis/DynamoDB counters for every API call, feature usage, or record created. Requires instrumentation in every service -- miss one, and you're giving away a feature for free.</li>
+        <li><strong>Application-level counters:</strong> Increment Redis/DynamoDB counters for every API call, feature usage, or record created. Requires instrumentation in every service. Miss one, and you're giving away a feature for free.</li>
         <li><strong>Log aggregation pipelines:</strong> Ship application logs to Kafka, aggregate in Flink or Spark, write to a billing DB. Complex, expensive, and typically 1-6 hours behind real time.</li>
         <li><strong>Third-party metering platforms:</strong> Tools like Metronome, Amberflo, or Orb that sit between your app and billing system. Add cost, another integration point, and a data residency concern.</li>
         <li><strong>Manual reconciliation:</strong> Finance teams manually reconcile infrastructure costs with customer accounts monthly. Doesn't scale past ~100 customers.</li>
@@ -147,7 +147,7 @@
         <li><strong>Platform metering for free:</strong> QUERY_ATTRIBUTION_HISTORY, CORTEX_AI_FUNCTIONS_USAGE_HISTORY, and TABLE_STORAGE_METRICS already track credits and bytes per tenant (via query_tag). No additional instrumentation for infrastructure costs.</li>
         <li><strong>Application event metering:</strong> Stream custom events (API calls, feature invocations) via Snowpipe Streaming. Sub-second latency from your app to the metering table.</li>
         <li><strong>Real-time aggregation:</strong> Dynamic tables continuously compute per-tenant billing totals. TARGET_LAG = 1 minute means your customer's usage dashboard is always current.</li>
-        <li><strong>Flexible rating logic:</strong> Change your billing unit from "queries" to "report views" to "AI tokens" with a SQL change -- no pipeline rebuild.</li>
+        <li><strong>Flexible rating logic:</strong> Change your billing unit from "queries" to "report views" to "AI tokens" with a SQL change. No pipeline rebuild.</li>
         <li><strong>Auditable by default:</strong> Every metering record is immutable, timestamped, and queryable. Dispute resolution is a Time Travel query, not a forensic investigation.</li>
       </ul>
     </div>
@@ -178,56 +178,10 @@
     <!-- Pricing Model Decision -->
     <div class="concept-section">
       <h2>Choosing Your Pricing Model</h2>
-      <p>77% of large SaaS companies now use some form of consumption pricing (Metronome 2025). The question isn't whether to adopt it, but which model fits your product. In 2026, <strong>hybrid</strong> (platform fee + usage) is the dominant pattern at 37% adoption.</p>
-      <div class="pricing-grid">
-        <div class="pricing-card">
-          <div class="pricing-label" style="color: #6b7280;">Traditional</div>
-          <h3>Per-Seat + Platform Fee</h3>
-          <p>Flat monthly fee per user. Predictable for customers and for your revenue forecast.</p>
-          <ul>
-            <li>Simple to implement and explain</li>
-            <li>Predictable revenue for you and costs for customer</li>
-            <li>Misaligned with AI: one agent does the work of 10 seats</li>
-            <li>Limits expansion revenue -- heavy users pay the same</li>
-            <li><strong>Best for:</strong> products where value scales with team size</li>
-          </ul>
-        </div>
-        <div class="pricing-card">
-          <div class="pricing-label" style="color: #2563eb;">Pure Usage</div>
-          <h3>Per-Unit (Pay-as-You-Go)</h3>
-          <p>Bill per API call, query, GB stored, or AI token. Perfect alignment between usage and price.</p>
-          <ul>
-            <li>Zero barrier to entry -- start free, pay as you grow</li>
-            <li>Natural expansion revenue as usage increases</li>
-            <li>Bill shock risk: 78% of buyers hit unexpected charges</li>
-            <li>Revenue volatility -- hard to forecast</li>
-            <li><strong>Best for:</strong> API-first platforms, data products, AI services</li>
-          </ul>
-        </div>
-        <div class="pricing-card recommended">
-          <div class="pricing-label">2026 consensus</div>
-          <h3>Hybrid (Platform + Usage)</h3>
-          <p>Base platform fee for access + usage-based component for consumption. Predictability meets alignment.</p>
-          <ul>
-            <li>Predictable base revenue + usage-driven expansion</li>
-            <li>Committed tiers with overage protect both sides</li>
-            <li>Customers can budget the base, grow into usage</li>
-            <li>Most flexibility for AI feature pricing</li>
-            <li><strong>Best for:</strong> most SaaS products in 2026</li>
-          </ul>
-        </div>
-        <div class="pricing-card">
-          <div class="pricing-label" style="color: #d97706;">Volume Tiered</div>
-          <h3>Committed Tiers with Overage</h3>
-          <p>Customer commits to a usage tier (e.g., 10K queries/month). Lower per-unit rate. Overage billed at a premium.</p>
-          <ul>
-            <li>Predictable for customer within committed range</li>
-            <li>Lower COGS per unit at volume (pass through savings)</li>
-            <li>Requires usage estimation -- wrong tier = waste</li>
-            <li>Overage rates can cause bill shock</li>
-            <li><strong>Best for:</strong> enterprise contracts with high-volume tenants</li>
-          </ul>
-        </div>
+      <p>77% of large SaaS companies now use some form of consumption pricing (Metronome 2025). In 2026, <strong>hybrid</strong> (platform fee + usage) is the dominant pattern at 37% adoption. For a full comparison of pricing model options (per-seat, pure usage, hybrid, committed consumption, and credit-based), see the <a href="1-0-pricing-transition-playbook.html" style="color: var(--sf-primary); font-weight: 600;">Section 1 Capstone Playbook</a>, which covers the strategic decision framework, value metric design, and rollout phases.</p>
+      <div style="margin-top: 16px; padding: 14px 18px; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border: 1px solid #bfdbfe; border-radius: 10px; display: flex; align-items: flex-start; gap: 10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sf-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <p style="font-size: 0.86rem; color: var(--sf-dark); margin: 0; line-height: 1.5;">This page assumes you've chosen a consumption or hybrid model. The metering pipeline below works for any of them; the only thing that changes is your <code style="font-size: 0.82rem;">pricing_rules</code> table in Step 5.</p>
       </div>
     </div>
 
@@ -257,7 +211,7 @@
 
     <!-- Tenant Spend Governance -->
     <div class="concept-section">
-      <h2>Helping Tenants Control Their Own Spend</h2>
+      <h2 id="tenant-spend" style="scroll-margin-top: 80px;">Helping Tenants Control Their Own Spend</h2>
       <p>In a managed SaaS model, you (the provider) own the Snowflake account. Your tenants can't log in to Snowsight and set their own budgets. But you can build self-service spend controls into your product using Snowflake's governance features as the enforcement layer.</p>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px;">
@@ -271,15 +225,23 @@
               <div style="font-size: 0.68rem; color: #16a34a; font-weight: 600;">GA &middot; Hard Stop</div>
             </div>
           </div>
-          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Attach a credit quota to a tenant's warehouse. When the quota hits, the warehouse suspends -- hard stop, no overage.</p>
-          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #f0fdf4; color: #16a34a; font-weight: 600;">Warehouse Compute</span>
-          </div>
-          <ul style="padding-left: 16px; margin: 0; font-size: 0.8rem; color: var(--text-muted);">
-            <li><strong>Provider:</strong> CREATE RESOURCE MONITOR, assign to tenant warehouse</li>
-            <li><strong>Tenant self-service:</strong> Your app calls ALTER RESOURCE MONITOR on their behalf</li>
-            <li><strong>Limit:</strong> Warehouse compute only -- no serverless, AI, or storage</li>
-          </ul>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Attach a credit quota to a tenant's warehouse. When the quota hits, the warehouse suspends. Hard stop, no overage. Your app can adjust the limit on the tenant's behalf for self-service. Covers warehouse compute only. No serverless, AI, or storage.</p>
+          <details style="margin-top: 12px;">
+            <summary style="font-size: 0.75rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">Show SQL</summary>
+            <div style="background: #1e293b; border-radius: 8px; padding: 14px; margin-top: 8px; overflow-x: auto;"><pre style="margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.72rem; line-height: 1.6; color: #e2e8f0; white-space: pre;"><span style="color: #64748b;">-- Create a 100-credit monthly monitor for Acme's warehouse</span>
+<span style="color: #7dd3fc;">CREATE RESOURCE MONITOR</span> acme_monitor
+  <span style="color: #7dd3fc;">WITH</span> CREDIT_QUOTA = 100
+  FREQUENCY = MONTHLY
+  START_TIMESTAMP = IMMEDIATELY
+  TRIGGERS
+    ON 75 PERCENT DO NOTIFY
+    ON 90 PERCENT DO NOTIFY
+    ON 100 PERCENT DO SUSPEND;
+
+<span style="color: #7dd3fc;">ALTER WAREHOUSE</span> acme_wh
+  <span style="color: #7dd3fc;">SET</span> RESOURCE_MONITOR = acme_monitor;</pre></div>
+            <div style="margin-top: 8px; font-size: 0.72rem;"><a href="https://docs.snowflake.com/en/sql-reference/sql/create-resource-monitor" target="_blank" style="color: var(--sf-primary);">CREATE RESOURCE MONITOR docs</a> &middot; <a href="https://docs.snowflake.com/en/user-guide/resource-monitors" target="_blank" style="color: var(--sf-primary);">Resource Monitors overview</a></div>
+          </details>
         </div>
 
         <!-- Custom Budgets -->
@@ -291,19 +253,30 @@
               <div style="font-size: 0.68rem; color: var(--sf-primary); font-weight: 600;">GA &middot; Alert + Action</div>
             </div>
           </div>
-          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Tag tenant objects with <code style="font-size: 0.78rem;">tenant_id = 'acme'</code>, create a budget for that tag. Monitors all services.</p>
-          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">Compute</span>
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">Serverless</span>
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">AI</span>
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">Clustering</span>
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #2563eb; font-weight: 600;">Agents</span>
-          </div>
-          <ul style="padding-left: 16px; margin: 0; font-size: 0.8rem; color: var(--text-muted);">
-            <li><strong>Provider:</strong> Create budget, set limit, configure webhooks (Slack/PagerDuty)</li>
-            <li><strong>Tenant self-service:</strong> Your app calls <code style="font-size: 0.75rem;">budget!SET_SPENDING_LIMIT()</code></li>
-            <li><strong>Limit:</strong> Alert only -- no hard stop. Triggers stored procs at threshold. Max 100/account</li>
-          </ul>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Tag tenant objects by cost center and create a budget that tracks all tagged resources. Monitors all services: compute, serverless, AI, clustering, and agents. Alert only (no hard stop), but can trigger automated actions at threshold. Your app can adjust the spending limit on the tenant's behalf for self-service. Max 100 budgets per account.</p>
+          <details style="margin-top: 12px;">
+            <summary style="font-size: 0.75rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">Show SQL</summary>
+            <div style="background: #1e293b; border-radius: 8px; padding: 14px; margin-top: 8px; overflow-x: auto;"><pre style="margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.72rem; line-height: 1.6; color: #e2e8f0; white-space: pre;"><span style="color: #64748b;">-- Tag tenant objects for budget tracking</span>
+<span style="color: #7dd3fc;">ALTER WAREHOUSE</span> acme_wh
+  <span style="color: #7dd3fc;">SET TAG</span> cost_center = <span style="color: #86efac;">'acme'</span>;
+<span style="color: #7dd3fc;">ALTER SCHEMA</span> app_db.acme_data
+  <span style="color: #7dd3fc;">SET TAG</span> cost_center = <span style="color: #86efac;">'acme'</span>;
+
+<span style="color: #64748b;">-- Create a custom budget object</span>
+<span style="color: #7dd3fc;">CREATE</span> SNOWFLAKE.CORE.BUDGET acme_budget();
+
+<span style="color: #64748b;">-- Set credit spending limit (credits/month)</span>
+<span style="color: #7dd3fc;">CALL</span> acme_budget!<span style="color: #c4b5fd;">SET_SPENDING_LIMIT</span>(500);
+
+<span style="color: #64748b;">-- Link the budget to the tag (tracks all tagged objects)</span>
+<span style="color: #7dd3fc;">CALL</span> acme_budget!<span style="color: #c4b5fd;">SET_RESOURCE_TAGS</span>(
+  [[<span style="color: #c4b5fd;">SYSTEM$REFERENCE</span>(<span style="color: #86efac;">'TAG'</span>,
+    <span style="color: #86efac;">'cost_mgmt.tags.cost_center'</span>,
+    <span style="color: #86efac;">'SESSION'</span>, <span style="color: #86efac;">'APPLYBUDGET'</span>),
+  <span style="color: #86efac;">'acme'</span>]]
+);</pre></div>
+            <div style="margin-top: 8px; font-size: 0.72rem;"><a href="https://docs.snowflake.com/en/user-guide/budgets/custom-budget" target="_blank" style="color: var(--sf-primary);">Custom Budgets docs</a> &middot; <a href="https://docs.snowflake.com/en/sql-reference/classes/budget/methods/set_spending_limit" target="_blank" style="color: var(--sf-primary);">SET_SPENDING_LIMIT</a> &middot; <a href="https://docs.snowflake.com/en/sql-reference/classes/budget/methods/set_resource_tags" target="_blank" style="color: var(--sf-primary);">SET_RESOURCE_TAGS</a></div>
+          </details>
         </div>
 
         <!-- Per-User Quotas -->
@@ -315,17 +288,25 @@
               <div style="font-size: 0.68rem; color: #7c3aed; font-weight: 600;">Public Preview &middot; Hard Stop</div>
             </div>
           </div>
-          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Daily or monthly credit caps per Snowflake user. When hit, AI function calls and Agent interactions pause. ~5 min enforcement.</p>
-          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #f5f3ff; color: #7c3aed; font-weight: 600;">AI Functions</span>
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #f5f3ff; color: #7c3aed; font-weight: 600;">Agents</span>
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #f5f3ff; color: #7c3aed; font-weight: 600;">Cortex Code</span>
-          </div>
-          <ul style="padding-left: 16px; margin: 0; font-size: 0.8rem; color: var(--text-muted);">
-            <li><strong>Provider:</strong> Map tenant to service user, set daily/monthly quota</li>
-            <li><strong>Tenant self-service:</strong> Expose in app UI, call quota API on their behalf</li>
-            <li><strong>Best for:</strong> AI spend control. Pairs with function-level RBAC</li>
-          </ul>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Daily or monthly credit caps per user. When hit, AI function calls and agent interactions pause. Map each tenant to a service user and set their quota. Best for AI spend control; pairs with function-level access controls.</p>
+          <details style="margin-top: 12px;">
+            <summary style="font-size: 0.75rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">Show SQL</summary>
+            <div style="background: #1e293b; border-radius: 8px; padding: 14px; margin-top: 8px; overflow-x: auto;"><pre style="margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.72rem; line-height: 1.6; color: #e2e8f0; white-space: pre;"><span style="color: #64748b;">-- Create a per-user quota object</span>
+<span style="color: #7dd3fc;">CREATE</span> SNOWFLAKE.CORE.QUOTA acme_ai_quota();
+
+<span style="color: #64748b;">-- Scope to AI services</span>
+<span style="color: #7dd3fc;">CALL</span> acme_ai_quota!<span style="color: #c4b5fd;">ADD_SHARED_RESOURCE</span>(<span style="color: #86efac;">'CORTEX AGENT'</span>);
+<span style="color: #7dd3fc;">CALL</span> acme_ai_quota!<span style="color: #c4b5fd;">ADD_SHARED_RESOURCE</span>(<span style="color: #86efac;">'AI FUNCTION'</span>);
+
+<span style="color: #64748b;">-- Set per-user monthly and daily limits</span>
+<span style="color: #7dd3fc;">CALL</span> acme_ai_quota!<span style="color: #c4b5fd;">SET_PER_USER_LIMIT</span>(1000);          <span style="color: #64748b;">-- monthly</span>
+<span style="color: #7dd3fc;">CALL</span> acme_ai_quota!<span style="color: #c4b5fd;">SET_PER_USER_LIMIT</span>(50, <span style="color: #86efac;">'DAILY'</span>);   <span style="color: #64748b;">-- daily</span>
+
+<span style="color: #64748b;">-- Enable hard stop when limit is reached</span>
+<span style="color: #7dd3fc;">CALL</span> acme_ai_quota!<span style="color: #c4b5fd;">SET_BLOCK_ENFORCEMENT_ENABLED</span>(
+  TRUE, TRUE);</pre></div>
+            <div style="margin-top: 8px; font-size: 0.72rem;"><a href="https://docs.snowflake.com/en/user-guide/budgets/per-user-quotas" target="_blank" style="color: var(--sf-primary);">Per-User Quotas docs</a> &middot; <a href="https://docs.snowflake.com/en/sql-reference/classes/quota/methods/set_per_user_limit" target="_blank" style="color: var(--sf-primary);">SET_PER_USER_LIMIT</a></div>
+          </details>
         </div>
 
         <!-- Application-Level -->
@@ -337,16 +318,23 @@
               <div style="font-size: 0.68rem; color: #d97706; font-weight: 600;">DIY &middot; Full Flexibility</div>
             </div>
           </div>
-          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Query your rated_usage dynamic table before allowing expensive operations. Check spend against the tenant's plan limit.</p>
-          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #fffbeb; color: #d97706; font-weight: 600;">Everything</span>
-            <span style="font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; background: #fffbeb; color: #d97706; font-weight: 600;">Custom Logic</span>
-          </div>
-          <ul style="padding-left: 16px; margin: 0; font-size: 0.8rem; color: var(--text-muted);">
-            <li><strong>Pattern:</strong> Check <code style="font-size: 0.75rem;">rated_usage</code> before each expensive operation</li>
-            <li><strong>Tenant self-service:</strong> Full control -- alerts, auto-downgrade, buy more</li>
-            <li><strong>Advantage:</strong> No Snowflake dependency. Your logic, your limits, your UX</li>
-          </ul>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin: 0 0 10px;">Check the tenant's current spend against their plan limit before allowing expensive operations. Full flexibility: alerts, auto-downgrade, buy more. No platform dependency: your logic, your limits, your UX.</p>
+          <details style="margin-top: 12px;">
+            <summary style="font-size: 0.75rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">Show SQL</summary>
+            <div style="background: #1e293b; border-radius: 8px; padding: 14px; margin-top: 8px; overflow-x: auto;"><pre style="margin: 0; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.72rem; line-height: 1.6; color: #e2e8f0; white-space: pre;"><span style="color: #64748b;">-- Check tenant spend before allowing an expensive operation</span>
+<span style="color: #7dd3fc;">SELECT</span> <span style="color: #c4b5fd;">SUM</span>(line_amount) <span style="color: #7dd3fc;">AS</span> current_spend
+<span style="color: #7dd3fc;">FROM</span> billing.rated_usage
+<span style="color: #7dd3fc;">WHERE</span> tenant_id = <span style="color: #86efac;">'acme'</span>
+  <span style="color: #7dd3fc;">AND</span> billing_month = <span style="color: #c4b5fd;">DATE_TRUNC</span>(<span style="color: #86efac;">'month'</span>,
+        <span style="color: #c4b5fd;">CURRENT_DATE</span>());
+
+<span style="color: #64748b;">-- In your app middleware (pseudocode):</span>
+<span style="color: #64748b;">-- if current_spend >= tenant.plan_limit:</span>
+<span style="color: #64748b;">--     return 429 "Spend limit reached"</span>
+<span style="color: #64748b;">-- elif current_spend >= tenant.plan_limit * 0.9:</span>
+<span style="color: #64748b;">--     show_warning("90% of budget used")</span></pre></div>
+            <div style="margin-top: 8px; font-size: 0.72rem;"><a href="https://docs.snowflake.com/en/user-guide/dynamic-tables/overview" target="_blank" style="color: var(--sf-primary);">Dynamic Tables docs</a> &middot; See Step 5 (rated_usage) in the storyboard below</div>
+          </details>
         </div>
 
       </div>
@@ -403,7 +391,7 @@
               <h4>Define the Metering Events Table</h4>
             </div>
             <p>A single table captures every billable event: API calls from your app, compute from Snowflake, AI invocations, storage snapshots. Every row has <code>tenant_id</code>, <code>event_type</code>, <code>quantity</code>, and optional metadata.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">This is the "raw meter" -- the single source of truth for all billing.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This is the "raw meter," the single source of truth for all billing.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="kw">CREATE TABLE</span> billing.metering_events (
@@ -443,7 +431,7 @@
               <div class="step-number">2</div>
               <h4>Stream Events from Your App</h4>
             </div>
-            <p>Your API middleware intercepts every tenant request and emits a metering event via Snowpipe Streaming. No batch jobs, no separate metering service -- events land in Snowflake in under a second.</p>
+            <p>Your API middleware intercepts every tenant request and emits a metering event via Snowpipe Streaming. No batch jobs, no separate metering service. Events land in Snowflake in under a second.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;">This replaces the Kafka → Flink → Redis → billing DB pipeline with a single SDK call.</p>
           </div>
           <div class="step-right">
@@ -565,8 +553,8 @@ channel = client.open_channel(
               <div class="step-number" style="background: var(--sf-dark);">5</div>
               <h4>Apply Rating Logic</h4>
             </div>
-            <p>Convert raw metered quantities into dollar amounts using your pricing rules. This is where you define what a "unit" costs the customer -- and where committed use discounts and tier pricing apply.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">The pricing table is a regular Snowflake table. Change a rate, and the next billing cycle reflects it -- no code deploy.</p>
+            <p>Convert raw metered quantities into dollar amounts using your pricing rules. This is where you define what a "unit" costs the customer, and where committed use discounts and tier pricing apply.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The pricing table is a regular Snowflake table. Change a rate, and the next billing cycle reflects it. No code deploy.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="comment">-- Pricing rules table (maintained by RevOps)</span>
@@ -619,7 +607,7 @@ channel = client.open_channel(
           <div class="step-right">
             <div class="ui-panel">
               <div class="ui-panel-header" style="display: flex; justify-content: space-between;">
-                <span>Usage Dashboard -- Acme Corp</span>
+                <span>Usage Dashboard: Acme Corp</span>
                 <span style="font-size: 0.68rem; color: var(--sf-primary);">Billing Period: June 2026</span>
               </div>
               <div class="ui-panel-body" style="padding: 16px;">
@@ -672,7 +660,7 @@ channel = client.open_channel(
               <h4>Invoice Generation</h4>
             </div>
             <p>At period end, a stored procedure snapshots the rated usage, applies final rules (committed use deduction, minimum charges), and produces a JSON invoice record ready for your billing system.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">The snapshot uses Time Travel semantics -- if a customer disputes an invoice, you can query exactly what the meter read at billing time.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The snapshot uses Time Travel semantics: if a customer disputes an invoice, you can query exactly what the meter read at billing time.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="kw">CREATE OR REPLACE PROCEDURE</span> billing.generate_invoice(

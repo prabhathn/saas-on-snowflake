@@ -85,7 +85,7 @@
 
     <div class="concept-hero">
       <h1>AI Functions in the UI</h1>
-      <p class="subtitle">Enriching your product's interface with AI: classifying tickets, summarizing transcripts, extracting fields from documents, and analyzing sentiment -- all as SQL function calls. No model hosting, no API keys, no inference infrastructure.</p>
+      <p class="subtitle">Enriching your product's interface with AI: classifying tickets, summarizing transcripts, extracting fields from documents, and analyzing sentiment, all as SQL function calls. No model hosting, no API keys, no inference infrastructure.</p>
     </div>
 
     <!-- How Companies Accomplish This Today -->
@@ -103,8 +103,8 @@
     <div class="concept-section">
       <h2>Roles and People Involved</h2>
       <div class="roles-grid">
-        <div class="role-card"><h4>Product Designers</h4><p>Decides where AI enrichments add value in the UI -- what to summarize, classify, or extract, and how to present AI-generated content alongside source data.</p></div>
-        <div class="role-card"><h4>Backend Engineers</h4><p>Integrates AI function calls into the data pipeline or dynamic tables. No new microservice needed -- it's a SQL column.</p></div>
+        <div class="role-card"><h4>Product Designers</h4><p>Decides where AI enrichments add value in the UI: what to summarize, classify, or extract, and how to present AI-generated content alongside source data.</p></div>
+        <div class="role-card"><h4>Backend Engineers</h4><p>Integrates AI function calls into the data pipeline or dynamic tables. No new microservice needed; it's a SQL column.</p></div>
         <div class="role-card"><h4>Frontend Engineers</h4><p>Renders pre-computed AI output: sentiment badges on tickets, extracted fields in forms, summaries next to source documents.</p></div>
         <div class="role-card"><h4>Data / AI Team</h4><p>Evaluates AI quality, tunes prompts via AI Function Studio, and monitors output accuracy. Uses the create → evaluate → optimize lifecycle.</p></div>
       </div>
@@ -117,7 +117,7 @@
         <li><strong>Integration complexity:</strong> Each AI capability (summarize, classify, extract) requires its own API integration, error handling, and cost tracking. Three features = three microservices.</li>
         <li><strong>Latency at query time:</strong> Calling external LLM APIs adds 1-5 seconds per request. Unacceptable for UI interactions that should feel instant.</li>
         <li><strong>Cost unpredictability:</strong> Token-based pricing makes AI feature costs hard to predict. A verbose transcript costs more to summarize than a short one.</li>
-        <li><strong>Data governance:</strong> Sending customer data to external AI APIs raises compliance concerns -- data residency, PII exposure, model training opt-out.</li>
+        <li><strong>Data governance:</strong> Sending customer data to external AI APIs raises compliance concerns: data residency, PII exposure, model training opt-out.</li>
         <li><strong>Quality consistency:</strong> Different models, prompts, and context windows produce inconsistent results. No systematic way to evaluate and optimize.</li>
       </ul>
     </div>
@@ -127,9 +127,9 @@
       <h2>What Snowflake Offers</h2>
       <ul>
         <li><strong>AI as SQL functions:</strong> Call AI_CLASSIFY, AI_EXTRACT, AI_COMPLETE, AI_SENTIMENT directly in SQL queries. No API integration, no external service, no data movement.</li>
-        <li><strong>Every modality:</strong> Text, documents, images, audio, and video -- one function signature, one platform. Classify a PDF, extract fields from a scanned invoice, transcribe a call recording.</li>
-        <li><strong>Pre-compute and cache:</strong> Run AI functions in a dynamic table to pre-enrich records as they arrive. UI queries hit pre-computed results -- instant response, no LLM latency at page load.</li>
-        <li><strong>Data never leaves Snowflake:</strong> AI functions run inside the platform. Customer data stays in your Snowflake account -- no external API calls, full governance retained.</li>
+        <li><strong>Every modality:</strong> Text, documents, images, audio, and video; one function signature, one platform. Classify a PDF, extract fields from a scanned invoice, transcribe a call recording.</li>
+        <li><strong>Pre-compute and cache:</strong> Run AI functions in a dynamic table to pre-enrich records as they arrive. UI queries hit pre-computed results. Instant response, no LLM latency at page load.</li>
+        <li><strong>Data never leaves Snowflake:</strong> AI functions run inside the platform. Customer data stays in your Snowflake account. No external API calls, full governance retained.</li>
         <li><strong>Create → Evaluate → Optimize:</strong> AI Function Studio (in Cortex Code) drafts prompts, scores against ground truth, and optimizes model/prompt combinations automatically.</li>
         <li><strong>Granular cost controls:</strong> Function-level RBAC, per-user quotas, tag-based budgets, and low-latency spend enforcement. AI credits tracked in CORTEX_USAGE and attributable to tenants.</li>
       </ul>
@@ -148,7 +148,7 @@
         <div class="fn-card">
           <div class="fn-modality">Text &middot; Docs &middot; Images</div>
           <div class="fn-name">AI_CLASSIFY</div>
-          <div class="fn-desc">Single or multi-label classification. Pass categories as an array -- no training data needed.</div>
+          <div class="fn-desc">Single or multi-label classification. Pass categories as an array. No training data needed.</div>
         </div>
         <div class="fn-card">
           <div class="fn-modality">Text &middot; Docs</div>
@@ -187,7 +187,7 @@
     <div class="concept-section">
       <h2>Customer Stories</h2>
       <div class="customer-story">
-        <p>"I don't think we could have gone down the LLM route at all without Cortex -- not without the costs outweighing the benefits."</p>
+        <p>"I don't think we could have gone down the LLM route at all without Cortex, not without the costs outweighing the benefits."</p>
         <span class="attribution">-- Mark Atkinson, Head of Data Science, Jet2 &middot; <a href="https://www.snowflake.com/en/customers/all-customers/case-study/jet2/" target="_blank" style="color: var(--sf-primary);">Case Study</a></span>
       </div>
       <div class="customer-story">
@@ -218,7 +218,7 @@
         </a>
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/dynamic-tables-about" target="_blank">
           <h4>Dynamic Tables</h4>
-          <p>Pre-compute AI enrichments as new records arrive. UI queries hit pre-built columns -- zero LLM latency at page load.</p>
+          <p>Pre-compute AI enrichments as new records arrive. UI queries hit pre-built columns. Zero LLM latency at page load.</p>
         </a>
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/cost-managing-budgets" target="_blank">
           <h4>Budgets and Quotas</h4>
@@ -240,7 +240,7 @@
               <div class="step-number">1</div>
               <h4>The Raw Support Tickets Table</h4>
             </div>
-            <p>Your SaaS product has a <code>SUPPORT_TICKETS</code> table with tenant_id, subject, body, and timestamp. Thousands of tickets arrive daily -- unstructured, unclassified, unscored.</p>
+            <p>Your SaaS product has a <code>SUPPORT_TICKETS</code> table with tenant_id, subject, body, and timestamp. Thousands of tickets arrive daily: unstructured, unclassified, unscored.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;">Today, a human reads each ticket to determine priority, category, and sentiment. That's what we're about to automate.</p>
           </div>
           <div class="step-right">
@@ -283,7 +283,7 @@
               <div class="step-number">2</div>
               <h4>Classify Tickets Instantly</h4>
             </div>
-            <p>One SQL call classifies each ticket into your routing categories. No training data, no model fine-tuning -- just pass your categories as an array.</p>
+            <p>One SQL call classifies each ticket into your routing categories. No training data, no model fine-tuning; just pass your categories as an array.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Multi-label mode</strong> returns all applicable labels, so a billing complaint that's also urgent gets both tags.</p>
           </div>
           <div class="step-right">
@@ -329,7 +329,7 @@
               <h4>Score Sentiment and Extract Key Fields</h4>
             </div>
             <p>Add sentiment scoring and structured extraction in the same query. AI_SENTIMENT returns a score from -1 to +1. AI_EXTRACT pulls out specific fields you define.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">The extracted JSON becomes queryable structured data -- filter by urgency, join on product area, aggregate by month.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">The extracted JSON becomes queryable structured data. Filter by urgency, join on product area, aggregate by month.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="kw">SELECT</span>
@@ -421,7 +421,7 @@
               <div class="step-number">5</div>
               <h4>Pre-Enrich with a Dynamic Table</h4>
             </div>
-            <p>Wrap the AI functions in a dynamic table so enrichment runs continuously as new tickets arrive. The UI queries pre-computed columns -- <strong>zero LLM latency at page load</strong>.</p>
+            <p>Wrap the AI functions in a dynamic table so enrichment runs continuously as new tickets arrive. The UI queries pre-computed columns. <strong>Zero LLM latency at page load</strong>.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;">Set <code>TARGET_LAG</code> to control freshness. 1 minute means new tickets are enriched within 60 seconds of creation.</p>
           </div>
           <div class="step-right">
@@ -467,13 +467,13 @@
               <div class="step-number">6</div>
               <h4>The Product UI</h4>
             </div>
-            <p>Your frontend queries the dynamic table -- no AI calls at render time. Every ticket arrives pre-classified, pre-scored, pre-summarized.</p>
+            <p>Your frontend queries the dynamic table. No AI calls at render time. Every ticket arrives pre-classified, pre-scored, pre-summarized.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;">The query is just a SELECT with filters. The intelligence is in the data, not the application code.</p>
           </div>
           <div class="step-right">
             <div class="ui-panel">
               <div class="ui-panel-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>Support Queue -- Acme Corp</span>
+                <span>Support Queue: Acme Corp</span>
                 <span style="font-size: 0.68rem; color: var(--sf-primary);">Auto-classified &middot; Auto-routed</span>
               </div>
               <div class="ui-panel-body" style="padding: 0;">
@@ -525,7 +525,7 @@
               <h4>Cost Governance</h4>
             </div>
             <p>Control who can use which functions, set per-user quotas, and track AI spend per tenant. Function-level RBAC ensures the support team can classify but can't run expensive completions.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">This ties directly to <a href="1-2-unit-cost-attribution.html" style="color: var(--sf-primary);">1.2 Unit Cost Attribution</a> -- AI credits show up in the same CORTEX_USAGE views.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This ties directly to <a href="1-2-unit-cost-attribution.html" style="color: var(--sf-primary);">1.2 Unit Cost Attribution</a>; AI credits show up in the same CORTEX_USAGE views.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="comment">-- Function-level RBAC: restrict which roles can use which functions</span>

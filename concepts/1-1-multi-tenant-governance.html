@@ -100,13 +100,13 @@
 
     <div class="concept-hero">
       <h1>Multi-Tenant Governance and Provisioning</h1>
-      <p class="subtitle">How to enforce tenant isolation at the data platform layer -- so developers write normal SQL, policies are enforced transparently, and cross-tenant data leakage is structurally impossible.</p>
+      <p class="subtitle">How to enforce tenant isolation at the data platform layer, so developers write normal SQL, policies are enforced transparently, and cross-tenant data leakage is structurally impossible.</p>
     </div>
 
     <!-- How Companies Accomplish This Today -->
     <div class="concept-section">
       <h2>How Companies Accomplish This Today</h2>
-      <p>Most SaaS companies build tenant isolation at the application layer -- embedding WHERE clauses in every query, adding middleware to filter results, and relying on developers to never forget a tenant check.</p>
+      <p>Most SaaS companies build tenant isolation at the application layer, embedding WHERE clauses in every query, adding middleware to filter results, and relying on developers to never forget a tenant check.</p>
       <ul>
         <li><strong>Application-layer filtering:</strong> Every query includes a <code>tenant_id</code> filter, enforced by ORM middleware or API gateways. One missed filter = data leak.</li>
         <li><strong>Separate databases per tenant:</strong> Physical isolation at the infrastructure level. Safe but expensive, hard to manage at scale, and makes cross-tenant analytics nearly impossible.</li>
@@ -142,7 +142,7 @@
     <div class="concept-section">
       <h2>Challenges Today</h2>
       <ul>
-        <li><strong>Human error at scale:</strong> One developer forgets a tenant filter in a new API endpoint -- instant cross-tenant data leak. This is the #1 cause of SaaS security incidents.</li>
+        <li><strong>Human error at scale:</strong> One developer forgets a tenant filter in a new API endpoint. Instant cross-tenant data leak. This is the #1 cause of SaaS security incidents.</li>
         <li><strong>Audit complexity:</strong> Proving to SOC2 auditors that every single query path enforces isolation requires exhaustive code review and testing.</li>
         <li><strong>Performance vs. isolation tradeoff:</strong> Physical separation (separate DBs) is safe but 10x more expensive. Logical separation (shared tables) is efficient but risky.</li>
         <li><strong>Feature velocity drag:</strong> Every new feature requires re-implementing and re-testing tenant isolation, slowing engineering teams by 20-30%.</li>
@@ -153,12 +153,12 @@
     <!-- What Snowflake Offers -->
     <div class="concept-section">
       <h2>What Snowflake Offers</h2>
-      <p>Snowflake moves tenant isolation from the application layer to the data platform layer -- making it structurally impossible, not just unlikely, for a query to return another tenant's data.</p>
+      <p>Snowflake moves tenant isolation from the application layer to the data platform layer, making it structurally impossible, not just unlikely, for a query to return another tenant's data.</p>
       <ul>
         <li><strong>Guaranteed isolation without performance penalty:</strong> Row-access policies enforce tenant boundaries at the engine level, not the application level. No WHERE clause to forget.</li>
-        <li><strong>One shared schema, many tenants:</strong> Keep the operational simplicity of a single database while each tenant sees only their data -- no per-tenant infrastructure.</li>
+        <li><strong>One shared schema, many tenants:</strong> Keep the operational simplicity of a single database while each tenant sees only their data, with no per-tenant infrastructure.</li>
         <li><strong>Audit-ready by default:</strong> Access policies are declarative and centrally managed. Show auditors the policy definition, not thousands of lines of application code.</li>
-        <li><strong>Zero engineering tax on new features:</strong> Developers write normal SQL. Policies are enforced transparently -- no tenant-aware code required.</li>
+        <li><strong>Zero engineering tax on new features:</strong> Developers write normal SQL. Policies are enforced transparently. No tenant-aware code required.</li>
         <li><strong>AI-safe multi-tenancy:</strong> Cortex Agents inherit session attributes with <code>is_immutable_session_attribute</code>, so row-access policies apply to AI-generated queries automatically.</li>
       </ul>
     </div>
@@ -171,15 +171,15 @@
         <div class="arch-stack">
           <div class="arch-layer sf">
             <span class="layer-name" style="min-width: 180px;">PLATFORM_ADMIN</span>
-            <span class="layer-desc">Your ops/engineering team (the SaaS provider). Bypasses the row-access policy -- sees all tenants. Used for cross-tenant analytics, debugging, provisioning.</span>
+            <span class="layer-desc">Your ops/engineering team (the SaaS provider). Bypasses the row-access policy; sees all tenants. Used for cross-tenant analytics, debugging, provisioning.</span>
           </div>
           <div class="arch-layer app">
             <span class="layer-name" style="min-width: 180px;">TENANT_ADMIN</span>
-            <span class="layer-desc">Your customer's admin (e.g., Acme's IT lead). Sees only their tenant's rows, but with full column visibility -- unmasked phone numbers, PII, etc.</span>
+            <span class="layer-desc">Your customer's admin (e.g., Acme's IT lead). Sees only their tenant's rows, but with full column visibility: unmasked phone numbers, PII, etc.</span>
           </div>
           <div class="arch-layer data">
             <span class="layer-name" style="min-width: 180px;">TENANT_USER</span>
-            <span class="layer-desc">Your customer's regular end-users (e.g., Acme's sales reps). Sees only their tenant's rows, and sensitive columns are fully masked -- phone numbers, SSNs, etc. are redacted.</span>
+            <span class="layer-desc">Your customer's regular end-users (e.g., Acme's sales reps). Sees only their tenant's rows, and sensitive columns are fully masked: phone numbers, SSNs, etc. are redacted.</span>
           </div>
         </div>
       </div>
@@ -197,7 +197,7 @@
           <p>All tenants share the same tables. A <code>tenant_id</code> column stamps every row. Row-access policies and session variables enforce isolation at query time.</p>
           <ul>
             <li>Scales from tens to millions of tenants</li>
-            <li>Simpler architecture -- fewer objects to manage</li>
+            <li>Simpler architecture, with fewer objects to manage</li>
             <li>More cost-efficient (shared compute)</li>
             <li>Cross-tenant analytics are trivial</li>
             <li>Requires consistent data model across tenants</li>
@@ -238,10 +238,10 @@
         <div class="decision-card">
           <div class="decision-label">Data-as-a-Service</div>
           <h3>Entitlement-Based Access</h3>
-          <p>One shared dataset owned by the provider. Each tenant is entitled to a subset based on business attributes -- regions, topics, asset classes, feeds. An entitlements table maps tenants to the slices they've licensed.</p>
+          <p>One shared dataset owned by the provider. Each tenant is entitled to a subset based on business attributes: regions, topics, asset classes, feeds. An entitlements table maps tenants to the slices they've licensed.</p>
           <ul>
             <li>Market data, threat intel, benchmarking, industry analytics</li>
-            <li>Rows don't "belong" to a tenant -- tenants get <em>access</em> to subsets</li>
+            <li>Rows don't "belong" to a tenant; tenants get <em>access</em> to subsets</li>
             <li>Policy joins to an entitlements table on a business key</li>
             <li>Use memoizable functions for performance at scale</li>
           </ul>
@@ -256,7 +256,7 @@
       <div class="feature-list">
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/security-row-intro" target="_blank">
           <h4>Row-Access Policies</h4>
-          <p>SQL-defined policies that automatically filter rows based on the querying user's context. Applied once, enforced on every query -- no application changes needed.</p>
+          <p>SQL-defined policies that automatically filter rows based on the querying user's context. Applied once, enforced on every query. No application changes needed.</p>
         </a>
         <a class="feature-item" href="https://docs.snowflake.com/en/user-guide/security-column-ddm-intro" target="_blank">
           <h4>Dynamic Data Masking</h4>
@@ -295,7 +295,7 @@
               <h4>Create the Shared Schema</h4>
             </div>
             <p>Start with a single <code>ORDERS</code> table containing data for three tenants. Every row has a <code>tenant_id</code>. A superuser can see all rows.</p>
-            <p style="font-size: 0.82rem; color: var(--sf-primary); font-weight: 500; margin-top: 8px;">This is the "combine tenants" approach -- the recommended starting point.</p>
+            <p style="font-size: 0.82rem; color: var(--sf-primary); font-weight: 500; margin-top: 8px;">This is the "combine tenants" approach, the recommended starting point.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="comment">-- Shared multi-tenant table</span>
@@ -330,7 +330,7 @@
               <h4>Create the Row-Access Policy</h4>
             </div>
             <p>Define a policy that filters rows where <code>tenant_id</code> matches the current session's tenant context. This uses <code>SYS_CONTEXT</code> to read session attributes set by the application.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Key insight:</strong> The policy is applied once and enforced on every query against this table -- developers never write a WHERE clause for tenant filtering.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;"><strong>Key insight:</strong> The policy is applied once and enforced on every query against this table; developers never write a WHERE clause for tenant filtering.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="comment">-- Create the row-access policy</span>
@@ -423,7 +423,7 @@ APAC   | 0700   | 392.20</div>
               <h4>Application Sets Tenant Context</h4>
             </div>
             <p>The application tier authenticates via key-pair auth, then sets the tenant session variable before issuing queries. Same SQL, different context, different results.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">Users never know Snowflake exists -- they authenticate to your app, and your app handles the Snowflake connection.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Users never know Snowflake exists. They authenticate to your app, and your app handles the Snowflake connection.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="comment"># Python application tier</span>
@@ -477,7 +477,7 @@ APAC   | 0700   | 392.20</div>
               <h4>Add Dynamic Masking</h4>
             </div>
             <p>Apply a masking policy on the <code>PHONE</code> column: full visibility for tenant admins, area-code-only for standard users. Different roles within the same tenant see different levels of detail.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">This layers on top of row-access policies -- you get both row-level and column-level control.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">This layers on top of row-access policies; you get both row-level and column-level control.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="comment">-- Masking policy: full phone for admins, area code only for others</span>
@@ -524,7 +524,7 @@ Bob      | ***-***-****</div>
               <div class="step-number">5</div>
               <h4>AI-Safe Multi-Tenancy</h4>
             </div>
-            <p>When calling Cortex Agents, pass the tenant ID as an immutable session attribute. The agent can't override it -- row-access policies apply to all AI-generated SQL.</p>
+            <p>When calling Cortex Agents, pass the tenant ID as an immutable session attribute. The agent can't override it; row-access policies apply to all AI-generated SQL.</p>
             <p style="font-size: 0.82rem; margin-top: 8px;">This is critical: without immutable attributes, a prompt injection could trick the agent into changing the tenant context.</p>
           </div>
           <div class="step-right">
@@ -570,7 +570,7 @@ Bob      | ***-***-****</div>
               <h4>Automated Provisioning</h4>
             </div>
             <p>Wrap tenant onboarding in a stored procedure. When a new customer signs up, call one procedure that sets up their role, mapping table entry, and default configuration.</p>
-            <p style="font-size: 0.82rem; margin-top: 8px;">No manual SQL, no human error. The procedure is the template -- every tenant gets the same setup.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">No manual SQL, no human error. The procedure is the template; every tenant gets the same setup.</p>
           </div>
           <div class="step-right">
             <div class="code-block"><pre><span class="kw">CREATE OR REPLACE PROCEDURE</span> admin.provision_tenant(

@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>1.0 Pricing Transition Playbook | Snowflake for SaaS</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    .breadcrumb { padding: 16px 0; font-size: 0.85rem; color: var(--text-muted); } .breadcrumb a { color: var(--sf-primary); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; }
+    .concept-hero { padding: clamp(40px, 6vw, 64px) 0 clamp(24px, 4vw, 40px); border-bottom: 1px solid var(--border); margin-bottom: clamp(32px, 4vw, 48px); }
+    .concept-hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text-heading); margin-bottom: 12px; }
+    .concept-hero .subtitle { font-size: 1.1rem; color: var(--text-muted); max-width: 720px; }
+    .concept-section { margin-bottom: clamp(40px, 5vw, 56px); }
+    .concept-section h2 { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--sf-primary); display: inline-block; }
+    .concept-section p, .concept-section li { font-size: 0.95rem; color: var(--text); line-height: 1.7; }
+    .concept-section ul, .concept-section ol { padding-left: 20px; margin-top: 12px; } .concept-section li { margin-bottom: 10px; }
+    .feature-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .feature-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .feature-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); margin-bottom: 8px; } .feature-item p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+    a.feature-item { text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    a.feature-item:hover { border-color: var(--sf-primary); box-shadow: 0 2px 8px rgba(41,181,232,0.1); }
+    a.feature-item h4::after { content: ' \2197'; font-size: 0.75rem; color: var(--sf-primary); }
+    .page-container { max-width: 1100px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px) 64px; }
+
+    /* 5-Phase pipeline */
+    .phase-pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 20px; }
+    .phase-stage { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 12px; text-align: center; position: relative; }
+    .phase-stage .phase-num { font-size: 0.6rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .phase-stage h4 { font-size: 0.82rem; font-weight: 650; color: var(--text-heading); margin-bottom: 4px; }
+    .phase-stage p { font-size: 0.72rem; color: var(--text-muted); margin: 0; }
+    .phase-stage::after { content: '\2192'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--sf-primary); font-weight: 700; z-index: 1; }
+    .phase-stage:last-child::after { content: none; }
+
+    /* Pricing model cards */
+    .model-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; }
+    .pm-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 22px; }
+    .pm-card h3 { font-size: 1rem; font-weight: 700; color: var(--sf-dark); margin-bottom: 4px; }
+    .pm-card .pm-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .pm-card p { font-size: 0.86rem; color: var(--text-muted); margin-bottom: 10px; }
+    .pm-card ul { padding-left: 16px; margin: 0; } .pm-card li { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 5px; }
+    .pm-card.recommended { border-color: var(--sf-primary); border-width: 2px; }
+    .pm-card.recommended .pm-label { color: #10b981; }
+
+    /* Checklist grid */
+    .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+    .check-card { background: var(--sf-lighter); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+    .check-card h4 { font-size: 0.85rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 4px; }
+    .check-card p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+
+    /* Reference cards */
+    .ref-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px; }
+    .ref-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--sf-primary); border-radius: 2px 10px 10px 2px; padding: 20px; text-decoration: none; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; display: block; }
+    .ref-card:hover { box-shadow: 0 2px 8px rgba(41,181,232,0.1); border-color: var(--sf-primary); }
+    .ref-card h4 { font-size: 1rem; font-weight: 700; color: var(--text-heading); margin-bottom: 6px; }
+    .ref-card p { font-size: 0.84rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
+    .ref-card .ref-link { font-size: 0.75rem; font-weight: 600; color: var(--sf-primary); margin-top: 10px; display: block; }
+    .ref-card .ref-link::after { content: ' \2192'; }
+
+    /* Workbook tabs */
+    .wb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    .wb-tab { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+    .wb-tab .wb-num { font-size: 0.62rem; font-weight: 600; color: var(--sf-primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+    .wb-tab h4 { font-size: 0.85rem; font-weight: 650; color: var(--text-heading); margin-bottom: 4px; }
+    .wb-tab p { font-size: 0.78rem; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+    /* Storyboard */
+    .storyboard { display: grid; grid-template-columns: 1fr; gap: 32px; margin-top: 24px; }
+    .story-step { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+    .step-left .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .step-number { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--sf-primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
+    .step-left h4 { font-size: 1rem; font-weight: 650; color: var(--text-heading); margin: 0; }
+    .step-left p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+    .step-right { min-width: 0; }
+
+    /* Gate callouts */
+    .gate { margin-top: 16px; padding: 14px 18px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; display: flex; align-items: flex-start; gap: 10px; }
+    .gate svg { flex-shrink: 0; margin-top: 2px; }
+    .gate p { font-size: 0.84rem; color: #166534; margin: 0; line-height: 1.5; }
+
+    /* Formula blocks */
+    .formula { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 12px; font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace; font-size: 0.82rem; color: var(--sf-dark); line-height: 1.8; overflow-x: auto; }
+
+    /* Numbered list with custom styling */
+    .analysis-list { counter-reset: analysis; list-style: none; padding-left: 0; margin-top: 12px; }
+    .analysis-list li { counter-increment: analysis; padding: 8px 0 8px 36px; position: relative; font-size: 0.88rem; color: var(--text); border-bottom: 1px solid var(--border); }
+    .analysis-list li:last-child { border-bottom: none; }
+    .analysis-list li::before { content: counter(analysis); position: absolute; left: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--sf-lighter); color: var(--sf-dark); font-weight: 700; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; }
+
+    /* Workbook sidebar + panel */
+    .wb-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 12px; }
+    .wb-sidebar { background: var(--sf-lighter); border-right: 1px solid var(--border); padding: 8px 0; }
+    .wb-tab-btn { display: block; width: 100%; padding: 8px 16px; font-size: 0.78rem; font-weight: 500; color: var(--text-muted); background: none; border: none; border-left: 3px solid transparent; cursor: pointer; text-align: left; transition: color 0.15s, background 0.15s, border-color 0.15s; }
+    .wb-tab-btn:hover { color: var(--text-heading); background: var(--card-bg); }
+    .wb-tab-btn--active { color: var(--sf-dark); font-weight: 600; background: var(--card-bg); border-left-color: var(--sf-primary); }
+    .wb-panel { display: none; padding: 20px; overflow-x: auto; min-width: 0; }
+
+    @media (max-width: 900px) {
+      .story-step { grid-template-columns: 1fr; }
+      .phase-pipeline { grid-template-columns: repeat(3, 1fr) !important; }
+      .phase-stage::after { content: none; }
+      .model-grid { grid-template-columns: 1fr; }
+      .ref-grid { grid-template-columns: 1fr; }
+      .wb-layout { grid-template-columns: 1fr; }
+      .wb-sidebar { border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-wrap: wrap; padding: 8px; gap: 4px; }
+      .wb-tab-btn { border-left: none; border-bottom: 2px solid transparent; padding: 6px 10px; font-size: 0.72rem; }
+      .wb-tab-btn--active { border-left-color: transparent; border-bottom-color: var(--sf-primary); }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav"><div class="nav-inner"><a href="../index.html" class="nav-brand"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 2L33 10.5V25.5L18 34L3 25.5V10.5L18 2Z" fill="#29B5E8"/><path d="M18 8L27 13V23L18 28L9 23V13L18 8Z" fill="white" fill-opacity="0.3"/><circle cx="18" cy="18" r="4" fill="white"/></svg>Snowflake for SaaS</a></div></nav>
+
+  <div class="page-container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> &rarr; Section 1: Foundation &rarr; 1.0 Pricing Transition Playbook</div>
+
+    <div class="concept-hero">
+      <h1>Playbook: Moving from Per-Seat to Hybrid Pricing</h1>
+      <p class="subtitle">An end-to-end guide to transitioning your SaaS pricing model, from selecting a value metric through shadow billing to full rollout, using the foundation built in Sections 1.1 through 1.3.</p>
+    </div>
+
+    <!-- Phase Pipeline Overview -->
+    <div class="concept-section">
+      <h2>The Six Phases</h2>
+      <p>Pricing transformation is a program, not a project. It requires cross-functional governance, data infrastructure, economic modeling, and staged rollout. These six phases provide the structure.</p>
+      <div class="phase-pipeline" style="grid-template-columns: repeat(6, 1fr);">
+        <div class="phase-stage">
+          <div class="phase-num">Phase 1</div>
+          <h4>Align the Team</h4>
+          <p>Set decision rights, form the working group, draft the charter</p>
+        </div>
+        <div class="phase-stage">
+          <div class="phase-num">Phase 2</div>
+          <h4>Build the Foundation</h4>
+          <p>Tenant identity, cost attribution, usage metering (1.1-1.3)</p>
+        </div>
+        <div class="phase-stage">
+          <div class="phase-num">Phase 3</div>
+          <h4>Design the Model</h4>
+          <p>Select value metric, design billable units, validate economics</p>
+        </div>
+        <div class="phase-stage">
+          <div class="phase-num">Phase 4</div>
+          <h4>Prove It Works</h4>
+          <p>Shadow billing, new logos, opt-in existing, early renewals</p>
+        </div>
+        <div class="phase-stage">
+          <div class="phase-num">Phase 5</div>
+          <h4>Enable the GTM</h4>
+          <p>Playbooks, calculators, sales comp, CPQ/billing updates</p>
+        </div>
+        <div class="phase-stage">
+          <div class="phase-num">Phase 6</div>
+          <h4>Run and Iterate</h4>
+          <p>Monthly rhythm, pricing iteration, cost efficiency gains</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Why Companies Are Moving Off Per-Seat -->
+    <div class="concept-section">
+      <h2>Why Companies Are Moving Off Per-Seat</h2>
+      <p>Per-seat/per-user models have been the SaaS default because they are easy to understand, budget for, and produce predictable recurring revenue. However, they increasingly break down when:</p>
+      <ul>
+        <li><strong>Automation and AI decouple value from users:</strong> When an AI agent does the work of 10 human analysts, charging per-seat undervalues the product and misaligns revenue with the value delivered.</li>
+        <li><strong>Machine identities drive most of the work:</strong> APIs, background services, and autonomous agents generate the majority of activity; none of them occupy a "seat."</li>
+        <li><strong>Customers under-provision to avoid cost:</strong> Teams share logins or avoid adding users, limiting adoption and making seat counts an unreliable measure of engagement.</li>
+        <li><strong>Variable costs don't track with seats:</strong> Infrastructure, AI inference, and third-party API fees scale with usage, not with headcount. A 10-seat customer running heavy AI workloads costs far more to serve than a 100-seat customer running light queries.</li>
+      </ul>
+      <p style="margin-top: 12px;">The most resilient pattern for companies starting from seats is <strong>hybrid pricing</strong>: a predictable base (platform fee or minimum commitment) plus a usage-based component tied to a value metric that scales with actual customer value.</p>
+    </div>
+
+    <!-- Pricing Model Taxonomy -->
+    <div class="concept-section">
+      <h2>Pricing Model Taxonomy</h2>
+      <p>Before designing your new model, understand the landscape. For a SaaS company starting from per-seat, the realistic transition targets are usually hybrid or committed consumption, not a cold jump to pure pay-as-you-go.</p>
+      <div class="model-grid">
+        <div class="pm-card">
+          <div class="pm-label" style="color: #6b7280;">Current State</div>
+          <h3>Per-Seat / Per-User</h3>
+          <p>Flat fee per named or active user. Value scales with team size.</p>
+          <ul>
+            <li>Predictable for both sides</li>
+            <li>Misaligned with AI and automation value</li>
+            <li>Limits expansion revenue</li>
+            <li><strong>Examples:</strong> Salesforce, Slack, Atlassian</li>
+          </ul>
+          <details style="margin-top: 12px;">
+            <summary style="font-size: 0.75rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">Try the Calculator</summary>
+            <div style="background: #f8fafc; border-radius: 8px; padding: 16px; margin-top: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Price per seat/month: <strong id="seat-price-val">$50</strong>
+                  <input type="range" min="10" max="200" value="50" id="seat-price" oninput="calcSeat()" style="width: 100%; margin-top: 4px;"></label>
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Number of seats: <strong id="seat-count-val">25</strong>
+                  <input type="range" min="1" max="500" value="25" id="seat-count" oninput="calcSeat()" style="width: 100%; margin-top: 4px;"></label>
+              </div>
+              <div style="margin-top: 12px; padding: 10px 14px; background: white; border-radius: 6px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.78rem; color: var(--text-muted);">Monthly bill</span>
+                <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-heading);" id="seat-total">$1,250</span>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">Fixed cost regardless of usage. A 25-seat customer running 100 queries/day pays the same as one running 10,000.</div>
+            </div>
+          </details>
+        </div>
+        <div class="pm-card">
+          <div class="pm-label" style="color: #2563eb;">Pure Usage</div>
+          <h3>Pay-as-You-Go</h3>
+          <p>Bill per API call, compute hour, GB, token, or transaction.</p>
+          <ul>
+            <li>Zero barrier to entry</li>
+            <li>Perfect cost alignment</li>
+            <li>Revenue volatility and bill shock risk</li>
+            <li><strong>Examples:</strong> AWS, Twilio, OpenAI, Stripe</li>
+          </ul>
+          <details style="margin-top: 12px;">
+            <summary style="font-size: 0.75rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">Try the Calculator</summary>
+            <div style="background: #f8fafc; border-radius: 8px; padding: 16px; margin-top: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Price per 1,000 units: <strong id="usage-price-val">$0.50</strong>
+                  <input type="range" min="1" max="100" value="5" id="usage-price" oninput="calcUsage()" style="width: 100%; margin-top: 4px;"></label>
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Monthly units (thousands): <strong id="usage-units-val">200</strong>
+                  <input type="range" min="10" max="2000" value="200" id="usage-units" oninput="calcUsage()" style="width: 100%; margin-top: 4px;"></label>
+              </div>
+              <div style="margin-top: 12px; padding: 10px 14px; background: white; border-radius: 6px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.78rem; color: var(--text-muted);">Monthly bill</span>
+                <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-heading);" id="usage-total">$100</span>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">Bill scales linearly with usage. Low-usage months are cheap; spike months can surprise.</div>
+            </div>
+          </details>
+        </div>
+        <div class="pm-card recommended">
+          <div class="pm-label">Recommended Transition Target</div>
+          <h3>Hybrid (Base + Usage)</h3>
+          <p>Platform fee or minimum commitment plus metered usage. Predictability meets alignment.</p>
+          <ul>
+            <li>Revenue floor + variable expansion</li>
+            <li>Customers can budget the base, grow into usage</li>
+            <li>Best bridge from seats to consumption</li>
+            <li><strong>Examples:</strong> Datadog, Intercom, modern SaaS</li>
+          </ul>
+          <details style="margin-top: 12px;">
+            <summary style="font-size: 0.75rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">Try the Calculator</summary>
+            <div style="background: #f8fafc; border-radius: 8px; padding: 16px; margin-top: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Platform fee/month: <strong id="hybrid-base-val">$500</strong>
+                  <input type="range" min="100" max="5000" value="500" step="100" id="hybrid-base" oninput="calcHybrid()" style="width: 100%; margin-top: 4px;"></label>
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Included units (thousands): <strong id="hybrid-included-val">100</strong>
+                  <input type="range" min="0" max="500" value="100" id="hybrid-included" oninput="calcHybrid()" style="width: 100%; margin-top: 4px;"></label>
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Overage per 1,000 units: <strong id="hybrid-overage-val">$0.80</strong>
+                  <input type="range" min="1" max="100" value="8" id="hybrid-overage" oninput="calcHybrid()" style="width: 100%; margin-top: 4px;"></label>
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Actual usage (thousands): <strong id="hybrid-actual-val">250</strong>
+                  <input type="range" min="10" max="2000" value="250" id="hybrid-actual" oninput="calcHybrid()" style="width: 100%; margin-top: 4px;"></label>
+              </div>
+              <div style="margin-top: 12px; padding: 10px 14px; background: white; border-radius: 6px; border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">
+                  <span>Platform fee</span><span id="hybrid-fee">$500</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">
+                  <span>Overage (<span id="hybrid-over-units">150</span>K units &times; rate)</span><span id="hybrid-over-cost">$120</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; padding-top: 8px; border-top: 1px solid var(--border);">
+                  <span style="color: var(--text-muted);">Monthly bill</span>
+                  <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-heading);" id="hybrid-total">$620</span>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">Predictable base + pay for what you use beyond the included amount. Low-usage months hit the floor; growth months expand naturally.</div>
+            </div>
+          </details>
+        </div>
+        <div class="pm-card">
+          <div class="pm-label" style="color: #7c3aed;">Enterprise</div>
+          <h3>Committed Consumption</h3>
+          <p>Customer prepays a credit pool or annual minimum. Usage draws down. Overage at defined rate.</p>
+          <ul>
+            <li>Discounts for volume commitments</li>
+            <li>Predictable for both sides within the commit</li>
+            <li>Works well for enterprise contracts</li>
+            <li><strong>Examples:</strong> Snowflake capacity, cloud reserved instances</li>
+          </ul>
+          <details style="margin-top: 12px;">
+            <summary style="font-size: 0.75rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">Try the Calculator</summary>
+            <div style="background: #f8fafc; border-radius: 8px; padding: 16px; margin-top: 8px;">
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Annual commitment: <strong id="commit-annual-val">$6,000</strong>
+                  <input type="range" min="1000" max="12000" value="6000" step="500" id="commit-annual" oninput="calcCommit()" style="width: 100%; margin-top: 4px;"></label>
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Committed rate per 1,000 units: <strong id="commit-rate-val">$0.40</strong>
+                  <input type="range" min="1" max="100" value="4" id="commit-rate" oninput="calcCommit()" style="width: 100%; margin-top: 4px;"></label>
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Overage rate per 1,000 units: <strong id="commit-overate-val">$0.80</strong>
+                  <input type="range" min="1" max="100" value="8" id="commit-overate" oninput="calcCommit()" style="width: 100%; margin-top: 4px;"></label>
+                <label style="font-size: 0.78rem; color: var(--text-muted);">Actual monthly usage (thousands): <strong id="commit-actual-val">1,500</strong>
+                  <input type="range" min="100" max="3000" value="1500" id="commit-actual" oninput="calcCommit()" style="width: 100%; margin-top: 4px;"></label>
+              </div>
+              <div style="margin-top: 12px; padding: 10px 14px; background: white; border-radius: 6px; border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">
+                  <span>Monthly allotment (commitment / 12)</span><span id="commit-monthly">$500</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">
+                  <span>Included units at committed rate</span><span id="commit-included-units">1,250K</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px;">
+                  <span>Overage</span><span id="commit-over-cost">$200</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; padding-top: 8px; border-top: 1px solid var(--border);">
+                  <span style="color: var(--text-muted);">Effective monthly cost</span>
+                  <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-heading);" id="commit-total">$700</span>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">Prepaid pool at a discounted rate. Stay within the commitment and you save; exceed it and overage kicks in at the higher rate.</div>
+            </div>
+          </details>
+        </div>
+      </div>
+      <p style="margin-top: 16px; font-size: 0.88rem; color: var(--text-muted);"><strong>Other models to consider:</strong> Credit-based (multi-product AI platforms), per-transaction / revenue share (payments, commerce), per-resource (observability, security), and per-workflow / per-outcome (automation, AI support). These are less common as transition targets from seats but may apply to specific product lines. See <a href="1-3-usage-metering-billing.html" style="color: var(--sf-primary);">1.3 Usage Metering</a> for detailed pricing model analysis.</p>
+    </div>
+
+    <!-- Designing the Value Metric -->
+    <div class="concept-section">
+      <h2>Designing the Value Metric</h2>
+      <p>The value metric is the unit your customers pay for. Selecting the right one is the most important decision in the transition: it determines whether the new model feels fair, is commercially viable, and actually improves on seats.</p>
+
+      <h3 style="font-size: 1rem; font-weight: 650; color: var(--text-heading); margin: 20px 0 12px;">Value Metric Checklist</h3>
+      <p>Score each candidate metric on these seven criteria. A good value metric should pass all of them:</p>
+      <div class="check-grid">
+        <div class="check-card">
+          <h4>Aligned with Value</h4>
+          <p>When the metric goes up, the customer's economic benefit goes up. "Report views" is better than "queries" because the customer understands the value of a report.</p>
+        </div>
+        <div class="check-card">
+          <h4>Understandable</h4>
+          <p>A buyer can explain it in one sentence to their Finance team. If it requires a whiteboard session, it's too complex.</p>
+        </div>
+        <div class="check-card">
+          <h4>Measurable &amp; Auditable</h4>
+          <p>You can capture it completely, deduplicate it, and reconcile it to invoices. No estimation, no sampling.</p>
+        </div>
+        <div class="check-card">
+          <h4>Forecastable</h4>
+          <p>Customers can reasonably estimate and influence their usage. If they can't budget for it, they won't buy it.</p>
+        </div>
+        <div class="check-card">
+          <h4>Scalable</h4>
+          <p>The metric grows as adoption and use cases grow. Avoids hard ceilings that cap expansion revenue.</p>
+        </div>
+        <div class="check-card">
+          <h4>Margin-Linked</h4>
+          <p>Price per unit can cover marginal cost and contribute to target gross margin (70-80% for SaaS).</p>
+        </div>
+        <div class="check-card">
+          <h4>Commercially Feasible</h4>
+          <p>Your CPQ, contracts, billing system, and reporting can all handle it without a 6-month systems project.</p>
+        </div>
+      </div>
+
+      <details style="margin-top: 16px;">
+        <summary style="font-size: 0.82rem; font-weight: 600; color: var(--sf-dark); cursor: pointer;">See scored examples of common value metrics</summary>
+        <div style="overflow-x: auto; margin-top: 12px;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.76rem;">
+            <thead>
+              <tr style="background: var(--sf-lighter);">
+                <th style="text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading); min-width: 140px;">Value Metric</th>
+                <th style="text-align: center; padding: 8px 6px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading);">Aligned</th>
+                <th style="text-align: center; padding: 8px 6px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading);">Under&shy;standable</th>
+                <th style="text-align: center; padding: 8px 6px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading);">Measur&shy;able</th>
+                <th style="text-align: center; padding: 8px 6px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading);">Forecast&shy;able</th>
+                <th style="text-align: center; padding: 8px 6px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading);">Scalable</th>
+                <th style="text-align: center; padding: 8px 6px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading);">Margin-Linked</th>
+                <th style="text-align: center; padding: 8px 6px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading);">Feasible</th>
+                <th style="text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text-heading); min-width: 180px;">Rationale</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">API Calls</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Easy to count, directly tied to platform value. Hard for customers to forecast spiky workloads.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">Compute Credits</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Normalizes heterogeneous workloads into one unit. Requires education on what a "credit" means.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">GB Stored / Processed</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Simple to measure and bill. Weak value alignment: storing more data doesn't always mean more value.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">AI Tokens / Credits</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #dc2626;">&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #dc2626;">&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Directly tracks AI cost. Opaque to buyers who don't think in tokens; hard to predict verbose inputs.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">Report Views / Queries</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Highest value alignment: customers pay for the insight, not the infrastructure. Margin varies by query cost.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">Workflows / Tasks</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Outcome-oriented: customers pay per job done. Margin depends on step complexity behind each workflow.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">Transactions / Events</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Revenue scales with business activity. Strong margin link since cost per transaction is well understood.</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border);">
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">Active Users</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #dc2626;">&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #dc2626;">&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Familiar to buyers, easy to budget. Breaks down when AI/automation decouples value from headcount.</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 10px; font-weight: 600; color: var(--sf-dark);">Resolved Cases / Outcomes</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #d97706;">&#9679;&#9679;&#9679;</td>
+                <td style="text-align: center; padding: 8px 6px; color: #dc2626;">&#9679;&#9679;</td>
+                <td style="padding: 8px 10px; color: var(--text-muted);">Strongest value alignment: pay per problem solved. Hard to measure cleanly and difficult to implement in billing systems.</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top: 10px; font-size: 0.72rem; color: var(--text-muted); display: flex; gap: 16px;">
+            <span><span style="color: #16a34a;">&#9679;&#9679;&#9679;&#9679;&#9679;</span> Strong</span>
+            <span><span style="color: #16a34a;">&#9679;&#9679;&#9679;&#9679;</span> Good</span>
+            <span><span style="color: #d97706;">&#9679;&#9679;&#9679;</span> Moderate</span>
+            <span><span style="color: #dc2626;">&#9679;&#9679;</span> Weak</span>
+          </div>
+        </div>
+      </details>
+
+      <h3 style="font-size: 1rem; font-weight: 650; color: var(--text-heading); margin: 28px 0 12px;">Designing the Billable Unit</h3>
+      <p>Translate raw telemetry into a customer-facing unit that is human-sized and easy to reason about:</p>
+      <ul>
+        <li><strong>Normalize to human-sized units:</strong> Per 1,000 events, per million tokens, per GB-month, per 100 workflows, not raw internal counts.</li>
+        <li><strong>Define included vs. excluded clearly:</strong> Retries, failed runs, test traffic, and internal housekeeping events should not be billed.</li>
+        <li><strong>Align with how customers budget:</strong> Monthly queries, number of processes automated, GB under management. Match the units they already think in.</li>
+        <li><strong>Provide a summary unit if the underlying measurement is complex:</strong> Credits, points, or tokens that abstract multiple dimensions into a single number.</li>
+        <li><strong>Two-axis model when needed:</strong> An access axis (platform fee or limited seats) for collaboration value, plus a usage axis (metered consumption) for automated work / transactions / data.</li>
+      </ul>
+
+      <!-- Anti-patterns -->
+      <div style="margin-top: 20px; padding: 16px 20px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px;">
+        <div style="font-size: 0.88rem; font-weight: 650; color: #991b1b; margin-bottom: 8px;">Anti-Patterns to Avoid</div>
+        <ul style="padding-left: 16px; margin: 0;">
+          <li style="font-size: 0.84rem; color: #7f1d1d; margin-bottom: 6px;"><strong>Charging for internal implementation details:</strong> Retries, orchestration steps, internal fan-out. The customer should pay for completed work, not your architecture.</li>
+          <li style="font-size: 0.84rem; color: #7f1d1d; margin-bottom: 6px;"><strong>Using logins or page views as a proxy for value:</strong> These are vanity metrics, not value metrics. They don't correlate with outcomes.</li>
+          <li style="font-size: 0.84rem; color: #7f1d1d; margin-bottom: 6px;"><strong>Having 4-5 overlapping meters:</strong> Invoices become opaque. Aim for 1-2 primary meters with clear definitions.</li>
+          <li style="font-size: 0.84rem; color: #7f1d1d;"><strong>Introducing usage fees without usage dashboards:</strong> If customers can't see their consumption in real time, bill shock is inevitable.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Data and Systems Foundation (Reference Section) -->
+    <div class="concept-section">
+      <h2>Data and Systems Foundation</h2>
+      <p>Before any go-to-market change, you need a trusted usage and cost foundation. The good news: if you've built the infrastructure described in Sections 1.1 through 1.3, you already have most of it. Here's how the sub-sections map to the requirements:</p>
+      <div class="ref-grid">
+        <a class="ref-card" href="1-1-multi-tenant-governance.html">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">A</span>Link Every System to a Single Customer Identity</h4>
+          <p>A consistent tenant identity that bridges your product, billing, CRM, and finance systems, so every usage event and cost record ties back to a single customer.</p>
+          <span class="ref-link">See 1.1 Multi-Tenant Governance</span>
+        </a>
+        <a class="ref-card" href="1-2-unit-cost-attribution.html">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">B</span>Attribute Every Cost to the Tenant That Caused It</h4>
+          <p>Per-tenant cost breakdowns across compute, AI, and storage: the cost floor that your pricing model must cover.</p>
+          <span class="ref-link">See 1.2 Unit Cost Attribution</span>
+        </a>
+        <a class="ref-card" href="1-3-usage-metering-billing.html">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">C</span>Capture Every Billable Event in Real Time</h4>
+          <p>A tenant-aware event stream that captures every billable action in real time: the single source of truth for all billing.</p>
+          <span class="ref-link">See 1.3 Usage Metering and Billing</span>
+        </a>
+        <a class="ref-card" href="1-3-usage-metering-billing.html#tenant-spend">
+          <h4><span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--sf-primary); color: white; font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 22px; margin-right: 8px;">D</span>Give Tenants Visibility Into Their Own Spend</h4>
+          <p>Real-time usage dashboards, spend alerts, and self-service controls so tenants can see and manage their own consumption.</p>
+          <span class="ref-link">See 1.3 Spend Governance</span>
+        </a>
+      </div>
+      <div style="margin-top: 16px; padding: 14px 18px; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border: 1px solid #bfdbfe; border-radius: 10px; display: flex; align-items: flex-start; gap: 10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sf-dark)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <p style="font-size: 0.86rem; color: var(--sf-dark); margin: 0; line-height: 1.5;"><strong>Key point:</strong> The data foundation is a prerequisite, not a parallel track. If you haven't built the metering infrastructure in 1.3 and the cost attribution in 1.2, you cannot run shadow billing or validate your pricing model. Start there.</p>
+      </div>
+    </div>
+
+    <!-- Cost and Pricing Modeling -->
+    <div class="concept-section">
+      <h2>Cost and Pricing Modeling</h2>
+      <p>With the data foundation in place, build an economic workbook (or equivalent BI model) that lets you test pricing scenarios against real usage data. This is the artifact that Finance, Product, and RevOps will use to converge on the target model.</p>
+
+      <h3 style="font-size: 1rem; font-weight: 650; color: var(--text-heading); margin: 20px 0 12px;">Workbook Structure</h3>
+      <div class="wb-layout">
+        <div class="wb-sidebar" id="wb-tabs">
+          <button class="wb-tab-btn wb-tab-btn--active" onclick="showWbTab(0)">1. Assumptions</button>
+          <button class="wb-tab-btn" onclick="showWbTab(1)">2. Customer Base</button>
+          <button class="wb-tab-btn" onclick="showWbTab(2)">3. Usage History</button>
+          <button class="wb-tab-btn" onclick="showWbTab(3)">4. Cost Model</button>
+          <button class="wb-tab-btn" onclick="showWbTab(4)">5. Price Book</button>
+          <button class="wb-tab-btn" onclick="showWbTab(5)">6. Cohorts</button>
+          <button class="wb-tab-btn" onclick="showWbTab(6)">7. Scenarios</button>
+          <button class="wb-tab-btn" onclick="showWbTab(7)">8. Shadow Billing</button>
+          <button class="wb-tab-btn" onclick="showWbTab(8)">9. Reconciliation</button>
+        </div>
+        <div id="wb-panels">
+        <div class="wb-panel" style="display: block;">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Assumptions</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">Global inputs that drive every other tab. Change one assumption and the entire model recalculates.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">ASSUMPTIONS</div>
+            <table style="width: 100%; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse;">
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Forecast horizon</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600;">12 months</td></tr>
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Customer growth (monthly)</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600;">+3%</td></tr>
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Monthly churn rate</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600;">1.2%</td></tr>
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Usage growth per account</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600;">+5%/mo</td></tr>
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Target gross margin</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600;">75%</td></tr>
+              <tr><td style="padding: 6px 12px; color: #64748b;">Scenario toggle</td><td style="padding: 6px 12px; font-weight: 600; color: var(--sf-primary);">Base case</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="wb-panel">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Customer Base</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">One row per account-month. Captures the current state of every customer for back-testing and scenario modeling.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">CUSTOMER_BASE <span style="font-weight: 400; color: #94a3b8;">(keyed by tenant_id from 1.1)</span></div>
+            <div style="overflow-x: auto;"><table style="width: 100%; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse; white-space: nowrap;">
+              <tr style="background: #f8fafc;"><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">tenant_id</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">segment</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">seats</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">ARR</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">plan</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">renewal</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">cost_to_serve</th></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">acme</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Mid-Market</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">45</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$54,000</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Pro</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">2026-11</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$1,420</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">globex</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Enterprise</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">200</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$240,000</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Enterprise</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">2027-03</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$6,800</td></tr>
+              <tr><td style="padding: 5px 10px;">initech</td><td style="padding: 5px 10px;">SMB</td><td style="padding: 5px 10px; text-align: right;">8</td><td style="padding: 5px 10px; text-align: right;">$9,600</td><td style="padding: 5px 10px;">Starter</td><td style="padding: 5px 10px;">2026-09</td><td style="padding: 5px 10px; text-align: right;">$310</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="wb-panel">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Usage History</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">One row per account-meter-month. This is the raw material for back-testing your proposed pricing model against real behavior.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">billing.usage_summary <span style="font-weight: 400; color: #94a3b8;">(see 1.3 Step 3)</span></div>
+            <div style="overflow-x: auto;"><table style="width: 100%; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse; white-space: nowrap;">
+              <tr style="background: #f8fafc;"><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">tenant_id</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">metric_name</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">billing_month</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">total_quantity</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">event_count</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">growth%</th></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">acme</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">api_calls</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">2026-08</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">142,300</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">142,300</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">+8%</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">acme</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">ai_credits</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">2026-08</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">187.4</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">94</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">+22%</td></tr>
+              <tr><td style="padding: 5px 10px;">globex</td><td style="padding: 5px 10px;">api_calls</td><td style="padding: 5px 10px;">2026-08</td><td style="padding: 5px 10px; text-align: right;">891,200</td><td style="padding: 5px 10px; text-align: right;">891,200</td><td style="padding: 5px 10px; text-align: right;">+3%</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="wb-panel">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Cost Model</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">Break down COGS by driver and classify each as fixed, variable, or shared. This feeds the marginal cost and fully loaded cost calculations.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">COST_MODEL <span style="font-weight: 400; color: #94a3b8;">(sourced from 1.2 QUERY_ATTRIBUTION + CORTEX_USAGE)</span></div>
+            <div style="overflow-x: auto;"><table style="width: 100%; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse; white-space: nowrap;">
+              <tr style="background: #f8fafc;"><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">event_type</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">cost_type</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">monthly_cost</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">cost_per_unit</th></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">compute</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Variable</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$12,400</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$0.003/query</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">ai</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Variable</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$3,200</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$3.00/credit</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">storage</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Semi-variable</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$1,800</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$0.40/GB-mo</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">support</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Semi-variable</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$8,200</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$18/ticket</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">third_party_apis</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Variable</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$2,600</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$0.005/call</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">data_egress</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Variable</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$940</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$0.09/GB</td></tr>
+              <tr><td style="padding: 5px 10px;">platform</td><td style="padding: 5px 10px;">Shared/Fixed</td><td style="padding: 5px 10px; text-align: right;">$4,000</td><td style="padding: 5px 10px; text-align: right; color: #64748b;">allocated</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="wb-panel">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Price Book</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">Versioned table of your pricing rules. RevOps maintains this; changes take effect at the next billing cycle with no code deploy.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">billing.pricing_rules <span style="font-weight: 400; color: #94a3b8;">(see 1.3 Step 5)</span></div>
+            <div style="overflow-x: auto;"><table style="width: 100%; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse; white-space: nowrap;">
+              <tr style="background: #f8fafc;"><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">metric_name</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">tier_min</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">tier_max</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">price_per_unit</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">description</th></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">report_views</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">0</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">1,000</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$0.050</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">First 1K views</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">report_views</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">1,001</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">5,000</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$0.035</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Volume tier</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">ai_credits</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">0</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">&#8734;</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$3.000</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Per AI credit</td></tr>
+              <tr><td style="padding: 5px 10px;">gb_stored</td><td style="padding: 5px 10px; text-align: right;">0</td><td style="padding: 5px 10px; text-align: right;">&#8734;</td><td style="padding: 5px 10px; text-align: right;">$0.400</td><td style="padding: 5px 10px;">Per GB/month</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="wb-panel">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Customer Cohorts</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">Group customers by signup date, segment, and usage band. Compare revenue, cost, margin, and retention under the old and new models side by side.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">CUSTOMER_COHORTS</div>
+            <div style="overflow-x: auto;"><table style="width: 100%; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse; white-space: nowrap;">
+              <tr style="background: #f8fafc;"><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">cohort</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">accounts</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">old_ARR</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">new_ARR</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">&#916;</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">NRR</th></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Enterprise, high-usage</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">24</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$4.2M</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$5.1M</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; color: #16a34a;">+21%</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">118%</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Mid-market, moderate</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">86</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$3.8M</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$3.6M</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; color: #dc2626;">-5%</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">104%</td></tr>
+              <tr><td style="padding: 5px 10px;">SMB, low-usage</td><td style="padding: 5px 10px; text-align: right;">210</td><td style="padding: 5px 10px; text-align: right;">$1.9M</td><td style="padding: 5px 10px; text-align: right;">$1.4M</td><td style="padding: 5px 10px; text-align: right; color: #dc2626;">-26%</td><td style="padding: 5px 10px; text-align: right;">96%</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="wb-panel">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Scenarios</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">For each account-month, compute new revenue, new COGS, and margin under the proposed model. Toggle scenario drivers to stress-test.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">billing.rated_usage <span style="font-weight: 400; color: #94a3b8;">(see 1.3 Step 5)</span></div>
+            <div style="overflow-x: auto;"><table style="width: 100%; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse; white-space: nowrap;">
+              <tr style="background: #f8fafc;"><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">tenant_id</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">base_fee</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">line_amount</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">total_due</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">cogs</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">margin</th></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">acme</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$500</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$715</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; font-weight: 600;">$1,215</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$420</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; color: #16a34a; font-weight: 600;">65%</td></tr>
+              <tr><td style="padding: 5px 10px;">globex</td><td style="padding: 5px 10px; text-align: right;">$2,000</td><td style="padding: 5px 10px; text-align: right;">$4,890</td><td style="padding: 5px 10px; text-align: right; font-weight: 600;">$6,890</td><td style="padding: 5px 10px; text-align: right;">$1,800</td><td style="padding: 5px 10px; text-align: right; color: #16a34a; font-weight: 600;">74%</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="wb-panel">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Shadow Billing</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">Run the new model against historical invoices without charging anyone. Flag accounts where the bill change exceeds your guardrails.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">SHADOW_BILLING <span style="font-weight: 400; color: #94a3b8;">(Aug 2026)</span></div>
+            <div style="overflow-x: auto;"><table style="width: 100%; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse; white-space: nowrap;">
+              <tr style="background: #f8fafc;"><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">tenant_id</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">segment</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">old_invoice</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">new_invoice</th><th style="padding: 5px 10px; text-align: right; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">&#916;%</th><th style="padding: 5px 10px; text-align: left; color: #64748b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">action</th></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">acme</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Mid-Market</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$4,500</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$3,200</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; color: #16a34a; font-weight: 600;">-29%</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9; color: #16a34a;">No action. Bill decreases under new model.</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">globex</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Enterprise</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$20,000</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$26,400</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; color: #dc2626; font-weight: 600;">+32%</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9; color: #dc2626;">Major increase. Offer committed tier with volume discount.</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">initech</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">SMB</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$800</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$920</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; color: #d97706; font-weight: 600;">+15%</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9; color: #d97706;">Moderate increase. Cap first-year rise at 10%, credit the delta.</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">wayne_ent</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Enterprise</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$18,000</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$17,600</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; color: #16a34a; font-weight: 600;">-2%</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9; color: #16a34a;">Near-neutral. Migrate at renewal with no special terms.</td></tr>
+              <tr><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">stark_ind</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9;">Mid-Market</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$6,000</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9;">$9,800</td><td style="padding: 5px 10px; text-align: right; border-bottom: 1px solid #f1f5f9; color: #dc2626; font-weight: 600;">+63%</td><td style="padding: 5px 10px; border-bottom: 1px solid #f1f5f9; color: #dc2626;">Severe increase. Grandfather for 12 months, introduce usage alerts.</td></tr>
+              <tr><td style="padding: 5px 10px;">oscorp</td><td style="padding: 5px 10px;">SMB</td><td style="padding: 5px 10px; text-align: right;">$1,200</td><td style="padding: 5px 10px; text-align: right;">$640</td><td style="padding: 5px 10px; text-align: right; color: #16a34a; font-weight: 600;">-47%</td><td style="padding: 5px 10px; color: #16a34a;">Significant decrease. Early adopter candidate for opt-in migration.</td></tr>
+            </table></div>
+          </div>
+        </div>
+        <div class="wb-panel">
+          <h4 style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); margin-bottom: 8px;">Reconciliation</h4>
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 14px;">The integrity check. Verify that usage flows through to invoices and that allocated costs reconcile back to actuals. Any residual is a gap in your metering.</p>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+            <div style="padding: 6px 12px; font-size: 0.68rem; font-weight: 600; background: #f1f5f9; color: #475569; border-bottom: 1px solid var(--border);">RECONCILIATION</div>
+            <table style="width: 100%; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; border-collapse: collapse;">
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Raw events &rarr; rated usage</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #16a34a;">&#x2714; 100% match</td></tr>
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Rated usage &rarr; invoice line items</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #16a34a;">&#x2714; 100% match</td></tr>
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Invoice revenue &rarr; ERP revenue</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #16a34a;">&#x2714; 100% match</td></tr>
+              <tr><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; color: #64748b;">Allocated cost &rarr; GL/Cloud totals</td><td style="padding: 6px 12px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #d97706;">&#x26A0; $240 residual (1.1%)</td></tr>
+              <tr><td style="padding: 6px 12px; color: #64748b;">Meter completeness</td><td style="padding: 6px 12px; font-weight: 600; color: #16a34a;">9/9 meters active</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <details style="margin-top: 24px;">
+        <summary style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); cursor: pointer;">Key Calculations</summary>
+        <div style="padding-top: 12px;">
+          <div class="formula">
+            <strong>Marginal Cost per Unit</strong> = &Delta;Total Cost / &Delta;Units<br>
+            <span style="color: var(--text-muted); font-size: 0.78rem;">Where &Delta;Cost and &Delta;Units come from an observed change (e.g., usage up 50M calls &rarr; cost up $3,000)</span>
+          </div>
+          <div class="formula" style="margin-top: 10px;">
+            <strong>Allocated Shared Cost per Unit</strong> = (Driver<sub>u</sub> / &sum;Driver) &times; Shared Cost Pool<br>
+            <span style="color: var(--text-muted); font-size: 0.78rem;">Proportional allocation of platform overhead using a driver (e.g., compute hours, GB processed)</span>
+          </div>
+          <div class="formula" style="margin-top: 10px;">
+            <strong>Fully Loaded Cost per Unit</strong> = (Direct Variable + Allocated Shared + Support + Partner Fees) / Billable Units<br>
+            <span style="color: var(--text-muted); font-size: 0.78rem;">This is your cost floor. Target 70-80% gross margin, so customer price = cost floor / (1 - target margin)</span>
+          </div>
+          <p style="margin-top: 16px; font-size: 0.88rem;">See <a href="1-2-unit-cost-attribution.html" style="color: var(--sf-primary);">1.2 Unit Cost Attribution</a> for the Snowflake-specific implementation and <a href="1-3-usage-metering-billing.html" style="color: var(--sf-primary);">1.3 Usage Metering</a> for the COGS-to-price walkthrough.</p>
+        </div>
+      </details>
+
+      <details style="margin-top: 12px;">
+        <summary style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); cursor: pointer;">Back-Testing Methodology</summary>
+        <div style="padding-top: 12px;">
+          <ol>
+            <li>Pull 12-24 months of historical usage, invoices, and cost data.</li>
+            <li>Apply the proposed price book to compute hypothetical bills for each account-month.</li>
+            <li>For each account-month, calculate: old revenue vs new revenue, old vs new COGS and margin, % bill change and volatility.</li>
+            <li>Slice by segment (SMB/mid-market/enterprise), industry, region, usage intensity, discounting, renewal proximity, and customer health.</li>
+            <li>Identify: big winners (bills go down), big losers (bills go up), accounts at risk of bill shock, accounts with poor margin.</li>
+            <li>Stress-test high-season months, spikes, and atypical usage patterns.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details style="margin-top: 12px;">
+        <summary style="font-size: 0.92rem; font-weight: 650; color: var(--text-heading); cursor: pointer;">10 Questions Your Model Should Answer</summary>
+        <div style="padding-top: 12px;">
+          <ol class="analysis-list">
+            <li>Which usage metric best correlates with retention and expansion?</li>
+            <li>What is marginal and fully loaded cost per unit of each proposed meter?</li>
+            <li>Which customers or segments are currently unprofitable?</li>
+            <li>How do revenue, gross margin, and cash-flow volatility change under each candidate model?</li>
+            <li>Which customers see >20% bill increase or decrease?</li>
+            <li>What allowances, commits, and caps stabilize spend while leaving room for expansion?</li>
+            <li>How sensitive are margins to usage growth, efficiency improvements, and cloud-rate changes?</li>
+            <li>How do NRR, LTV/CAC, and payback change after migration?</li>
+            <li>Which meters and rules generate the most disputes or reconciliation issues?</li>
+            <li>Under which model do high-growth strategic accounts generate healthy margin rather than dilutive growth?</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+    <!-- Rollout Phases (Storyboard) -->
+    <div class="concept-section">
+      <h2>Rollout Playbook</h2>
+      <p>Pricing transitions fail when they flip a switch for the entire customer base at once. The playbook below uses a phased approach with clear gates between each phase. Do not advance to the next phase until the gate criteria are met.</p>
+
+      <div class="storyboard">
+
+        <!-- Phase 1: Discovery & Governance -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">1</div>
+              <h4>Align</h4>
+            </div>
+            <p>Get leadership aligned on "why" and "where," set decision rights, and form the cross-functional team. This phase is about building consensus and the governance structure to make decisions, not about building software.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Typical duration: 2-3 weeks.</p>
+          </div>
+          <div class="step-right">
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 8px;">Key Actions</div>
+            <ul style="padding-left: 16px; margin: 0; font-size: 0.84rem; color: var(--text); line-height: 1.7;">
+              <li>Appoint an <strong>executive sponsor</strong> (CRO/CPO) and a <strong>program owner</strong> (Pricing/RevOps)</li>
+              <li>Form a cross-functional working group: Product, Finance, RevOps, Sales, CS, Legal, Billing/Eng</li>
+              <li>Draft a <strong>pricing transformation charter</strong>: target products/segments, candidate value metrics, revenue/margin/NRR goals, customer experience guardrails (no mid-contract forced migrations), max acceptable bill increase bands</li>
+              <li>Set decision cadence: weekly working session, biweekly steering forum, monthly exec review</li>
+            </ul>
+            <div class="gate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <p><strong>Gate:</strong> Leadership agrees on (a) objectives, (b) pilot scope, (c) target metrics, and (d) owners.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2: Data Foundation -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">2</div>
+              <h4>Build the Data Foundation</h4>
+            </div>
+            <p>Before you can model pricing scenarios or run shadow billing, you need the infrastructure to track tenants, attribute costs, and meter usage. This is the technical prerequisite: build or validate the systems described in Sections 1.1 through 1.3.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Typical duration: 4-8 weeks (often runs in parallel with Phase 1).</p>
+          </div>
+          <div class="step-right">
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 8px;">Key Actions</div>
+            <ul style="padding-left: 16px; margin: 0; font-size: 0.84rem; color: var(--text); line-height: 1.7;">
+              <li><strong>Tenant identity</strong> (<a href="1-1-multi-tenant-governance.html" style="color: var(--sf-primary);">1.1</a>): Establish a canonical tenant_id that bridges product, billing, CRM, and finance. Enforce it in every table, every event, every query via session variables and row-access policies</li>
+              <li><strong>Cost attribution</strong> (<a href="1-2-unit-cost-attribution.html" style="color: var(--sf-primary);">1.2</a>): Tag queries with tenant context so compute, AI, and storage costs are attributable. Baseline current cost-to-serve per tenant from ACCOUNT_USAGE views</li>
+              <li><strong>Usage metering</strong> (<a href="1-3-usage-metering-billing.html" style="color: var(--sf-primary);">1.3</a>): Build the metering_events table, stream application events via Snowpipe Streaming, and set up dynamic table aggregation for real-time usage summaries</li>
+              <li><strong>Customer-facing transparency</strong> (<a href="1-3-usage-metering-billing.html#tenant-spend" style="color: var(--sf-primary);">1.3</a>): Deploy usage dashboards, spend alerts, and self-service controls so tenants can monitor their own consumption before you change the pricing model</li>
+              <li><strong>Baseline metrics:</strong> With the foundation in place, measure current revenue by segment/plan/customer, seat utilization vs purchased, churn/GRR/NRR, discounting, and gross margin</li>
+            </ul>
+            <div class="gate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <p><strong>Gate:</strong> You can query per-tenant cost-to-serve, generate a usage summary for any account-month, and show a working usage dashboard. Without this, Phases 3-6 are guesswork.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3: Model Design & Economic Validation -->
+        <div class="story-step" style="border: 2px solid var(--sf-primary); background: linear-gradient(135deg, #f8fafc, #eff6ff);">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number" style="background: var(--sf-dark);">3</div>
+              <h4>Model Design &amp; Economic Validation</h4>
+            </div>
+            <p>Select the value metric, design billable units, and validate the economics with back-tests against real customer data. This is the most analytically intensive phase: it's where the workbook above gets built and stress-tested.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Typical duration: 2-4 weeks.</p>
+          </div>
+          <div class="step-right">
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 8px;">Key Actions</div>
+            <ul style="padding-left: 16px; margin: 0; font-size: 0.84rem; color: var(--text); line-height: 1.7;">
+              <li>Run <strong>value-metric workshops</strong> using the checklist above. Score 3-5 candidate metrics, select 1-2</li>
+              <li>Decide: pure usage vs hybrid vs committed consumption. Define the relationship between platform access and usage</li>
+              <li>Build the <strong>economic workbook</strong> (9 tabs): back-test over 12-24 months, model downside/base/upside scenarios</li>
+              <li>Design <strong>guardrails</strong>: minimum commitments, included allowances, overage rates and tiers, caps, bill-protection rules</li>
+              <li>Define <strong>migration offers</strong>: grandfathering period, credits for early adopters, caps on first-year increases, optional dual-billing comparison period</li>
+              <li>Work with Legal: updated order forms, dispute mechanisms, usage accuracy SLAs, migration and renewal terms</li>
+            </ul>
+            <div class="gate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <p><strong>Gate:</strong> Model passes target thresholds for revenue, margin, NRR, and customer-impact distribution. No segment sees >X% average bill increase.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3: Pilot & Controlled Migration -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">4</div>
+              <h4>Pilot &amp; Controlled Migration</h4>
+            </div>
+            <p>Prove the model with limited risk. Fix problems before broad rollout. This phase has four sequential stages, each expanding the blast radius.</p>
+            <p style="font-size: 0.82rem; margin-top: 8px;">Typical duration: 4-8 weeks per stage.</p>
+          </div>
+          <div class="step-right">
+            <div style="font-size: 0.82rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 8px;">Four-Stage Sequence</div>
+            <ol style="padding-left: 16px; margin: 0; font-size: 0.84rem; color: var(--text); line-height: 1.7;">
+              <li style="margin-bottom: 10px;"><strong>Shadow billing:</strong> Compute hypothetical bills for all customers behind the scenes. Don't charge yet. Reconcile usage &rarr; bill &rarr; invoices. Verify meter coverage, rating accuracy, and variance.</li>
+              <li style="margin-bottom: 10px;"><strong>New logos only:</strong> Offer the new model to a defined new-logo segment (e.g., mid-market in one region). Track conversion rate, early usage, support burden, invoice comprehension.</li>
+              <li style="margin-bottom: 10px;"><strong>Opt-in existing customers:</strong> Invite select existing customers with strong adoption and exec champions. Offer migration credits and bill ceilings during the test.</li>
+              <li><strong>Early renewals:</strong> For a limited customer set, make the new model the default at renewal with clear protections (caps on year-one increase).</li>
+            </ol>
+            <div style="margin-top: 14px; font-size: 0.82rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Weekly Pilot Review</div>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0; line-height: 1.5;">Track: new sign-ups, usage behavior, invoice accuracy, support contacts and disputes, margin by pilot cohort, customer-specific before/after bill comparisons.</p>
+            <div class="gate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <p><strong>Gate:</strong> Invoice accuracy proven and disputes low. Customers can explain the model back to you. No major surprises in revenue, margin, or churn. No unmanageable bill shock.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 4: Full GTM Enablement -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">5</div>
+              <h4>Full GTM Enablement &amp; Rollout</h4>
+            </div>
+            <p>Make it easy and safe for Sales, CS, Marketing, and customers. This phase is about enablement artifacts, not pricing design; the model is locked from Phase 3.</p>
+          </div>
+          <div class="step-right">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div style="background: var(--sf-lighter); border-radius: 8px; padding: 14px;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Sales &amp; CS</div>
+                <ul style="padding-left: 14px; margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                  <li>Pricing playbook: ICP, qualification questions, deal structures</li>
+                  <li>Discounting rules and approval matrix</li>
+                  <li>ROI and pricing calculators</li>
+                  <li>Renewal and migration approach</li>
+                </ul>
+              </div>
+              <div style="background: var(--sf-lighter); border-radius: 8px; padding: 14px;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Customer-Facing</div>
+                <ul style="padding-left: 14px; margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                  <li>Public pricing page (simplified structure)</li>
+                  <li>Budgeting guide ("how to forecast your bill")</li>
+                  <li>Detailed FAQ with low/medium/high usage examples</li>
+                  <li>Migration email sequences</li>
+                </ul>
+              </div>
+              <div style="background: var(--sf-lighter); border-radius: 8px; padding: 14px;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Sales Compensation</div>
+                <ul style="padding-left: 14px; margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                  <li>Commission on committed baseline + expansion at renewal</li>
+                  <li>Activation and usage growth incentives (CS co-ownership)</li>
+                  <li>Transition guarantees (minimum OTE) while data matures</li>
+                </ul>
+              </div>
+              <div style="background: var(--sf-lighter); border-radius: 8px; padding: 14px;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Systems</div>
+                <ul style="padding-left: 14px; margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                  <li>CPQ updated with new SKUs, meters, entitlements</li>
+                  <li>Billing system supports new rating logic</li>
+                  <li>Customer dashboards support new model</li>
+                  <li>Legal templates and order forms updated</li>
+                </ul>
+              </div>
+            </div>
+            <div class="gate">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <p><strong>Gate:</strong> Playbooks, calculators, systems, and contracts are ready and frontline teams are trained. Only then roll out broadly.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 5: Operationalize & Iterate -->
+        <div class="story-step">
+          <div class="step-left">
+            <div class="step-header">
+              <div class="step-number">6</div>
+              <h4>Operationalize &amp; Iterate</h4>
+            </div>
+            <p>Treat pricing and packaging as a living system. Set a monthly operating rhythm with a standard dashboard that tracks customer health, usage, economics, commercial performance, and operational quality.</p>
+          </div>
+          <div class="step-right">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div style="background: var(--sf-lighter); border-radius: 8px; padding: 14px;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Customer Health</div>
+                <ul style="padding-left: 14px; margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                  <li>GRR, NRR, downgrades, churn</li>
+                  <li>Billing disputes</li>
+                  <li>Support contacts about pricing</li>
+                </ul>
+              </div>
+              <div style="background: var(--sf-lighter); border-radius: 8px; padding: 14px;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Usage Metrics</div>
+                <ul style="padding-left: 14px; margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                  <li>Activation and time-to-value</li>
+                  <li>Usage growth and volatility</li>
+                  <li>Feature adoption by tier</li>
+                </ul>
+              </div>
+              <div style="background: var(--sf-lighter); border-radius: 8px; padding: 14px;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Unit Economics</div>
+                <ul style="padding-left: 14px; margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                  <li>Revenue per unit; realized price vs list</li>
+                  <li>Cost per unit; gross margin by meter</li>
+                  <li>Contribution margin by account and segment</li>
+                </ul>
+              </div>
+              <div style="background: var(--sf-lighter); border-radius: 8px; padding: 14px;">
+                <div style="font-size: 0.78rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Operational Quality</div>
+                <ul style="padding-left: 14px; margin: 0; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                  <li>Meter completeness and coverage</li>
+                  <li>Usage &rarr; invoice reconciliation variance</li>
+                  <li>Time to implement pricing changes</li>
+                </ul>
+              </div>
+            </div>
+            <div style="margin-top: 14px; font-size: 0.82rem; font-weight: 600; color: var(--sf-dark); margin-bottom: 6px;">Continuous Adjustment Levers</div>
+            <ul style="padding-left: 16px; margin: 0; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
+              <li>Adjust <strong>packaging and tiers</strong> before changing unit prices where possible</li>
+              <li>Refine <strong>discounting rules</strong> for segments where realized price is too low or friction is high</li>
+              <li>Add or refine <strong>caps, alerts, and budgeting aids</strong> where bill shock occurs</li>
+              <li>Improve <strong>cost efficiency</strong> and pass a portion of gains into competitive pricing</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <p>Snowflake for SaaS | Built by Prabhath Nanisetty and Cortex Code</p>
+  </footer>
+  <script>
+    function showWbTab(idx) {
+      var panels = document.querySelectorAll('.wb-panel');
+      var btns = document.querySelectorAll('.wb-tab-btn');
+      for (var i = 0; i < panels.length; i++) {
+        panels[i].style.display = i === idx ? 'block' : 'none';
+        btns[i].classList.toggle('wb-tab-btn--active', i === idx);
+      }
+    }
+    function fmt(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}); }
+    function fmt2(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+
+    function calcSeat() {
+      var price = +document.getElementById('seat-price').value;
+      var count = +document.getElementById('seat-count').value;
+      document.getElementById('seat-price-val').textContent = fmt(price);
+      document.getElementById('seat-count-val').textContent = count;
+      document.getElementById('seat-total').textContent = fmt(price * count);
+    }
+
+    function calcUsage() {
+      var price = +document.getElementById('usage-price').value / 10;
+      var units = +document.getElementById('usage-units').value;
+      document.getElementById('usage-price-val').textContent = fmt2(price);
+      document.getElementById('usage-units-val').textContent = units.toLocaleString();
+      document.getElementById('usage-total').textContent = fmt(price * units);
+    }
+
+    function calcHybrid() {
+      var base = +document.getElementById('hybrid-base').value;
+      var included = +document.getElementById('hybrid-included').value;
+      var overage = +document.getElementById('hybrid-overage').value / 10;
+      var actual = +document.getElementById('hybrid-actual').value;
+      var overUnits = Math.max(0, actual - included);
+      var overCost = overUnits * overage;
+      document.getElementById('hybrid-base-val').textContent = fmt(base);
+      document.getElementById('hybrid-included-val').textContent = included.toLocaleString();
+      document.getElementById('hybrid-overage-val').textContent = fmt2(overage);
+      document.getElementById('hybrid-actual-val').textContent = actual.toLocaleString();
+      document.getElementById('hybrid-fee').textContent = fmt(base);
+      document.getElementById('hybrid-over-units').textContent = overUnits.toLocaleString();
+      document.getElementById('hybrid-over-cost').textContent = fmt(overCost);
+      document.getElementById('hybrid-total').textContent = fmt(base + overCost);
+    }
+
+    function calcCommit() {
+      var annual = +document.getElementById('commit-annual').value;
+      var rate = +document.getElementById('commit-rate').value / 10;
+      var overate = +document.getElementById('commit-overate').value / 10;
+      var actual = +document.getElementById('commit-actual').value;
+      var monthly = annual / 12;
+      var includedUnits = Math.floor(monthly / rate);
+      var overUnits = Math.max(0, actual - includedUnits);
+      var overCost = overUnits * overate;
+      document.getElementById('commit-annual-val').textContent = fmt(annual);
+      document.getElementById('commit-rate-val').textContent = fmt2(rate);
+      document.getElementById('commit-overate-val').textContent = fmt2(overate);
+      document.getElementById('commit-actual-val').textContent = actual.toLocaleString();
+      document.getElementById('commit-monthly').textContent = fmt(monthly);
+      document.getElementById('commit-included-units').textContent = includedUnits.toLocaleString() + 'K';
+      document.getElementById('commit-over-cost').textContent = fmt(overCost);
+      document.getElementById('commit-total').textContent = fmt(monthly + overCost);
+    }
+  </script>
+</body>
+</html>
