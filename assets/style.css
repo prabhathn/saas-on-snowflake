@@ -138,7 +138,9 @@ body {
 
 .section-header {
   border-left: 3px solid var(--sf-primary);
-  padding-left: 20px;
+  background: var(--bg-section);
+  border-radius: 0 10px 10px 0;
+  padding: 20px 24px 20px 20px;
   margin-bottom: 28px;
   display: flex;
   flex-direction: column;
