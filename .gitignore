@@ -1,9 +1,19 @@
 .DS_Store
 .snowflake/
 
-# Incomplete capstone stub pages (in progress)
+# Incomplete / draft pages (card--draft on index.html) - keep local only
 concepts/2-0-*.html
+concepts/2-1-*.html
+concepts/2-2-*.html
 concepts/3-0-*.html
+concepts/3-1-*.html
+concepts/3-2-*.html
+concepts/3-3-*.html
 concepts/4-0-*.html
+concepts/4-3-*.html
 concepts/5-0-*.html
+concepts/5-1-*.html
+concepts/5-2-*.html
 concepts/6-0-*.html
+concepts/6-2-*.html
+concepts/6-3-*.html
