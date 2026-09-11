@@ -226,7 +226,8 @@
   [[<span style="color: #c4b5fd;">SYSTEM$REFERENCE</span>(<span style="color: #86efac;">'TAG'</span>,
     <span style="color: #86efac;">'cost_mgmt.tags.cost_center'</span>,
     <span style="color: #86efac;">'SESSION'</span>, <span style="color: #86efac;">'APPLYBUDGET'</span>),
-  <span style="color: #86efac;">'acme'</span>]]
+  <span style="color: #86efac;">'acme'</span>]],
+  <span style="color: #86efac;">'UNION'</span>
 );</pre></div>
             <div style="margin-top: 8px; font-size: 0.72rem;"><a href="https://docs.snowflake.com/en/user-guide/budgets/custom-budget" target="_blank" style="color: var(--sf-primary);">Custom Budgets docs</a> &middot; <a href="https://docs.snowflake.com/en/sql-reference/classes/budget/methods/set_spending_limit" target="_blank" style="color: var(--sf-primary);">SET_SPENDING_LIMIT</a> &middot; <a href="https://docs.snowflake.com/en/sql-reference/classes/budget/methods/set_resource_tags" target="_blank" style="color: var(--sf-primary);">SET_RESOURCE_TAGS</a></div>
           </details>
@@ -388,24 +389,30 @@
             <p style="font-size: 0.82rem; margin-top: 8px;">This replaces the Kafka → Flink → Redis → billing DB pipeline with a single SDK call.</p>
           </div>
           <div class="step-right">
-            <div class="code-block"><pre><span class="comment"># FastAPI middleware that emits metering events</span>
-<span class="kw">from</span> snowflake.streaming <span class="kw">import</span> SnowflakeStreamingClient
+            <div class="code-block"><pre><span class="comment"># Prerequisite: CREATE PIPE metering_pipe</span>
+<span class="comment">#   AS COPY INTO billing.metering_events</span>
+<span class="comment">#   FROM TABLE(DATA_SOURCE(TYPE =&gt; 'STREAMING'))</span>
+<span class="comment">#   MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;</span>
 
-client = SnowflakeStreamingClient(...)
-channel = client.open_channel(
-    name=<span class="str">"metering_channel"</span>,
-    database=<span class="str">"APP_DB"</span>,
-    schema=<span class="str">"BILLING"</span>,
-    table=<span class="str">"METERING_EVENTS"</span>
-)
+<span class="comment"># FastAPI middleware that emits metering events</span>
+<span class="kw">from</span> snowpipe_streaming <span class="kw">import</span> SnowpipeStreamingClient
+
+client = SnowpipeStreamingClient.builder(
+    client_name=<span class="str">"metering_client"</span>,
+    db_name=<span class="str">"APP_DB"</span>,
+    schema_name=<span class="str">"BILLING"</span>,
+    pipe_name=<span class="str">"METERING_PIPE"</span>
+).build()
+
+channel = client.open_channel(<span class="str">"metering_channel"</span>)
 
 <span class="kw">async def</span> <span class="fn">metering_middleware</span>(request, call_next):
     <span class="comment"># Get tenant from auth context</span>
     tenant_id = request.state.tenant_id
     response = <span class="kw">await</span> call_next(request)
 
-    <span class="comment"># Emit metering event -- sub-second to Snowflake</span>
-    channel.insert_row({
+    <span class="comment"># Emit metering event via append_row</span>
+    channel.append_row({
         <span class="str">"tenant_id"</span>:   tenant_id,
         <span class="str">"event_type"</span>:  <span class="str">"app"</span>,
         <span class="str">"metric_name"</span>: <span class="str">"api_calls"</span>,
@@ -477,7 +484,7 @@ channel = client.open_channel(
   <span class="fn">PARSE_JSON</span>(query_tag):<span class="str">'tenant_id'</span>::<span class="kw">VARCHAR</span>,
   <span class="str">'compute'</span>,
   <span class="str">'credits_used'</span>,
-  <span class="fn">SUM</span>(credits_used_compute)
+  <span class="fn">SUM</span>(credits_attributed_compute)
 <span class="kw">FROM</span> snowflake.account_usage.query_attribution_history
 <span class="kw">WHERE</span> start_time >= <span class="fn">DATE_TRUNC</span>(<span class="str">'day'</span>, <span class="fn">CURRENT_DATE</span>())
   <span class="kw">AND</span> query_tag <span class="kw">IS NOT NULL</span>
@@ -490,7 +497,7 @@ channel = client.open_channel(
   <span class="fn">PARSE_JSON</span>(query_tag):<span class="str">'tenant_id'</span>::<span class="kw">VARCHAR</span>,
   <span class="str">'ai'</span>,
   <span class="str">'ai_credits'</span>,
-  <span class="fn">SUM</span>(credits_used)
+  <span class="fn">SUM</span>(credits)
 <span class="kw">FROM</span> snowflake.account_usage
   .cortex_ai_functions_usage_history
 <span class="kw">WHERE</span> start_time >= <span class="fn">DATE_TRUNC</span>(<span class="str">'day'</span>, <span class="fn">CURRENT_DATE</span>())
